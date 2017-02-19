@@ -13,7 +13,9 @@ public class HTTPResponseBuilder {
         this.fullMessage = new ArrayList<Byte>();
     }
 
-    public byte[] build(float version, int statusCode, String phrase){
+    public byte[] build(float version, int statusCode, String phrase,
+                        String message)
+    {
 
         //Add the status line
         putStatusLine(version, statusCode, phrase);
@@ -21,8 +23,12 @@ public class HTTPResponseBuilder {
         //Add all the header lines from the map
         putAllHeaderLines();
 
-        //Add a blank line to show that we are finished
+        //Add a blank line to show that we are finished with status and header
+        //lines
         putBlankLine();
+
+        //Add our message in this case the web-page
+        putMessage(message);
 
         //Convert the full message into a primitive final message
         byte[] finalMessage = convertMessage();
@@ -92,6 +98,13 @@ public class HTTPResponseBuilder {
     public void putBlankLine(){
         fullMessage.add(ByteArrayHelper.CR);
         fullMessage.add(ByteArrayHelper.LF);
+    }
+
+    public void putMessage(String message){
+        byte[] messageBytes = ByteArrayHelper.toByteArray(message);
+        for(byte b : messageBytes) {
+            fullMessage.add(b);
+        }
     }
 
     public void clear(){
