@@ -100,7 +100,7 @@ public class HTTPRequestBuilder
     }
 
     public byte[] convertMessage(){
-        byte[] finalMessage = new[fullMessage.size()];
+        byte[] finalMessage = new byte[fullMessage.size()];
         for(int i = 0; i < fullMessage.size(); i++){
             finalMessage[i] = fullMessage.get(i);
         }
