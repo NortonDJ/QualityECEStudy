@@ -43,6 +43,7 @@ public class HTTPRequestBuilder
         for(byte b : methodBytes){
             fullMessage.add(b);
         }
+
         fullMessage.add(ByteArrayHelper.SP);
 
         //Add the url bytes
@@ -50,6 +51,7 @@ public class HTTPRequestBuilder
         for(byte b: urlBytes){
             fullMessage.add(b);
         }
+
         fullMessage.add(ByteArrayHelper.SP);
 
         //Add the version bytes
@@ -61,15 +63,14 @@ public class HTTPRequestBuilder
         fullMessage.add(ByteArrayHelper.LF);
     }
 
-    public void putHeaderLine(String header, String value)
-    {
-        String headerLine = "<"+header+">";
-        byte[] headerBytes = headerLine.getBytes();
+    public void putHeaderLine(String header, String value) {
 
         // Add the header bytes
+        byte[] headerBytes = ByteArrayHelper.toByteArray(header);
         for(byte b : headerBytes){
             fullMessage.add(Byte.valueOf(b));
         }
+
         fullMessage.add(ByteArrayHelper.SP);
 
         // Add the value bytes
@@ -77,6 +78,7 @@ public class HTTPRequestBuilder
         for(byte b: valueBytes) {
             fullMessage.add(Byte.valueOf(b));
         }
+
         // Terminate the line
         fullMessage.add(ByteArrayHelper.CR);
         fullMessage.add(ByteArrayHelper.LF);
@@ -104,6 +106,7 @@ public class HTTPRequestBuilder
         for(int i = 0; i < fullMessage.size(); i++){
             finalMessage[i] = fullMessage.get(i);
         }
+
         return finalMessage;
     }
 
