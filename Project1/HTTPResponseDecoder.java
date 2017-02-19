@@ -27,11 +27,11 @@ public class HTTPResponseDecoder {
         ByteBuffer buffer = ByteBuffer.allocate(4);
         buffer.putFloat(value);
         return buffer.array();
-        
     }
     
     public static void main(String[] args){
         float version1 = 1.0f;
+        int sp
         HTTPResponseDecoder h1 = new HTTPResponseDecoder();
         byte[] array1 = h1.toByteArray(version1);
         //System.out.println(array1[0]);

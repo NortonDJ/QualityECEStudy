@@ -50,8 +50,9 @@ public class ClientApp {
         byte[] request = requestBuilder.build("GET", file, httpversion);
         tl.send(request);
         byte[] response = tl.receive();
-        byte[] raw = responseDecoder.decode(response);
-        return (raw);
+        //byte[] raw = responseDecoder.decode(response);
+        //return (raw);
+        return null;
     }
 
 
