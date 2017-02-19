@@ -13,6 +13,12 @@ public class ByteArrayHelper {
         buffer.putFloat(value);
         return buffer.array();
     }
+
+    public static byte[] toByteArray(int value){
+        ByteBuffer buffer = ByteBuffer.allocate(4);
+        buffer.putInt(value);
+        return buffer.array();
+    }
     
     public static int toInt(byte[] bytes){
         return ByteBuffer.wrap(bytes).getInt();
