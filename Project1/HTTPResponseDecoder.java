@@ -23,20 +23,9 @@ public class HTTPResponseDecoder {
         //return ByteBuffer.wrap(response).getFloat();
         return new byte[0];
     }
-<<<<<<< HEAD
-    
-    public byte[] toByteArray(float value) {    
-        ByteBuffer buffer = ByteBuffer.allocate(4);
-        buffer.putFloat(value);
-        return buffer.array();
-    }
-    
-=======
 
->>>>>>> aae0c7b77bcbf7258556e13b9f594788bb919b0e
     public static void main(String[] args){
         float version1 = 1.0f;
-        int sp
         HTTPResponseDecoder h1 = new HTTPResponseDecoder();
         byte[] array1 = ByteArrayHelper.toByteArray(version1);
         //System.out.println(array1[0]);
