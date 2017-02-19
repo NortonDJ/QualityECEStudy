@@ -19,6 +19,10 @@ public class ByteArrayHelper {
         buffer.putInt(value);
         return buffer.array();
     }
+
+    public static byte[] toByteArray(String value){
+        return value.getBytes();
+    }
     
     public static int toInt(byte[] bytes){
         return ByteBuffer.wrap(bytes).getInt();
