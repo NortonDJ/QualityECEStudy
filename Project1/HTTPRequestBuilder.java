@@ -14,4 +14,8 @@ public class HTTPRequestBuilder
 
     }
 
+    public byte[] build(){
+        return new byte[0];
+    }
+
 }

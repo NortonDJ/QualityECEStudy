@@ -1,25 +1,35 @@
 /**
- * HTTP class which deals with all headings, append messages to locations of files
+ * Created by nortondj on 2/19/17.
  */
-public class HTTP
-{
-    int dprop;
-    int dtrans;
-    /**
-     * Constructor for objects of class HTTP
-     */
-    public HTTP()
-    {
-        TransportLayer transportLayer = new TransportLayer(false, dprop, dtrans);
+public class HTTP{
+    private HTTPRequestBuilder requestBuilder;
+    private HTTPResponseBuilder responseBuilder;
+    private HTTPRequestDecoder requestDecoder;
+    private HTTPResponseDecoder responseDecoder;
+
+
+    public HTTP(){
+        requestBuilder = new HTTPRequestBuilder();
+        responseBuilder = new HTTPResponseBuilder();
+        requestDecoder = new HTTPRequestDecoder();
+        responseDecoder = new HTTPResponseDecoder();
     }
-    
-    //a method to receive request message
-    public void receive(byte[] message){
-        
+
+    public byte[] buildResponse(){
+        return responseBuilder.build();
     }
-    
-    //a respond method to send byte array according to request
-    public void respond(){
-        
+
+    public byte[] buildRequest(String filename, float httpversion){
+        return requestBuilder.build();
     }
+
+    public byte[] decodeResponse(byte[] response){
+        return responseDecoder.decode();
+    }
+
+    public byte[] decodeRequest(byte[] request){
+        return requestDecoder.decode();
+    }
+
+
 }

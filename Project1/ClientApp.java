@@ -1,15 +1,11 @@
-
-import com.sun.security.ntlm.Client;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 
 //This class represents the client application
 public class ClientApp {
-    private float httpversion;
-    private boolean connected;
     private TransportLayer tl;
+    private HTTP http;
+
     public static void main(String[] args) throws Exception {
         float httpversion;
 
@@ -43,13 +39,19 @@ public class ClientApp {
         }
     }
 
-    public ClientApp(float httpversion) {
-        this.httpversion = httpversion;
+    public ClientApp() {
+        this.http = new HTTP();
         this.tl = new TransportLayer(false, 0, 0);
     }
 
-    public void send(byte[] payload) {
-        tl.send(payload);
+    public byte[] GETRequest(String file, float httpversion){
+        byte[] request = http.buildRequest(file, httpversion);
+        tl.send(request);
+        byte[] response = tl.receive();
+        raw = http.decodeResponse(response);
+        return (raw);
     }
+
+
 
 }
