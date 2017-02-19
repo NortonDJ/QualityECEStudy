@@ -48,7 +48,7 @@ public class ClientApp {
         byte[] request = http.buildRequest(file, httpversion);
         tl.send(request);
         byte[] response = tl.receive();
-        raw = http.decodeResponse(response);
+        byte[] raw = http.decodeResponse(response);
         return (raw);
     }
 

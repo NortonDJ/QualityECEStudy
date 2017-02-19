@@ -24,11 +24,11 @@ public class HTTP{
     }
 
     public byte[] decodeResponse(byte[] response){
-        return responseDecoder.decode();
+        return responseDecoder.decode(response);
     }
 
     public byte[] decodeRequest(byte[] request){
-        return requestDecoder.decode();
+        return requestDecoder.decode(request);
     }
 
 
