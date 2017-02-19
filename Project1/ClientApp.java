@@ -4,7 +4,8 @@ import java.io.InputStreamReader;
 //This class represents the client application
 public class ClientApp {
     private TransportLayer tl;
-    private HTTP http;
+    private HTTPRequestBuilder requestBuilder;
+    private HTTPResponseDecoder responseDecoder;
 
     public static void main(String[] args) throws Exception {
         float httpversion;
@@ -40,15 +41,16 @@ public class ClientApp {
     }
 
     public ClientApp() {
-        this.http = new HTTP();
+        this.responseDecoder = new HTTPResponseDecoder();
+        this.requestBuilder = new HTTPRequestBuilder();
         this.tl = new TransportLayer(false, 0, 0);
     }
 
     public byte[] GETRequest(String file, float httpversion){
-        byte[] request = http.buildRequest(file, httpversion);
+        byte[] request = requestBuilder.build("GET", file, httpversion);
         tl.send(request);
         byte[] response = tl.receive();
-        byte[] raw = http.decodeResponse(response);
+        byte[] raw = responseDecoder.decode(response);
         return (raw);
     }
 
