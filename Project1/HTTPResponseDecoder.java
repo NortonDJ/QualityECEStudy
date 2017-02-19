@@ -6,19 +6,23 @@ import java.nio.ByteBuffer;
 public class HTTPResponseDecoder {
     byte[] originalArray;
     ArrayList<byte[]> splitedStatus;
+    HashMap<byte[], byte[]> splitedHeader;
+    ArrayList<byte[]>  body;
+    ByteArrayHelper byteArrayHelper = new ByteArrayHelper();
     
-    //float version;
-    //int sp, cr, lf;
-    //int status_code;
-    //String phrase;
-    //String header;
-    //String value;
-    //String body;
     public HTTPResponseDecoder(){
-        //this.originalArray = array;
         splitedStatus = new ArrayList<byte[]>();
+        splitedHeader = new HashMap<byte[], byte[]>();
+        body = new ArrayList<byte[]>();
     }
     
+    /**the  format of byte array received: Version|sp|status|sp|phrase|cr|lf|
+      *                                    header|sp|value|cr|lf|
+      *                                    ...
+      *                                    header|sp|value|cr|lf|
+      *                                    cr|lf|
+      *                                    body
+      */
     public byte[] decode(byte[] response){                       
         //byte array -> float
         //return ByteBuffer.wrap(response).getFloat();
@@ -27,26 +31,19 @@ public class HTTPResponseDecoder {
     }
 
     public static void main(String[] args){
-        float version1 = 1.0f;
-        int sp1 = 16;
-        byte[] array1 = ByteArrayHelper.toByteArray(version1);
         HTTPResponseDecoder h1 = new HTTPResponseDecoder();
-        //System.out.println(array1[0]);
-        //System.out.println(array1[1]);
-        //System.out.println(array1[2]);
-        //System.out.println(array1[3]);
-        System.out.println(h1.decode(array1));
+        byte[] array1 = new byte[14];
+        for(int i = 0; i < 1; i++){
+            array1[i] = 1;
+        }
+        //System.out.println(h1.originalArray);
+        h1.split_status(array1);
     }
     
-    /**the  format of byte array received: Version|sp|status|sp|phrase|cr|lf|
-      *                                    header|sp|value|cr|lf|
-      *                                    ...
-      *                                    header|sp|value|cr|lf|
-      *                                    cr|lf|
-      *                                    Entire body
-      */  
-    public ArrayList<byte[]> split_status(){
-        //status line
+    //status line  
+    public ArrayList<byte[]> split_status(byte[] array){
+        originalArray = array;
+        System.out.println(originalArray[0]);
         byte[] version = Arrays.copyOfRange(originalArray,0,3);
         splitedStatus.add(version);
         byte[] sp1 = Arrays.copyOfRange(originalArray,4,4);
@@ -63,5 +60,27 @@ public class HTTPResponseDecoder {
         splitedStatus.add(lf);
         return splitedStatus;
     }
-        //Headerline
+    
+    //Header line & body
+    public  HashMap<byte[], byte[]> split_header(byte[] array){
+        int n = 14;
+        char check = 15;
+        char check2 = 12;
+        while(!((byteArrayHelper.toChar(Arrays.copyOfRange(originalArray,n,n))) == (check))){
+            byte[] header =  Arrays.copyOfRange(originalArray,n,n+1);
+            byte[] sp = Arrays.copyOfRange(originalArray,n+2,n+2);
+            byte[] value =  Arrays.copyOfRange(originalArray,n+3, n+4);
+            byte[] cr = Arrays.copyOfRange(originalArray,n+5,n+5);
+            byte[] lf = Arrays.copyOfRange(originalArray,n+6,n+6);
+            splitedHeader.put(header, value);
+            n = n + 7;
+        }
+        
+        if(((byteArrayHelper.toChar(Arrays.copyOfRange(originalArray,n,n))) == (check)) && 
+        ((byteArrayHelper.toChar(Arrays.copyOfRange(originalArray,n+1,n+1))) == (check2))){
+            byte[] mainbody = Arrays.copyOfRange(originalArray,n+2,array.length);
+            body.add(mainbody);
+        }
+        return splitedHeader;
+    }
 }
