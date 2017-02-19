@@ -3,7 +3,7 @@
  */
 public class HTTPResponseBuilder {
 
-    public byte[] build(){
+    public byte[] build(float httpversion, int statusCode, String phrase){
         return new byte[0];
     }
 
