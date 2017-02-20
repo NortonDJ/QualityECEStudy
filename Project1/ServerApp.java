@@ -37,7 +37,7 @@ public class ServerApp
                     System.out.println("Setting dprop = " + dprop +
                             " and dtrans = " + dtrans);
                 }
-            default: dprop = 100; dtrans = 20;
+            default: dprop = 0; dtrans = 0;
         }
         ServerApp s = new ServerApp(dprop, dtrans);
         s.run();
@@ -45,12 +45,12 @@ public class ServerApp
 
     public ServerApp(int dprop, int dtrans){
         this.format = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
-        System.out.println(getCurTime());
         this.dprop = dprop;
         this.dtrans = dtrans;
         transportLayer = new TransportLayer(true, dprop, dtrans);
         this.builder = new HTTPResponseBuilder();
         this.decoder = new HTTPRequestDecoder();
+        this.language = new MyMarkUp();
     }
 
     public String getCurTime(){
@@ -76,7 +76,6 @@ public class ServerApp
     public byte[] formResponse(byte[] request){
         //send the decoder the request
         decoder.decode(request);
-
         //server supports both versions
         float version = decoder.getVersion();
         String method = decoder.getMethod();
@@ -94,7 +93,6 @@ public class ServerApp
 
                 //Create a file object from the url
                 File f = new File(url);
-
                 if(ifmodified.isEmpty()){
                     //if it doesn't exist, then its just a plain get request
                     message = language.readFile(f);
@@ -124,13 +122,14 @@ public class ServerApp
             catch(Exception e){
                 //the file could not be opened, thus we don't know the
                 //resource
+                e.printStackTrace();
                 return builder.build(version, 404, "NOT FOUND",
                         "The requested resource could not be found");
             }
         }
         else{
             return builder.build(version,404, "NOT FOUND",
-                    "Unknown request");
+                    "Unknown method of request");
         }
     }
 
@@ -143,7 +142,6 @@ public class ServerApp
                 break;
 
             String str = new String (request);
-            System.out.println( str );
 
             byte[] response = formResponse(request);
             sendResponse(response);

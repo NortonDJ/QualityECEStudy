@@ -11,49 +11,53 @@ public class HTTPRequestDecoder {
     
     public HashMap<String, String> decode(byte[] requestBytes){
         //store Method
+        if(requestBytes.length == 0){
+            System.out.println("HTTPRequestDecoder EMPTY");
+        }
+        
         int i = 0;
         char check_sp = 16;
         char check_cr = 15;
-        while(!(byteArrayHelper.toChar(Arrays.copyOfRange(requestBytes,i,i))==check_sp)){
+        
+        while(requestBytes[i]!=check_sp){
             i++;
         }
-        byte[] method = Arrays.copyOfRange(requestBytes,0,i-1);
+        byte[] method = Arrays.copyOfRange(requestBytes,0,i);
         requestMap.put("method", byteArrayHelper.tostring(method));
         
         //store URL
         int j = i + 1;
-        while(!(byteArrayHelper.toChar(Arrays.copyOfRange(requestBytes,j,j))==check_sp)){
+        while(requestBytes[j]!=check_sp){
             j++;
         }
-        byte[] url = Arrays.copyOfRange(requestBytes,i+1,j-1);
+        byte[] url = Arrays.copyOfRange(requestBytes,i+1,j);
         requestMap.put("url", byteArrayHelper.tostring(url));
         
         //store Version
         int k = j + 1;
-        while(!(byteArrayHelper.toChar(Arrays.copyOfRange(requestBytes,k,k))==check_cr)){
+        while(requestBytes[k]!=check_cr){
             k++;
         }
-        byte[] version = Arrays.copyOfRange(requestBytes,j+1,k-1);
+        byte[] version = Arrays.copyOfRange(requestBytes,j+1,k);
         requestMap.put("version", new Float(byteArrayHelper.toFloat(version)).toString());
       
         int n = k + 2;
-        while(!((byteArrayHelper.toChar(Arrays.copyOfRange(requestBytes,n,n))) == (check_cr))){
+        while(requestBytes[n]!= check_cr){
             //store header
             int m = n;
-            while(!(byteArrayHelper.toChar(Arrays.copyOfRange(requestBytes,m,m))==check_sp)){
+            while(requestBytes[m]!=check_sp){
                 m++;
             }
             byte[] header =  Arrays.copyOfRange(requestBytes, n ,m-1);
-            requestMap.put("header", byteArrayHelper.tostring(header));
             
             
             //store value
             int x = m + 1;
-            while(!(byteArrayHelper.toChar(Arrays.copyOfRange(requestBytes,x,x))==check_cr)){
+            while(requestBytes[x]!=check_cr){
                 x++;
             }
             byte[] value = Arrays.copyOfRange(requestBytes, m + 1, x - 1);
-            requestMap.put("value", byteArrayHelper.tostring(value));
+            requestMap.put(byteArrayHelper.tostring(header), byteArrayHelper.tostring(value));
             
             n = x + 2;
         }
@@ -97,6 +101,9 @@ public class HTTPRequestDecoder {
     public String getHeader(String header){
         try{
             String s = requestMap.get(header);
+            if(s == null){
+                return "";
+            }
             return s;
         }
         catch(Exception ex){

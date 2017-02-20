@@ -34,7 +34,6 @@ public class MyMarkUp {
                 //System.out.println("Contents for " + filename + ": " + contents);
                 wp.addPageContents(filename, contents);
             }
-            System.out.println(wp.constructPage());
         }
         catch(Exception e){
             e.printStackTrace();
@@ -43,7 +42,7 @@ public class MyMarkUp {
 
     }
 
-    public String readFile(File file) throws FileNotFoundException {
+    public String readFile(File file) throws Exception {
         try {
             Scanner in = new Scanner(new FileReader(file));
             String contents = "";
@@ -52,7 +51,8 @@ public class MyMarkUp {
             }
             return contents;
         }
-        catch(FileNotFoundException e){
+        catch(Exception e){
+            e.printStackTrace();
             throw e;
         }
     }
@@ -63,7 +63,7 @@ public class MyMarkUp {
             //create a reader for the file
             Scanner in = new Scanner(new FileReader(file));
             //look for any attachments using regex
-            String regex = "(<src=\".*\")";
+            String regex = "(<src=\".*\">)";
             Pattern pattern = Pattern.compile(regex);
             //read line by line looking for attachments
             while(in.hasNextLine()){
@@ -96,7 +96,7 @@ public class MyMarkUp {
             //create a reader for the file
             Scanner in = new Scanner(contents);
             //look for any attachments using regex
-            String regex = "(<src=\".*\")";
+            String regex = "<src=.*>";
             Pattern pattern = Pattern.compile(regex);
             //read line by line looking for attachments
             while(in.hasNextLine()){
@@ -107,7 +107,7 @@ public class MyMarkUp {
                     String match = m.group();
                     //discard the <src=" and "> from the string
                     //for example: <src="example1.txt"> -> example1.txt
-                    String discEmbed = match.substring(6, match.length()-1);
+                    String discEmbed = match.substring(5, match.length()-1);
                     //if the attachment has not yet been added to the queue
                     //then add it
                     if(attachments.contains(discEmbed) == false){

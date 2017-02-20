@@ -20,10 +20,13 @@ public class HTTPResponseDecoder {
       */
     public void decode(byte[] responseBytes){                       
         //store version
+                if(responseBytes.length == 0){
+            System.out.println("HTTPResponseDecoder EMPTY");
+        }
         int i = 0;
         char check_sp = 16;
         char check_cr = 15;
-        while(!(byteArrayHelper.toChar(Arrays.copyOfRange(responseBytes,i,i))==check_sp)){
+        while(responseBytes[i]!=check_sp){
             i++;
         }
         byte[] version = Arrays.copyOfRange(responseBytes,0,i-1);
@@ -31,7 +34,7 @@ public class HTTPResponseDecoder {
         
         //store status
         int j = i + 1;
-        while(!(byteArrayHelper.toChar(Arrays.copyOfRange(responseBytes,j,j))==check_sp)){
+        while(responseBytes[j]!=check_sp){
             j++;
         }
         byte[] status = Arrays.copyOfRange(responseBytes, i+1, j-1);
@@ -39,17 +42,17 @@ public class HTTPResponseDecoder {
         
         //store phrase
         int k = j + 1;
-        while(!(byteArrayHelper.toChar(Arrays.copyOfRange(responseBytes,k,k))==check_cr)){
+        while(responseBytes[k]!=check_cr){
             k++;
         }
         byte[] phrase = Arrays.copyOfRange(responseBytes,j+1,k-1);
         responseMap.put("phrase", byteArrayHelper.tostring(phrase));
         
         int n = k + 2;
-        while(!((byteArrayHelper.toChar(Arrays.copyOfRange(responseBytes,n,n))) == (check_cr))){
+        while(responseBytes[n]!= (check_cr)){
             //store header
             int m = n;
-            while(!(byteArrayHelper.toChar(Arrays.copyOfRange(responseBytes,m,m))==check_sp)){
+            while(responseBytes[m]!=check_sp){
                 m++;
             }
             byte[] header =  Arrays.copyOfRange(responseBytes, n ,m-1);
@@ -58,7 +61,7 @@ public class HTTPResponseDecoder {
             
             //store value
             int x = m + 1;
-            while(!(byteArrayHelper.toChar(Arrays.copyOfRange(responseBytes,x,x))==check_cr)){
+            while(responseBytes[x]!=check_cr){
                 x++;
             }
             byte[] value = Arrays.copyOfRange(responseBytes, m + 1, x - 1);

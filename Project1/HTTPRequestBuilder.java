@@ -12,7 +12,7 @@ public class HTTPRequestBuilder
         this.headerLines = new HashMap<String, String>();
         this.fullMessage = new ArrayList<Byte>();
     }
-
+    
     public byte[] build(String method, String url, float version){
 
         //Add the request line

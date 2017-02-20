@@ -35,7 +35,7 @@ public class WebPage {
 
             //look for all references to any embedded values and replace them
             for(String src : embeddedMap.keySet()) {
-                String fse = "<src=\"" + src + "\">";
+                String fse = "<src=" + src + ">";
                 page = page.replaceAll(fse, embeddedMap.get(src));
             }
 

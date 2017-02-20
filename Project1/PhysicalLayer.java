@@ -82,8 +82,8 @@ public class PhysicalLayer
                 bytesRecieved = new byte[numBytes];
                 System.arraycopy(bytes, 0, bytesRecieved, 0, numBytes );
             }
-        } catch (IOException e) {}
-
+        } catch (IOException e) {
+        }
         return bytesRecieved;
     }
 }

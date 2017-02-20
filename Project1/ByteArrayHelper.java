@@ -6,11 +6,13 @@ public class ByteArrayHelper {
     public static final byte LF = 12;
     public static final byte CR = 15;
     public static final byte SP = 16;
+    public static final byte[] synack = {1,2,3};
+    public static final byte[] syn = {4,5,6};
+    public static final byte[] ack = {7,8,9};
     
     public static void main(String[] arg){
         String string1 = "yizhong Chen";
         ByteArrayHelper bah = new ByteArrayHelper();
-        System.out.println(string1);
     }
     
     public static byte[] toByteArray(float value) {

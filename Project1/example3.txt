@@ -1,7 +1,7 @@
 Now that this has been taken care of, let's view it one more time.
 
-<src="Project1/example1.txt">
+<src=example1.txt>
 
 And we'll talk some more afterwards.
 
-<src="Project1/example2.txt">
+<src=example2.txt>

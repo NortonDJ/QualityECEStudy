@@ -62,6 +62,9 @@ public class ClientApp {
         byte[] request = requestBuilder.build("GET", file, httpversion);
         tl.send(request);
         byte[] response = tl.receive();
+        if(response == null){
+            System.out.println("RESPONSE IS NULL");
+        }
         responseDecoder.decode(response);
         return response;
     }
@@ -85,8 +88,7 @@ public class ClientApp {
                 page.addPageContents(filename, contents);
 
                 //look for attachments
-                Queue<String> newQ = mmu.findAttachments(filename);
-
+                Queue<String> newQ = mmu.findAttachments(contents);
                 //copy those attachments to the workQ if worthy
                 while(newQ.isEmpty() == false) {
                     String srcName = newQ.poll();
