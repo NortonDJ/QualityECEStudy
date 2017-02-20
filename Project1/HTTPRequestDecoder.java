@@ -8,7 +8,6 @@ import java.util.*;
 */
 public class HTTPRequestDecoder {
     HashMap<String, String> requestMap;
-    ByteArrayHelper byteArrayHelper = new ByteArrayHelper();
     public HTTPRequestDecoder(){
         requestMap = new HashMap<String, String>();
     }
@@ -25,10 +24,6 @@ public class HTTPRequestDecoder {
      */   
     public HashMap<String, String> decode(byte[] requestBytes){
         //store Method
-        if(requestBytes.length == 0){
-            System.out.println("HTTPRequestDecoder EMPTY");
-        }
-        
         int i = 0;
         char check_sp = 16;
         char check_cr = 15;
@@ -37,7 +32,8 @@ public class HTTPRequestDecoder {
             i++;
         }
         byte[] method = Arrays.copyOfRange(requestBytes,0,i);
-        requestMap.put("method", byteArrayHelper.tostring(method));
+        String methodString = ByteArrayHelper.tostring(method);
+        requestMap.put("method", ByteArrayHelper.tostring(method));
         
         //store URL
         int j = i + 1;
@@ -45,7 +41,7 @@ public class HTTPRequestDecoder {
             j++;
         }
         byte[] url = Arrays.copyOfRange(requestBytes,i+1,j);
-        requestMap.put("url", byteArrayHelper.tostring(url));
+        requestMap.put("url", ByteArrayHelper.tostring(url));
         
         //store Version
         int k = j + 1;
@@ -53,7 +49,7 @@ public class HTTPRequestDecoder {
             k++;
         }
         byte[] version = Arrays.copyOfRange(requestBytes,j+1,k);
-        requestMap.put("version", new Float(byteArrayHelper.toFloat(version)).toString());
+        requestMap.put("version", new Float(ByteArrayHelper.toFloat(version)).toString());
       
         int n = k + 2;
         while(requestBytes[n]!= check_cr){
@@ -62,7 +58,7 @@ public class HTTPRequestDecoder {
             while(requestBytes[m]!=check_sp){
                 m++;
             }
-            byte[] header =  Arrays.copyOfRange(requestBytes, n ,m-1);
+            byte[] header =  Arrays.copyOfRange(requestBytes, n ,m);
             
             
             //store value
@@ -70,14 +66,14 @@ public class HTTPRequestDecoder {
             while(requestBytes[x]!=check_cr){
                 x++;
             }
-            byte[] value = Arrays.copyOfRange(requestBytes, m + 1, x - 1);
-            requestMap.put(byteArrayHelper.tostring(header), byteArrayHelper.tostring(value));
+            byte[] value = Arrays.copyOfRange(requestBytes, m + 1, x);
+            requestMap.put(ByteArrayHelper.tostring(header), ByteArrayHelper.tostring(value));
             
             n = x + 2;
         }
         
         byte[] body = Arrays.copyOfRange(requestBytes, n+2, requestBytes.length);
-        requestMap.put("body", byteArrayHelper.tostring(body));
+        requestMap.put("body", ByteArrayHelper.tostring(body));
         return requestMap;
     }
     

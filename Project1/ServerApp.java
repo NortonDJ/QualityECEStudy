@@ -92,6 +92,7 @@ public class ServerApp
             try{
                 //load the necessary headers
                 String ifmodified = decoder.getHeader("ifmodified");
+                System.out.println("IF MODIFIED" + ifmodified);
                 String url = decoder.getURL();
 
                 //initialize message, phrase, and status code
@@ -110,6 +111,8 @@ public class ServerApp
                 else{
                     Date dClient = format.parse(ifmodified);
                     Date dCurrent = new Date(f.lastModified());
+                    System.out.println("CLIENT TIME: " + dClient);
+                    System.out.println("SERVER TIME: " + dCurrent);
                     if(dCurrent.after(dClient)){
                         //if the current version is newer than the client's
                         //version, send a 200 and the current version

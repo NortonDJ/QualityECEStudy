@@ -94,18 +94,12 @@ public class HTTPRequestBuilder
 
         // Add the header bytes
         byte[] headerBytes = ByteArrayHelper.toByteArray(header);
-        for(byte b : headerBytes){
-            fullMessage.add(Byte.valueOf(b));
-        }
-
+        
         fullMessage.add(ByteArrayHelper.SP);
 
         // Add the value bytes
         byte[] valueBytes = value.getBytes();
-        for(byte b: valueBytes) {
-            fullMessage.add(Byte.valueOf(b));
-        }
-
+        
         // Terminate the line
         fullMessage.add(ByteArrayHelper.CR);
         fullMessage.add(ByteArrayHelper.LF);

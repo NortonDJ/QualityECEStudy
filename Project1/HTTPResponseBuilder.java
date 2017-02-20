@@ -91,7 +91,6 @@ public class HTTPResponseBuilder {
      * @param header and value
      */ 
     public void putHeaderLine(String header, String value) {
-
         // Add the header bytes
         byte[] headerBytes = ByteArrayHelper.toByteArray(header);
         for(byte b : headerBytes){

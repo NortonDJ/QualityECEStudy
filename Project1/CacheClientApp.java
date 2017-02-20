@@ -25,20 +25,24 @@ public class CacheClientApp extends ClientApp {
         String file = "example4.txt";
         cca.run(file);
         File f = new File(file);
-        f.setLastModified(System.currentTimeMillis());
+        try{
+            System.out.println("EDIT AND SAVE THE FILE NOW");
+            Thread.sleep(20000);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
         cca.run(file);
     }
 
     public byte[] GETRequest(String file, float httpversion){
         if(cache.containsKey(file)){
-            requestBuilder.mapHeader("ifmodified", getCurTime());
+            System.out.println("CACHE CONTAINS KEY ADD A HEADER");
+            requestBuilder.mapHeader("ifmodified", cacheTimes.get(file));
         }
         byte[] request = requestBuilder.build("GET", file, httpversion);
         tl.send(request);
         byte[] response = tl.receive();
-        if(response == null){
-            System.out.println("RESPONSE IS NULL");
-        }
         responseDecoder.decode(response);
         if(httpversion == 1.0f){
             tl.disconnect();
@@ -61,8 +65,6 @@ public class CacheClientApp extends ClientApp {
                 int statusCode = responseDecoder.getStatus();
                 String phrase = responseDecoder.getPhrase();
                 //print them
-                System.out.println("Status Code: " + statusCode);
-                System.out.println("Phrase: " + phrase);
                 String contents;
                 //if the response says the information is up to date, get it
                 //from the cache
@@ -70,14 +72,16 @@ public class CacheClientApp extends ClientApp {
                     contents = cache.get(filename);
                 }
                 else if(responseDecoder.getStatus() == 200){
-                //otherwise it would have sent the information
+                    //otherwise it would have sent the information
                     contents = responseDecoder.getBody();
+                    cacheTimes.put(filename, getCurTime());
                 }
                 else{
                     System.out.println("Could not create the webpage");
                     return;
                 }
                 //add them to the page's information list
+                cache.put(filename,contents);
                 page.addPageContents(filename, contents);
 
                 //look for attachments
@@ -95,7 +99,7 @@ public class CacheClientApp extends ClientApp {
                     }
                 }
             }
-            System.out.println(page.constructPage());
+            //System.out.println(page.constructPage());
             if(version==1.1f){
                 tl.disconnect();
             }
