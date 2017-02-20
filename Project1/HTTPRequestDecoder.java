@@ -34,7 +34,7 @@ public class HTTPRequestDecoder {
             k++;
         }
         byte[] version = Arrays.copyOfRange(requestBytes,j+1,k-1);
-        requestMap.put("version", byteArrayHelper.tostring(version));
+        requestMap.put("version", new Float(byteArrayHelper.toFloat(version)).toString());
       
         int n = k + 2;
         while(!((byteArrayHelper.toChar(Arrays.copyOfRange(requestBytes,n,n))) == (check_cr))){
@@ -83,29 +83,20 @@ public class HTTPRequestDecoder {
         }
     }
     
-    public String getVersion(){
+    public Float getVersion(){
         try{
             String s = requestMap.get("version");
-            return s;
+            float f = Float.parseFloat(s);
+            return f;
         }
         catch(Exception ex){
-            return "";
+            return 0.0f;
         }
     }
     
-    public String getHeader(){
+    public String getHeader(String header){
         try{
-            String s = requestMap.get("header");
-            return s;
-        }
-        catch(Exception ex){
-            return "";
-        }
-    }
-    
-    public String getValue(){
-        try{
-            String s = requestMap.get("value");
+            String s = requestMap.get(header);
             return s;
         }
         catch(Exception ex){
