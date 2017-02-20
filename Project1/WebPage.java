@@ -76,6 +76,9 @@ public class WebPage {
         }
     }
 
+    /**
+     * Clears the embedded map and the page ordering queue
+     */
     public void clear(){
         this.embeddedMap = new HashMap<String, String>();
         this.pageOrdering = new LinkedList<String>();
