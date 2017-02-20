@@ -1,6 +1,4 @@
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -20,19 +18,19 @@ public class CacheClientApp extends ClientApp {
     }
 
     public static void main(String[] args){
+        try{
         float version = Float.parseFloat(args[0]);
         CacheClientApp cca = new CacheClientApp(version);
         String file = "example4.txt";
-        cca.run(file);
-        File f = new File(file);
-        try{
+            cca.run(file);
+            File f = new File(file);
+            cca.run(file);
             System.out.println("EDIT AND SAVE THE FILE NOW");
             Thread.sleep(20000);
         }
         catch(Exception e){
             e.printStackTrace();
         }
-        cca.run(file);
     }
 
     public byte[] GETRequest(String file, float httpversion){

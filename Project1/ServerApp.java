@@ -21,30 +21,41 @@ public class ServerApp
 
     public static void main(String[] args) throws Exception
     {
-        int dprop;  //ms
-        int dtrans; //ms per byte
-        switch(args.length){
-            case 1 :
-                System.out.println("Invalid arguments: requires specifying a " +
-                        "dprop AND a dtrans.");
-                dprop = 100; dtrans = 20;
-                System.out.println("Setting dprop = " + dprop +
-                        " and dtrans = " + dtrans);
-                break;
-            case 2 :
-                try{
-                    dprop = Integer.parseInt(args[0]);
-                    dtrans = Integer.parseInt(args[1]);
-                } catch(Exception e){
-                    System.out.println(e.getMessage());
-                    dprop = 100; dtrans = 20;
+        try {
+            int dprop;  //ms
+            int dtrans; //ms per byte
+            switch (args.length) {
+                case 1:
+                    System.out.println("Invalid arguments: requires specifying a " +
+                            "dprop AND a dtrans.");
+                    dprop = 100;
+                    dtrans = 20;
                     System.out.println("Setting dprop = " + dprop +
                             " and dtrans = " + dtrans);
-                }
-            default: dprop = 0; dtrans = 0;
+                    break;
+                case 2:
+                    try {
+                        dprop = Integer.parseInt(args[0]);
+                        dtrans = Integer.parseInt(args[1]);
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                        dprop = 100;
+                        dtrans = 20;
+                        System.out.println("Setting dprop = " + dprop +
+                                " and dtrans = " + dtrans);
+                    }
+                default:
+                    dprop = 0;
+                    dtrans = 0;
+            }
+            ServerApp s = new ServerApp(dprop, dtrans);
+            s.run();
         }
-        ServerApp s = new ServerApp(dprop, dtrans);
-        s.run();
+        catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Bye!");
+            System.exit(-1);
+        }
     }
 
     /**

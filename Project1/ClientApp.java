@@ -17,12 +17,19 @@ public class ClientApp {
     private DateFormat format;
 
 
-    public static void main(String[] args) throws Exception {
-        float version = Float.parseFloat(args[0]);
-        ClientApp ca = new ClientApp(version);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String line = reader.readLine();
-        ca.run(line);
+    public static void main(String[] args) {
+        try {
+            float version = Float.parseFloat(args[0]);
+            ClientApp ca = new ClientApp(version);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            String line = reader.readLine();
+            ca.run(line);
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Bye!");
+            System.exit(-1);
+        }
         /*float httpversion;
 
         switch (args.length) {
