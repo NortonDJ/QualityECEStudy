@@ -43,7 +43,7 @@ public class HTTPResponseDecoder {
     //status line  
     public ArrayList<byte[]> split_status(byte[] array){
         originalArray = array;
-        System.out.println(originalArray[0]);
+        
         byte[] version = Arrays.copyOfRange(originalArray,0,3);
         splitedStatus.add(version);
         byte[] sp1 = Arrays.copyOfRange(originalArray,4,4);

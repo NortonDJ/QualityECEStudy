@@ -1,5 +1,6 @@
 import java.nio.ByteBuffer;
-
+import java.util.Base64;
+import java.util.*;
 /**
  * Created by nortondj on 2/19/17.
  */
@@ -7,6 +8,12 @@ public class ByteArrayHelper {
     public static final byte LF = 12;
     public static final byte CR = 15;
     public static final byte SP = 16;
+    
+    public static void main(String[] arg0){
+        String string1 = "yizhong Chen";
+        ByteArrayHelper bah = new ByteArrayHelper();
+        System.out.println(string1);
+    }
     
     public static byte[] toByteArray(float value) {
         ByteBuffer buffer = ByteBuffer.allocate(4);
@@ -32,8 +39,9 @@ public class ByteArrayHelper {
         return ByteBuffer.wrap(bytes).getChar();
     }
     
-    public static String toString(byte[] bytes){
-        return bytes.toString();
+    public static String tostring(byte[] bytes){
+        String s = new String(bytes);
+        return s;
     }
     
     public static float toFloat(byte[] bytes){
