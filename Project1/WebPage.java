@@ -43,5 +43,14 @@ public class WebPage {
         return page;
     }
 
+    public boolean containsSrc(String filename){
+        if(this.embeddedMap.keySet().contains(filename)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
 
 }
