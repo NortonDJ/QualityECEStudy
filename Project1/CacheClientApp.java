@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -14,6 +17,16 @@ public class CacheClientApp extends ClientApp {
         super(httpversion);
         this.cache = new HashMap<String, String>();
         this.cacheTimes = new HashMap<String, String>();
+    }
+
+    public static void main(String[] args){
+        float version = Float.parseFloat(args[0]);
+        CacheClientApp cca = new CacheClientApp(version);
+        String file = "example4.txt";
+        cca.run(file);
+        File f = new File(file);
+        f.setLastModified(System.currentTimeMillis());
+        cca.run(file);
     }
 
     public byte[] GETRequest(String file, float httpversion){
