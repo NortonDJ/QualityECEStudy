@@ -7,7 +7,7 @@ public class ByteArrayHelper {
     public static final byte CR = 15;
     public static final byte SP = 16;
     
-    public static void main(String[] arg0){
+    public static void main(String[] arg){
         String string1 = "yizhong Chen";
         ByteArrayHelper bah = new ByteArrayHelper();
         System.out.println(string1);
