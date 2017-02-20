@@ -35,6 +35,13 @@ public class ExperimentController {
 
     }
 
+    /**
+     * Runs some tests to plot the time it takes to create a webpage for
+     * non-persistent and persistent
+     * @param writeFile the file to write the results to
+     * @param startingFile the file to load as the webpage
+     * @param version the http version
+     */
     public void simulatePvsNP(String writeFile, String startingFile, float version) {
         try {
             fout = new FileWriter(new File(writeFile));
@@ -56,6 +63,13 @@ public class ExperimentController {
         }
     }
 
+    /**
+     * Runs some tests to plot the time it takes to create the same webpage 3
+     * times without using a cache.
+     * @param writeFile the file to write the results to
+     * @param startingFile the file to create the webpage from
+     * @param version the version
+     */
     public void simulateNC(String writeFile, String startingFile, float version){
         try {
             fout = new FileWriter(new File(writeFile));
@@ -80,6 +94,13 @@ public class ExperimentController {
         }
     }
 
+    /**
+     * Runs some tests to plot the time it takes to create the same webpage 3
+     * times while using a cache.
+     * @param writeFile the file to write the results to
+     * @param startingFile the file to create the webpage from
+     * @param version the version
+     */
     public void simulateC(String writeFile, String startingFile, float version){
         try {
             fout = new FileWriter(new File(writeFile));
@@ -104,6 +125,13 @@ public class ExperimentController {
         }
     }
 
+    /**
+     * Runs some tests to capture the time it takes to use the DUMP method
+     * protocol
+     * @param writeFile the file to write the results to
+     * @param startingFile the file to create the webpage from
+     * @param version the http version
+     */
     public void simulateDUMP(String writeFile, String startingFile, float version) {
         try {
             fout = new FileWriter(new File(writeFile));
