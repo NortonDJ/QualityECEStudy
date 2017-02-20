@@ -59,7 +59,7 @@ public class ExperimentController {
         }
 
         catch(Exception e){
-            fout.close();
+            //fout.close();
         }
     }
 
@@ -90,7 +90,7 @@ public class ExperimentController {
         }
 
         catch(Exception e){
-            fout.close();
+            //fout.close();
         }
     }
 
@@ -121,7 +121,7 @@ public class ExperimentController {
         }
 
         catch(Exception e){
-            fout.close();
+            //fout.close();
         }
     }
 
@@ -149,7 +149,7 @@ public class ExperimentController {
         }
 
         catch(Exception e){
-            fout.close();
+            //fout.close();
         }
     }
 
