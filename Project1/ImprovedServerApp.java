@@ -19,14 +19,50 @@ public class ImprovedServerApp extends ServerApp {
         this.page = new WebPage();
     }
 
+    public static void main(String[] args){
+         try {
+            int dprop;  //ms
+            int dtrans; //ms per byte
+            switch (args.length) {
+                case 1:
+                    System.out.println("Invalid arguments: requires specifying a " +
+                            "dprop AND a dtrans.");
+                    dprop = 100;
+                    dtrans = 20;
+                    System.out.println("Setting dprop = " + dprop +
+                            " and dtrans = " + dtrans);
+                    break;
+                case 2:
+                    try {
+                        dprop = Integer.parseInt(args[0]);
+                        dtrans = Integer.parseInt(args[1]);
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                        dprop = 100;
+                        dtrans = 20;
+                        System.out.println("Setting dprop = " + dprop +
+                                " and dtrans = " + dtrans);
+                    }
+                default:
+                    dprop = 200;
+                    dtrans = 10;
+            }
+            ImprovedServerApp s = new ImprovedServerApp(dprop, dtrans);
+            s.run();
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Bye!");
+            System.exit(-1);
+        }
+    }
+    
     public byte[] formResponse(byte[] request){
         //send the decoder the request
         decoder.decode(request);
-
         //server supports both versions
         float version = decoder.getVersion();
         String method = decoder.getMethod();
-
         //if the method was "GET" handle it by GET
         if(method.equals("GET")){
             return (handleGET(version));
@@ -44,7 +80,7 @@ public class ImprovedServerApp extends ServerApp {
         try{
             //load the necessary headers
             String url = decoder.getURL();
-
+            
             //initialize message, phrase, and status code
             String message = "";
             int statusCode = 0;
@@ -54,7 +90,6 @@ public class ImprovedServerApp extends ServerApp {
             workQ.add(url);
             while(workQ.isEmpty() == false){
                 String filename = workQ.poll();
-
                 File f = new File(filename);
 
                 String contents = mmu.readFile(f);
@@ -63,7 +98,7 @@ public class ImprovedServerApp extends ServerApp {
                 page.addPageContents(filename, contents);
 
                 //look for attachments
-                Queue<String> newQ = mmu.findAttachments(f);
+                Queue<String> newQ = mmu.findAttachments(contents);
 
                 // copy those attachments to the workQ if worthy
                 while(newQ.isEmpty() == false) {
@@ -81,7 +116,6 @@ public class ImprovedServerApp extends ServerApp {
             message = page.constructPage();
             statusCode = 666;
             phrase = "DUMP SUCCESSFUL";
-            System.out.println("SERVER STATUS CODE" + statusCode);
             return builder.build(version, statusCode, phrase, message);
         }
         catch(Exception e){

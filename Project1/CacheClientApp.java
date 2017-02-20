@@ -21,12 +21,12 @@ public class CacheClientApp extends ClientApp {
         try{
         float version = Float.parseFloat(args[0]);
         CacheClientApp cca = new CacheClientApp(version);
-        String file = "example4.txt";
-            cca.run(file);
-            File f = new File(file);
+            String file = "example4.txt";
             cca.run(file);
             System.out.println("EDIT AND SAVE THE FILE NOW");
-            Thread.sleep(20000);
+            Thread.sleep(10000);
+            File f = new File(file);
+            cca.run(file);
         }
         catch(Exception e){
             e.printStackTrace();
@@ -35,7 +35,6 @@ public class CacheClientApp extends ClientApp {
 
     public byte[] GETRequest(String file, float httpversion){
         if(cache.containsKey(file)){
-            System.out.println("CACHE CONTAINS KEY ADD A HEADER");
             requestBuilder.mapHeader("ifmodified", cacheTimes.get(file));
         }
         byte[] request = requestBuilder.build("GET", file, httpversion);
@@ -97,7 +96,7 @@ public class CacheClientApp extends ClientApp {
                     }
                 }
             }
-            //System.out.println(page.constructPage());
+            System.out.println(page.constructPage());
             if(version==1.1f){
                 tl.disconnect();
             }

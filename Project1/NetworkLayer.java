@@ -41,7 +41,7 @@ public class NetworkLayer
     public void send(byte[] payload)
     {
         try {
-            Thread.sleep(dtrans * payload.length * 8);
+            Thread.sleep(dtrans * payload.length);
             Thread.sleep(dprop);
         }
         catch(Exception e){

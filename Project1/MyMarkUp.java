@@ -72,45 +72,6 @@ public class MyMarkUp {
              * @param file
              * @return queue of attachment
              */
-    public Queue<String> findAttachments(File file){
-        Queue<String> attachments = new LinkedList<String>();
-        try{
-            //create a reader for the file
-            Scanner in = new Scanner(new FileReader(file));
-            //look for any attachments using regex
-            String regex = "(<src=\".*\">)";
-            Pattern pattern = Pattern.compile(regex);
-            //read line by line looking for attachments
-            while(in.hasNextLine()){
-                String line = in.nextLine();
-                Matcher m = pattern.matcher(line);
-                //for any matching groups add them to the attachments
-                while(m.find()){
-                    String match = m.group();
-                    //discard the <src=" and "> from the string
-                    //for example: <src="example1.txt"> -> example1.txt
-                    String discEmbed = match.substring(6, match.length()-1);
-                    //if the attachment has not yet been added to the queue
-                    //then add it
-                    if(attachments.contains(discEmbed) == false){
-                        attachments.add(discEmbed);
-                    }
-                }
-            }
-        }
-        catch(Exception e){
-            System.out.println("file not found");
-            //Do nothing just exit
-        }
-        return attachments;
-    }
-
-    /**
-             * find attached file
-             * 
-             * @param file
-             * @return queue of attachment
-             */
     public Queue<String> findAttachments(String contents){
         Queue<String> attachments = new LinkedList<String>();
         try{

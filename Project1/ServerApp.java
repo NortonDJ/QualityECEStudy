@@ -45,8 +45,8 @@ public class ServerApp
                                 " and dtrans = " + dtrans);
                     }
                 default:
-                    dprop = 0;
-                    dtrans = 0;
+                    dprop = 200;
+                    dtrans = 10;
             }
             ServerApp s = new ServerApp(dprop, dtrans);
             s.run();
@@ -162,7 +162,6 @@ public class ServerApp
                     phrase ="NOT MODIFIED";
                 }
             }
-            System.out.println("SERVER STATUS CODE" + statusCode);
             return builder.build(version, statusCode, phrase, message);
         }
         catch(Exception e){

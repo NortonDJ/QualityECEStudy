@@ -43,32 +43,27 @@ public class DUMPClientApp extends ClientApp{
         try{
             long start = System.currentTimeMillis();
             System.out.println("TIME START");
-            Queue<String> workQ = new LinkedList<String>();
-            workQ.add(startingFile);
-            while(workQ.isEmpty() == false){
-                String filename = workQ.poll();
+            String filename = startingFile;
 
-                //send a get request for an embedded file
-                DUMRequest(filename,version);
-                //get the response information
-                String contents = responseDecoder.getBody();
-                int statusCode = responseDecoder.getStatus();
-                String phrase = responseDecoder.getPhrase();
-                //print them
-                System.out.println("Status Code: " + statusCode);
-                System.out.println("Phrase: " + phrase);
-                if(statusCode != 666){
-                    //Webpage could not be constructed
-                    System.out.println("The webpage could not be constructed");
-                    return;
-                }
-                //add them to the page's information list
-                page.addPageContents(filename, contents);
+            //send a DUMP request for an embedded file
+            DUMRequest(filename,version);
+            //get the response information
+            String contents = responseDecoder.getBody();
+            int statusCode = responseDecoder.getStatus();
+            String phrase = responseDecoder.getPhrase();
+            //print them
+            System.out.println("Status Code: " + statusCode);
+            System.out.println("Phrase: " + phrase);
+            System.out.println("Body: " + contents);
+            if(statusCode != 666){
+                //Webpage could not be constructed
+                System.out.println("The webpage could not be constructed");
+                return;
             }
+            //add them to the page's information list
+            page.addPageContents(filename, contents);
             System.out.println(page.constructPage());
-            if(version==1.1f){
-                tl.disconnect();
-            }
+            tl.disconnect();
             long stop = System.currentTimeMillis();
             System.out.println("TIME STOP");
             System.out.println("TIME ELAPSED(ms): " + (stop-start));
