@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.LinkedList;
 import java.util.Queue;
 
 //This class represents the client application
@@ -68,17 +69,10 @@ public class ClientApp {
 
     public void run(String startingFile){
         try{
-            //send a get request for starting file
-        //*********FROM SERVER *******************
-            File f = new File(startingFile);
-            //add the contents to the webpage object
-            String contents = mmu.readFile(f);
-        //****************************************
-            page.addPageContents(startingFile, contents);
-            //look for embedded texts
-            Queue<String> q = mmu.findAttachments(f);
-            while(q.isEmpty() == false){
-                String filename = q.poll();
+            Queue<String> workQ = new LinkedList<String>();
+            workQ.add(startingFile);
+            while(workQ.isEmpty() == false){
+                String filename = workQ.poll();
                 //send a get request for an embedded file
         //*********FROM SERVER *******************
                 File f2 = new File(filename);
@@ -91,16 +85,17 @@ public class ClientApp {
 
                 //look for attachments
                 Queue<String> newQ = mmu.findAttachments(f2);
+
+                //copy those attachments to the workQ if worthy
                 while(newQ.isEmpty() == false) {
                     String srcName = newQ.poll();
                     //if the work q or the page already have the information
-                    //dont add it again
-                    if(q.contains(srcName) || page.containsSrc(srcName)) {
-
+                    if(workQ.contains(srcName) || page.containsSrc(srcName)) {
+                        //dont add it again
                     }
                     //otherwise add the attachment to the work q
                     else{
-                        q.add(srcName);
+                        workQ.add(srcName);
                     }
                 }
             }
