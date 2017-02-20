@@ -108,7 +108,7 @@ public class ClientApp {
                 if(statusCode != 200){
                     //Webpage could not be constructed
                     System.out.println("The webpage could not be constructed");
-                    return;
+                    return 0;
                 }
                 //add them to the page's information list
                 page.addPageContents(filename, contents);

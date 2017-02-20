@@ -75,7 +75,7 @@ public class CacheClientApp extends ClientApp {
                 }
                 else{
                     System.out.println("Could not create the webpage");
-                    return;
+                    return 0;
                 }
                 //add them to the page's information list
                 cache.put(filename,contents);
