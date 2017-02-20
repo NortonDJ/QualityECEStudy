@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -11,9 +10,11 @@ public class ClientApp {
     private HTTPResponseDecoder responseDecoder;
     private WebPage page;
     private MyMarkUp mmu;
+    private float version;
 
     public static void main(String[] args) throws Exception {
-        ClientApp ca = new ClientApp();
+        float version = Float.parseFloat(args[0]);
+        ClientApp ca = new ClientApp(version);
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line = reader.readLine();
         ca.run(line);
@@ -50,12 +51,13 @@ public class ClientApp {
 
     }
 
-    public ClientApp() {
+    public ClientApp(float version) {
         this.responseDecoder = new HTTPResponseDecoder();
         this.requestBuilder = new HTTPRequestBuilder();
         this.tl = new TransportLayer(false, 0, 0);
         this.page = new WebPage();
         this.mmu = new MyMarkUp();
+        this.version = version;
     }
 
     public byte[] GETRequest(String file, float httpversion){
@@ -66,24 +68,25 @@ public class ClientApp {
             System.out.println("RESPONSE IS NULL");
         }
         responseDecoder.decode(response);
+        if(httpversion == 1.0f){
+            tl.disconnect();
+        }
         return response;
     }
 
     public void run(String startingFile){
         try{
+            long start = System.currentTimeMillis();
+            System.out.println("TIME START");
             Queue<String> workQ = new LinkedList<String>();
             workQ.add(startingFile);
             while(workQ.isEmpty() == false){
                 String filename = workQ.poll();
-                //send a get request for an embedded file
-                //*********FROM SERVER *******************
-                //File f2 = new File(filename);
 
-                //extract the contents
-                //String embedContents = mmu.readFile(f2);
-                //*********FROM SERVER *******************
-                GETRequest(filename,1.0f);
+                //send a get request for an embedded file
+                GETRequest(filename,version);
                 String contents = responseDecoder.getBody();
+
                 //add them to the page's information list
                 page.addPageContents(filename, contents);
 
@@ -103,6 +106,12 @@ public class ClientApp {
                 }
             }
             System.out.println(page.constructPage());
+            if(version==1.1f){
+                tl.disconnect();
+            }
+            long stop = System.currentTimeMillis();
+            System.out.println("TIME STOP");
+            System.out.println("TIME ELAPSED(ms): " + (stop-start));
         }
         catch(Exception e){
             e.printStackTrace();
