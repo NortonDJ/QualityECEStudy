@@ -25,7 +25,7 @@ public class WebPage {
     /**
              * add contents of a page, get stored
              * 
-             * @param file name, contents
+             * @param filename, contents
              */
     public void addPageContents(String filename, String contents){
         embeddedMap.put(filename,contents);
@@ -64,7 +64,7 @@ public class WebPage {
     /**
              * check if there is embedded filenames
              * 
-             * @param file name
+             * @param filename
              * @return true if yes, false if no
              */
     public boolean containsSrc(String filename){
@@ -74,6 +74,11 @@ public class WebPage {
         else{
             return false;
         }
+    }
+
+    public void clear(){
+        this.embeddedMap = new HashMap<String, String>();
+        this.pageOrdering = new LinkedList<String>();
     }
 
 
