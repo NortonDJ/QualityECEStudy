@@ -1,14 +1,22 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
+import java.util.Queue;
 
 //This class represents the client application
 public class ClientApp {
     private TransportLayer tl;
     private HTTPRequestBuilder requestBuilder;
     private HTTPResponseDecoder responseDecoder;
+    private WebPage page;
+    private MyMarkUp mmu;
 
     public static void main(String[] args) throws Exception {
-        float httpversion;
+        ClientApp ca = new ClientApp();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String line = reader.readLine();
+        ca.run(line);
+        /*float httpversion;
 
         switch (args.length) {
             case 1:
@@ -37,13 +45,16 @@ public class ClientApp {
             System.out.println(str);
             //read next line
             line = reader.readLine();
-        }
+        }*/
+
     }
 
     public ClientApp() {
         this.responseDecoder = new HTTPResponseDecoder();
         this.requestBuilder = new HTTPRequestBuilder();
         this.tl = new TransportLayer(false, 0, 0);
+        this.page = new WebPage();
+        this.mmu = new MyMarkUp();
     }
 
     public byte[] GETRequest(String file, float httpversion){
@@ -53,6 +64,51 @@ public class ClientApp {
         //byte[] raw = responseDecoder.decode(response);
         //return (raw);
         return null;
+    }
+
+    public void run(String startingFile){
+        try{
+            //send a get request for starting file
+        //*********FROM SERVER *******************
+            File f = new File(startingFile);
+            //add the contents to the webpage object
+            String contents = mmu.readFile(f);
+        //****************************************
+            page.addPageContents(startingFile, contents);
+            //look for embedded texts
+            Queue<String> q = mmu.findAttachments(f);
+            while(q.isEmpty() == false){
+                String filename = q.poll();
+                //send a get request for an embedded file
+        //*********FROM SERVER *******************
+                File f2 = new File(filename);
+
+                //extract the contents
+                String embedContents = mmu.readFile(f2);
+        //*********FROM SERVER *******************
+                //add them to the page's information list
+                page.addPageContents(filename, embedContents);
+
+                //look for attachments
+                Queue<String> newQ = mmu.findAttachments(f2);
+                while(newQ.isEmpty() == false) {
+                    String srcName = newQ.poll();
+                    //if the work q or the page already have the information
+                    //dont add it again
+                    if(q.contains(srcName) || page.containsSrc(srcName)) {
+
+                    }
+                    //otherwise add the attachment to the work q
+                    else{
+                        q.add(srcName);
+                    }
+                }
+            }
+            System.out.println(page.constructPage());
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
 
