@@ -27,6 +27,10 @@ public class HTTPResponseDecoder {
      */                                    
     public void decode(byte[] responseBytes){                       
         //store version
+        
+        for(byte b : responseBytes){
+            System.out.println(b);
+        }
                 if(responseBytes.length == 0){
             System.out.println("HTTPResponseDecoder EMPTY");
         }
@@ -44,8 +48,12 @@ public class HTTPResponseDecoder {
         while(responseBytes[j]!=check_sp){
             j++;
         }
-        byte[] status = Arrays.copyOfRange(responseBytes, i+1, j-1);
-        responseMap.put("status", byteArrayHelper.tostring(status));
+        byte[] status = Arrays.copyOfRange(responseBytes, i+1, j);
+        System.out.println("STATUS");
+        for(byte b : status){
+            System.out.println(b);
+        }
+        responseMap.put("status", Integer.toString(byteArrayHelper.toInt(status)));
         
         //store phrase
         int k = j + 1;
@@ -103,9 +111,11 @@ public class HTTPResponseDecoder {
     public int getStatus(){
         try{
             String s = responseMap.get("status");
+            System.out.println("IN METHOD STATUS : " + s);
             return Integer.parseInt(s);
         }
         catch(Exception ex){
+            System.out.println("NO STATUS");
             return -1;
         }
     }

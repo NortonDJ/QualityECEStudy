@@ -125,6 +125,7 @@ public class ServerApp
                         phrase ="NOT MODIFIED";
                     }
                 }
+                System.out.println("SERVER STATUS CODE" + statusCode);
                 return builder.build(version, statusCode, phrase, message);
             }
             catch(Exception e){
