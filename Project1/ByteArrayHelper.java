@@ -1,6 +1,4 @@
 import java.nio.ByteBuffer;
-import java.util.Base64;
-import java.util.*;
 /**
  * Created by nortondj on 2/19/17.
  */
