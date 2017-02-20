@@ -39,7 +39,7 @@ public class DUMPClientApp extends ClientApp{
         return response;
     }
 
-    public void run(String startingFile){
+    public long run(String startingFile){
         try{
             long start = System.currentTimeMillis();
             System.out.println("TIME START");
@@ -58,7 +58,7 @@ public class DUMPClientApp extends ClientApp{
             if(statusCode != 666){
                 //Webpage could not be constructed
                 System.out.println("The webpage could not be constructed");
-                return;
+                return 0;
             }
             //add them to the page's information list
             page.addPageContents(filename, contents);
@@ -68,9 +68,11 @@ public class DUMPClientApp extends ClientApp{
             System.out.println("TIME STOP");
             System.out.println("TIME ELAPSED(ms): " + (stop-start));
             page.clear();
+            return stop-start;
         }
         catch(Exception e){
             e.printStackTrace();
+            return 0;
         }
     }
 

@@ -47,7 +47,7 @@ public class CacheClientApp extends ClientApp {
         return response;
     }
 
-    public void run(String startingFile){
+    public long run(String startingFile){
         try{
             long start = System.currentTimeMillis();
             System.out.println("TIME START");
@@ -104,9 +104,11 @@ public class CacheClientApp extends ClientApp {
             System.out.println("TIME STOP");
             System.out.println("TIME ELAPSED(ms): " + (stop-start));
             page.clear();
+            return(stop-start);
         }
         catch(Exception e){
             e.printStackTrace();
+            return(0);
         }
     }
 
