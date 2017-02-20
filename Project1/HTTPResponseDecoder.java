@@ -63,8 +63,6 @@ public class HTTPResponseDecoder {
                 m++;
             }
             byte[] header =  Arrays.copyOfRange(responseBytes, n ,m-1);
-            responseMap.put("header", byteArrayHelper.tostring(header));
-            
             
             //store value
             int x = m + 1;
@@ -72,7 +70,7 @@ public class HTTPResponseDecoder {
                 x++;
             }
             byte[] value = Arrays.copyOfRange(responseBytes, m + 1, x - 1);
-            responseMap.put("value", byteArrayHelper.tostring(value));
+            responseMap.put(byteArrayHelper.tostring(header), byteArrayHelper.tostring(value));
             
             n = x + 2;
         }
@@ -86,13 +84,14 @@ public class HTTPResponseDecoder {
              * 
              * @return version. if there is no such thing, return empty string
              */
-    public String getVersion(){
+    public float getVersion(){
         try{
             String s = responseMap.get("version");
-            return s;
+            return Float.valueOf(s);
         }
         catch(Exception ex){
-            return "";
+            System.out.println("String to float - getVersion: failed");
+            return -1;
         }
     }
     
@@ -101,13 +100,13 @@ public class HTTPResponseDecoder {
              * 
              * @return status. if there is no such thing, return empty string
              */
-    public String getStatus(){
+    public int getStatus(){
         try{
             String s = responseMap.get("status");
-            return s;
+            return Integer.parseInt(s);
         }
         catch(Exception ex){
-            return "";
+            return -1;
         }
     }
     
@@ -131,24 +130,9 @@ public class HTTPResponseDecoder {
              * 
              * @return header. if there is no such thing, return empty string
              */
-    public String getHeader(){
+    public String getHeader(String header){
         try{
-            String s = responseMap.get("header");
-            return s;
-        }
-        catch(Exception ex){
-            return "";
-        }
-    }
-    
-    /**
-             * Get 'value' information from the byte array received
-             * 
-             * @return value. if there is no such thing, return empty string
-             */
-    public String getValue(){
-        try{
-            String s = responseMap.get("value");
+            String s = responseMap.get(header);
             return s;
         }
         catch(Exception ex){
