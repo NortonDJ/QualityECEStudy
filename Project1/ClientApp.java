@@ -79,6 +79,7 @@ public class ClientApp {
                 //extract the contents
                 //String embedContents = mmu.readFile(f2);
                 //*********FROM SERVER *******************
+                GETRequest(filename,1.0f);
                 String contents = responseDecoder.getBody();
                 //add them to the page's information list
                 page.addPageContents(filename, contents);
