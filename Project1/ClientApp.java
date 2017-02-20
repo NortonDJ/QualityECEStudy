@@ -62,9 +62,8 @@ public class ClientApp {
         byte[] request = requestBuilder.build("GET", file, httpversion);
         tl.send(request);
         byte[] response = tl.receive();
-        //byte[] raw = responseDecoder.decode(response);
-        //return (raw);
-        return null;
+        responseDecoder.decode(response);
+        return response;
     }
 
     public void run(String startingFile){
@@ -74,17 +73,18 @@ public class ClientApp {
             while(workQ.isEmpty() == false){
                 String filename = workQ.poll();
                 //send a get request for an embedded file
-        //*********FROM SERVER *******************
-                File f2 = new File(filename);
+                //*********FROM SERVER *******************
+                //File f2 = new File(filename);
 
                 //extract the contents
-                String embedContents = mmu.readFile(f2);
-        //*********FROM SERVER *******************
+                //String embedContents = mmu.readFile(f2);
+                //*********FROM SERVER *******************
+                String contents = responseDecoder.getBody();
                 //add them to the page's information list
-                page.addPageContents(filename, embedContents);
+                page.addPageContents(filename, contents);
 
                 //look for attachments
-                Queue<String> newQ = mmu.findAttachments(f2);
+                Queue<String> newQ = mmu.findAttachments(filename);
 
                 //copy those attachments to the workQ if worthy
                 while(newQ.isEmpty() == false) {
