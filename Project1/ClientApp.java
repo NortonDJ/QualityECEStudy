@@ -1,16 +1,21 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.Queue;
 
 //This class represents the client application
 public class ClientApp {
-    private TransportLayer tl;
-    private HTTPRequestBuilder requestBuilder;
-    private HTTPResponseDecoder responseDecoder;
-    private WebPage page;
-    private MyMarkUp mmu;
-    private float version;
+    protected TransportLayer tl;
+    protected HTTPRequestBuilder requestBuilder;
+    protected HTTPResponseDecoder responseDecoder;
+    protected WebPage page;
+    protected MyMarkUp mmu;
+    protected float version;
+    private DateFormat format;
+
 
     public static void main(String[] args) throws Exception {
         float version = Float.parseFloat(args[0]);
@@ -52,6 +57,7 @@ public class ClientApp {
     }
 
     public ClientApp(float version) {
+        this.format = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
         this.responseDecoder = new HTTPResponseDecoder();
         this.requestBuilder = new HTTPRequestBuilder();
         this.tl = new TransportLayer(false, 0, 0);
@@ -85,8 +91,18 @@ public class ClientApp {
 
                 //send a get request for an embedded file
                 GETRequest(filename,version);
+                //get the response information
                 String contents = responseDecoder.getBody();
-
+                int statusCode = responseDecoder.getStatus();
+                String phrase = responseDecoder.getPhrase();
+                //print them
+                System.out.println("Status Code: " + statusCode);
+                System.out.println("Phrase: " + phrase);
+                if(statusCode != 200){
+                    //Webpage could not be constructed
+                    System.out.println("The webpage could not be constructed");
+                    return;
+                }
                 //add them to the page's information list
                 page.addPageContents(filename, contents);
 
@@ -112,12 +128,17 @@ public class ClientApp {
             long stop = System.currentTimeMillis();
             System.out.println("TIME STOP");
             System.out.println("TIME ELAPSED(ms): " + (stop-start));
+            page.clear();
         }
         catch(Exception e){
             e.printStackTrace();
         }
     }
 
+    public String getCurTime(){
+        Calendar cal = Calendar.getInstance();
+        return (format.format(cal.getTime()));
+    }
 
 
 }
