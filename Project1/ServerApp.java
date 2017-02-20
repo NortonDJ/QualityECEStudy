@@ -11,13 +11,13 @@ import java.util.Date;
 */
 public class ServerApp
 {
-    private DateFormat format;
-    private TransportLayer transportLayer;
-    private int dprop;  // ms
-    private int dtrans; // ms per byte
-    private HTTPRequestDecoder decoder;
-    private HTTPResponseBuilder builder;
-    private MyMarkUp language;
+    protected DateFormat format;
+    protected TransportLayer transportLayer;
+    protected int dprop;  // ms
+    protected int dtrans; // ms per byte
+    protected HTTPRequestDecoder decoder;
+    protected HTTPResponseBuilder builder;
+    protected MyMarkUp language;
 
     public static void main(String[] args) throws Exception
     {
@@ -84,57 +84,14 @@ public class ServerApp
     public byte[] formResponse(byte[] request){
         //send the decoder the request
         decoder.decode(request);
+
         //server supports both versions
         float version = decoder.getVersion();
         String method = decoder.getMethod();
-        //if the method was GET
+
+        //if the method was "GET" handle it by GET
         if(method.equals("GET")){
-            try{
-                //load the necessary headers
-                String ifmodified = decoder.getHeader("ifmodified");
-                String url = decoder.getURL();
-
-                //initialize message, phrase, and status code
-                String message = "";
-                int statusCode = 0;
-                String phrase = "";
-
-                //Create a file object from the url
-                File f = new File(url);
-                if(ifmodified.isEmpty()){
-                    //if it doesn't exist, then its just a plain get request
-                    message = language.readFile(f);
-                    statusCode = 200;
-                    phrase = "OK";
-                }
-                else{
-                    Date dClient = format.parse(ifmodified);
-                    Date dCurrent = new Date(f.lastModified());
-                    if(dCurrent.after(dClient)){
-                        //if the current version is newer than the client's
-                        //version, send a 200 and the current version
-                        message = language.readFile(f);
-                        statusCode = 200;
-                        phrase = "OK";
-                    }
-                    else{
-                        //the current version is older or the same as the
-                        //client's version, send a 304.
-                        message = "";
-                        statusCode = 304;
-                        phrase ="NOT MODIFIED";
-                    }
-                }
-                System.out.println("SERVER STATUS CODE" + statusCode);
-                return builder.build(version, statusCode, phrase, message);
-            }
-            catch(Exception e){
-                //the file could not be opened, thus we don't know the
-                //resource
-                e.printStackTrace();
-                return builder.build(version, 404, "NOT FOUND",
-                        "The requested resource could not be found");
-            }
+            return (handleGET(version));
         }
         else{
             return builder.build(version,404, "NOT FOUND",
@@ -154,6 +111,55 @@ public class ServerApp
 
             byte[] response = formResponse(request);
             sendResponse(response);
+        }
+    }
+
+    public byte[] handleGET(float version){
+        try{
+            //load the necessary headers
+            String ifmodified = decoder.getHeader("ifmodified");
+            String url = decoder.getURL();
+
+            //initialize message, phrase, and status code
+            String message = "";
+            int statusCode = 0;
+            String phrase = "";
+
+            //Create a file object from the url
+            File f = new File(url);
+            if(ifmodified.isEmpty()){
+                //if it doesn't exist, then its just a plain get request
+                message = language.readFile(f);
+                statusCode = 200;
+                phrase = "OK";
+            }
+            else{
+                Date dClient = format.parse(ifmodified);
+                Date dCurrent = new Date(f.lastModified());
+                if(dCurrent.after(dClient)){
+                    //if the current version is newer than the client's
+                    //version, send a 200 and the current version
+                    message = language.readFile(f);
+                    statusCode = 200;
+                    phrase = "OK";
+                }
+                else{
+                    //the current version is older or the same as the
+                    //client's version, send a 304.
+                    message = "";
+                    statusCode = 304;
+                    phrase ="NOT MODIFIED";
+                }
+            }
+            System.out.println("SERVER STATUS CODE" + statusCode);
+            return builder.build(version, statusCode, phrase, message);
+        }
+        catch(Exception e){
+            //the file could not be opened, thus we don't know the
+            //resource
+            e.printStackTrace();
+            return builder.build(version, 404, "NOT FOUND",
+                    "The requested resource could not be found");
         }
     }
 }
