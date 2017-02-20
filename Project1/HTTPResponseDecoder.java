@@ -4,16 +4,11 @@ import java.nio.ByteBuffer;
  * Created by nortondj on 2/19/17.
  */
 public class HTTPResponseDecoder {
-    byte[] originalArray;
-    ArrayList<byte[]> splitedStatus;
-    HashMap<byte[], byte[]> splitedHeader;
-    ArrayList<byte[]>  body;
+    HashMap<String, String> responseMap;
     ByteArrayHelper byteArrayHelper = new ByteArrayHelper();
     
     public HTTPResponseDecoder(){
-        splitedStatus = new ArrayList<byte[]>();
-        splitedHeader = new HashMap<byte[], byte[]>();
-        body = new ArrayList<byte[]>();
+        responseMap = new HashMap<String, String>();
     }
     
     /**the  format of byte array received: Version|sp|status|sp|phrase|cr|lf|
@@ -23,64 +18,117 @@ public class HTTPResponseDecoder {
       *                                    cr|lf|
       *                                    body
       */
-    public byte[] decode(byte[] response){                       
-        //byte array -> float
-        //return ByteBuffer.wrap(response).getFloat();
-        this.originalArray = response;
-        return new byte[0];
-    }
-
-    public static void main(String[] args){
-        HTTPResponseDecoder h1 = new HTTPResponseDecoder();
-        byte[] array1 = new byte[14];
-        for(int i = 0; i < 1; i++){
-            array1[i] = 1;
+    public HashMap<String, String> decode(byte[] responseBytes){                       
+        //store version
+        int i = 0;
+        char check_sp = 16;
+        char check_cr = 15;
+        while(!(byteArrayHelper.toChar(Arrays.copyOfRange(responseBytes,i,i))==check_sp)){
+            i++;
         }
-        //System.out.println(h1.originalArray);
-        h1.split_status(array1);
-    }
-    
-    //status line  
-    public ArrayList<byte[]> split_status(byte[] array){
-        originalArray = array;
+        byte[] version = Arrays.copyOfRange(responseBytes,0,i-1);
+        responseMap.put("version", byteArrayHelper.tostring(version));
         
-        byte[] version = Arrays.copyOfRange(originalArray,0,3);
-        splitedStatus.add(version);
-        byte[] sp1 = Arrays.copyOfRange(originalArray,4,4);
-        splitedStatus.add(sp1);
-        byte[] status = Arrays.copyOfRange(originalArray,5,8);
-        splitedStatus.add(status);
-        byte[] sp2 = Arrays.copyOfRange(originalArray, 9,9);
-        splitedStatus.add(sp2);
-        byte[] phrase = Arrays.copyOfRange(originalArray, 10,11);
-        splitedStatus.add(phrase);
-        byte[] cr = Arrays.copyOfRange(originalArray,12,12);
-        splitedStatus.add(cr);
-        byte[] lf = Arrays.copyOfRange(originalArray,13,13);
-        splitedStatus.add(lf);
-        return splitedStatus;
-    }
-    
-    //Header line & body
-    public  HashMap<byte[], byte[]> split_header(byte[] array){
-        int n = 14;
-        char check = 15;
-        char check2 = 12;
-        while(!((byteArrayHelper.toChar(Arrays.copyOfRange(originalArray,n,n))) == (check))){
-            byte[] header =  Arrays.copyOfRange(originalArray,n,n+1);
-            byte[] sp = Arrays.copyOfRange(originalArray,n+2,n+2);
-            byte[] value =  Arrays.copyOfRange(originalArray,n+3, n+4);
-            byte[] cr = Arrays.copyOfRange(originalArray,n+5,n+5);
-            byte[] lf = Arrays.copyOfRange(originalArray,n+6,n+6);
-            splitedHeader.put(header, value);
-            n = n + 7;
+        //store status
+        int j = i + 1;
+        while(!(byteArrayHelper.toChar(Arrays.copyOfRange(responseBytes,j,j))==check_sp)){
+            j++;
+        }
+        byte[] status = Arrays.copyOfRange(responseBytes, i+1, j-1);
+        responseMap.put("status", byteArrayHelper.tostring(status));
+        
+        //store phrase
+        int k = j + 1;
+        while(!(byteArrayHelper.toChar(Arrays.copyOfRange(responseBytes,k,k))==check_cr)){
+            k++;
+        }
+        byte[] phrase = Arrays.copyOfRange(responseBytes,j+1,k-1);
+        responseMap.put("phrase", byteArrayHelper.tostring(phrase));
+        
+        int n = k + 2;
+        while(!((byteArrayHelper.toChar(Arrays.copyOfRange(responseBytes,n,n))) == (check_cr))){
+            //store header
+            int m = n;
+            while(!(byteArrayHelper.toChar(Arrays.copyOfRange(responseBytes,m,m))==check_sp)){
+                m++;
+            }
+            byte[] header =  Arrays.copyOfRange(responseBytes, n ,m-1);
+            responseMap.put("header", byteArrayHelper.tostring(header));
+            
+            
+            //store value
+            int x = m + 1;
+            while(!(byteArrayHelper.toChar(Arrays.copyOfRange(responseBytes,x,x))==check_cr)){
+                x++;
+            }
+            byte[] value = Arrays.copyOfRange(responseBytes, m + 1, x - 1);
+            responseMap.put("value", byteArrayHelper.tostring(value));
+            
+            n = x + 2;
         }
         
-        if(((byteArrayHelper.toChar(Arrays.copyOfRange(originalArray,n,n))) == (check)) && 
-        ((byteArrayHelper.toChar(Arrays.copyOfRange(originalArray,n+1,n+1))) == (check2))){
-            byte[] mainbody = Arrays.copyOfRange(originalArray,n+2,array.length);
-            body.add(mainbody);
+        byte[] body = Arrays.copyOfRange(responseBytes, n+2, responseBytes.length);
+        responseMap.put("body", byteArrayHelper.tostring(body));
+        return responseMap;
+    }
+    
+    public String getMethod(){
+        try{
+            String s = responseMap.get("method");
+            return s;
         }
-        return splitedHeader;
+        catch(Exception ex){
+            return "";
+        }
+    }
+    
+    public String getURL(){
+        try{
+            String s = responseMap.get("url");
+            return s;
+        }
+        catch(Exception ex){
+            return "";
+        }
+    }
+    
+    public String getVersion(){
+        try{
+            String s = responseMap.get("version");
+            return s;
+        }
+        catch(Exception ex){
+            return "";
+        }
+    }
+    
+    public String getHeader(){
+        try{
+            String s = responseMap.get("header");
+            return s;
+        }
+        catch(Exception ex){
+            return "";
+        }
+    }
+    
+    public String getValue(){
+        try{
+            String s = responseMap.get("value");
+            return s;
+        }
+        catch(Exception ex){
+            return "";
+        }
+    }
+    
+    public String getBody(){
+        try{
+            String s = responseMap.get("body");
+            return s;
+        }
+        catch(Exception ex){
+            return "";
+        }
     }
 }
