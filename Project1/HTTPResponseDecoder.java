@@ -18,7 +18,7 @@ public class HTTPResponseDecoder {
       *                                    cr|lf|
       *                                    body
       */
-    public HashMap<String, String> decode(byte[] responseBytes){                       
+    public void decode(byte[] responseBytes){                       
         //store version
         int i = 0;
         char check_sp = 16;
@@ -69,7 +69,6 @@ public class HTTPResponseDecoder {
         
         byte[] body = Arrays.copyOfRange(responseBytes, n+2, responseBytes.length);
         responseMap.put("body", byteArrayHelper.tostring(body));
-        return responseMap;
     }
     
     public String getMethod(){
