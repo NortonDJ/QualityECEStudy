@@ -40,7 +40,7 @@ public class ServerApp
             default: dprop = 100; dtrans = 20;
         }
         ServerApp s = new ServerApp(dprop, dtrans);
-        //s.run();
+        s.run();
     }
 
     public ServerApp(int dprop, int dtrans){
@@ -58,7 +58,7 @@ public class ServerApp
         return (format.format(cal.getTime()));
     }
 
-    /*public void sendResponse(byte[] response){
+    public void sendResponse(byte[] response){
         transportLayer.send( response );
 
         //if the http version is 1.0f, then disconnect (force a handshake again)
@@ -74,6 +74,9 @@ public class ServerApp
     }
 
     public byte[] formResponse(byte[] request){
+        //send the decoder the request
+        decoder.decode(request);
+
         //server supports both versions
         float version = decoder.getVersion();
         String method = decoder.getMethod();
@@ -81,7 +84,7 @@ public class ServerApp
         if(method.equals("GET")){
             try{
                 //load the necessary headers
-                String ifmodified = decoder.getIfModifiedHeader();
+                String ifmodified = decoder.getHeader("ifmodified");
                 String url = decoder.getURL();
 
                 //initialize message, phrase, and status code
@@ -146,5 +149,4 @@ public class ServerApp
             sendResponse(response);
         }
     }
-    */
 }
