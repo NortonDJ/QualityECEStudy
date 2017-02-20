@@ -3,22 +3,40 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 /**
- * Created by nortondj on 2/19/17.
- */
+* This class simulates the webpage
+* 
+* @author  Darren Norton, Yizhong Chen
+* @since   Feb-19th-2017 
+*/
 public class WebPage {
     private HashMap<String, String> embeddedMap;
     private Queue<String> pageOrdering;
 
+    /**
+             * This is a constructor for web page
+             * Form my data structures to deal with embedded pages and the order of them
+             * 
+             */
     public WebPage(){
         this.embeddedMap = new HashMap<String,String>();
         this.pageOrdering = new LinkedList();
     }
 
+    /**
+             * add contents of a page, get stored
+             * 
+             * @param file name, contents
+             */
     public void addPageContents(String filename, String contents){
         embeddedMap.put(filename,contents);
         pageOrdering.add(filename);
     }
 
+    /**
+             * construct the page
+             * 
+             * @return page
+             */
     public String constructPage(){
         String page = "";
         while(pageOrdering.isEmpty() == false){
@@ -42,7 +60,13 @@ public class WebPage {
         }
         return page;
     }
-
+    
+    /**
+             * check if there is embedded filenames
+             * 
+             * @param file name
+             * @return true if yes, false if no
+             */
     public boolean containsSrc(String filename){
         if(this.embeddedMap.keySet().contains(filename)){
             return true;

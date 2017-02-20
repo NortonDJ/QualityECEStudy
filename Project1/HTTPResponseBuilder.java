@@ -1,18 +1,30 @@
 import java.util.ArrayList;
 import java.util.HashMap;
-
 /**
- * Created by nortondj on 2/19/17.
- */
+* This class contains method for HTTP to compose the response message it needs to send, and stored all original information in a
+* hashmap.
+* 
+* @author  Darren Norton, Yizhong Chen
+* @since   Feb-19th-2017 
+*/
 public class HTTPResponseBuilder {
     private HashMap<String, String> headerLines;
     private ArrayList<Byte> fullMessage;
 
+    /**
+     * Constructor of HTTPResponseBuilder
+     * create two data structure to keep track with
+     */
     public HTTPResponseBuilder(){
         this.headerLines = new HashMap<String, String>();
         this.fullMessage = new ArrayList<Byte>();
     }
 
+    /**
+     * This method build the final respond message by forming status line, header lines, blank line and body seperately
+     * @param version, statusCode, phrase, message
+     * @return respond byte array
+     */    
     public byte[] build(float version, int statusCode, String phrase,
                         String message)
     {
@@ -40,6 +52,12 @@ public class HTTPResponseBuilder {
 
     }
 
+    
+    /**
+     * This method build the status line
+     * 
+     * @param version, statusCode, phrase
+     */ 
     public void putStatusLine(float version, int statusCode, String phrase) {
         //Add the version bytes
         byte[] versionBytes = ByteArrayHelper.toByteArray(version);
@@ -66,7 +84,12 @@ public class HTTPResponseBuilder {
         fullMessage.add(ByteArrayHelper.CR);
         fullMessage.add(ByteArrayHelper.LF);
     }
-
+    
+    /**
+     * This method build one header line
+     * 
+     * @param header and value
+     */ 
     public void putHeaderLine(String header, String value) {
 
         // Add the header bytes
@@ -88,6 +111,10 @@ public class HTTPResponseBuilder {
         fullMessage.add(ByteArrayHelper.LF);
     }
 
+    /**
+     * This method form all header lines together
+     * 
+     */ 
     public void putAllHeaderLines(){
         for(String header : headerLines.keySet()){
             String value = headerLines.get(header);
@@ -95,11 +122,20 @@ public class HTTPResponseBuilder {
         }
     }
 
+    /**
+     * This method build a blank line
+     * 
+     */ 
     public void putBlankLine(){
         fullMessage.add(ByteArrayHelper.CR);
         fullMessage.add(ByteArrayHelper.LF);
     }
 
+    /**
+     * convert body of the message into byte array and get stored
+     * 
+     * @param message
+     */ 
     public void putMessage(String message){
         byte[] messageBytes = ByteArrayHelper.toByteArray(message);
         for(byte b : messageBytes) {
@@ -107,11 +143,20 @@ public class HTTPResponseBuilder {
         }
     }
 
+    /**
+     * This method clear everything in hashmap and arraylist
+     * 
+     */ 
     public void clear(){
         this.fullMessage = new ArrayList<Byte>();
         this.headerLines = new HashMap<String, String>();
     }
 
+    /**
+     * This method build the body
+     * 
+     * @return byte array of body
+     */ 
     public byte[] convertMessage(){
         byte[] finalMessage = new byte[fullMessage.size()];
         for(int i = 0; i < fullMessage.size(); i++){

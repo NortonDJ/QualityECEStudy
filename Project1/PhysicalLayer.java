@@ -1,12 +1,14 @@
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-
-// A class that simulates the physical layer. In real life we are using a TCP socket
+/**
+* This class simulates the physical layer, which is actually a simulation of TCP sockets
+*
+* @author  Darren Norton, Yizhong Chen
+* @since   Feb-19th-2017 
+*/
 public class PhysicalLayer
 {
     //port that server will be listening on on localhost.
@@ -19,7 +21,13 @@ public class PhysicalLayer
     DataOutputStream socketOut;
     //stream to read in data from socket
     InputStream inputStream;
-
+    /**
+             * This is a constructor for PhysicalLayer
+             * if the boolean is true, this is a server
+             * if the boolean is false, this is a client
+             * @param boolean (server/client)
+             * 
+             */
     public PhysicalLayer(boolean server)
     {
         //if this is a server
@@ -49,15 +57,20 @@ public class PhysicalLayer
                 //create an inputstream for reading data
                 inputStream = senderSocket.getInputStream();
 
-            } catch (IOException e) {
+            } 
+            catch (IOException e) {
                 //will run if server was not listening
                 System.out.println("Cannot Connect to server");
-                System.exit(1); }
+                System.exit(1); 
             }
-
         }
-
-
+    }
+    
+    /**
+             * send out the bytes message to socket
+             * 
+             * @param byte message
+             */
         public void send(byte[] payload)
         {
         try
@@ -68,7 +81,12 @@ public class PhysicalLayer
         catch(Exception ex){}
     }
 
-    //read bytes from socket
+    
+    /**
+             * read bytes from socket
+             * 
+             * @return the byte array received
+             */
     public byte[] receive()
     {
         byte[] bytesRecieved = null;

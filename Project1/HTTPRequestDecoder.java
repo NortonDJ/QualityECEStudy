@@ -1,7 +1,11 @@
 import java.util.*;
 /**
- * Created by nortondj on 2/19/17.
- */
+* This class contains method for HTTP to decompose the requesst message it received, and stored all information in a
+* hashmap. Then, we can use the hash map to get all kinds of information we need.
+* 
+* @author  Darren Norton, Yizhong Chen
+* @since   Feb-19th-2017 
+*/
 public class HTTPRequestDecoder {
     HashMap<String, String> requestMap;
     ByteArrayHelper byteArrayHelper = new ByteArrayHelper();
@@ -9,6 +13,16 @@ public class HTTPRequestDecoder {
         requestMap = new HashMap<String, String>();
     }
     
+    /**
+     * This method decode the request message(byte array) it received according to the following format
+     * the  format of byte array received: method|sp|URL|sp|version|cr|lf|
+     *                                     header|sp|value|cr|lf|
+     *                                     ...
+     *                                     header|sp|value|cr|lf|
+     *                                     cr|lf|
+     *                                     body
+     * @param responseBytes
+     */   
     public HashMap<String, String> decode(byte[] requestBytes){
         //store Method
         if(requestBytes.length == 0){
@@ -67,6 +81,11 @@ public class HTTPRequestDecoder {
         return requestMap;
     }
     
+    /**
+             * Get 'method' information from the byte array received
+             * 
+             * @return method. if there is no such thing, return empty string
+             */
     public String getMethod(){
         try{
             String s = requestMap.get("method");
@@ -77,6 +96,11 @@ public class HTTPRequestDecoder {
         }
     }
     
+    /**
+             * Get 'URL' information from the byte array received
+             * 
+             * @return URL. if there is no such thing, return empty string
+             */
     public String getURL(){
         try{
             String s = requestMap.get("url");
@@ -87,6 +111,11 @@ public class HTTPRequestDecoder {
         }
     }
     
+    /**
+             * Get 'version' information from the byte array received
+             * 
+             * @return version. if there is no such thing, return empty string
+             */
     public Float getVersion(){
         try{
             String s = requestMap.get("version");
@@ -98,6 +127,11 @@ public class HTTPRequestDecoder {
         }
     }
     
+    /**
+             * Get 'header' information from the byte array received
+             * 
+             * @return header. if there is no such thing, return empty string
+             */
     public String getHeader(String header){
         try{
             String s = requestMap.get(header);
@@ -111,6 +145,26 @@ public class HTTPRequestDecoder {
         }
     }
     
+    /**
+             * Get 'value' information from the byte array received
+             * 
+             * @return value. if there is no such thing, return empty string
+             */
+    public String getValue(){
+        try{
+            String s = requestMap.get("value");
+            return s;
+        }
+        catch(Exception ex){
+            return "";
+        }
+    }
+    
+    /**
+             * Get 'value' information from the byte array received
+             * 
+             * @return value. if there is no such thing, return empty string
+             */
     public String getBody(){
         try{
             String s = requestMap.get("body");

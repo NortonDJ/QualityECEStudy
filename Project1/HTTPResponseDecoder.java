@@ -1,8 +1,12 @@
 import java.util.*;
 import java.nio.ByteBuffer;
 /**
- * Created by nortondj on 2/19/17.
- */
+* This class contains method for HTTP to decompose the response message it received, and stored all information in a
+* hashmap. Then, we can use the hash map to get all kinds of information we need.
+* 
+* @author  Darren Norton, Yizhong Chen
+* @since   Feb-19th-2017 
+*/
 public class HTTPResponseDecoder {
     HashMap<String, String> responseMap;
     ByteArrayHelper byteArrayHelper = new ByteArrayHelper();
@@ -11,13 +15,16 @@ public class HTTPResponseDecoder {
         responseMap = new HashMap<String, String>();
     }
     
-    /**the  format of byte array received: Version|sp|status|sp|phrase|cr|lf|
-      *                                    header|sp|value|cr|lf|
-      *                                    ...
-      *                                    header|sp|value|cr|lf|
-      *                                    cr|lf|
-      *                                    body
-      */
+    /**
+     * This method decode the response message(byte array) it received according to the following format
+     * the  format of byte array received: Version|sp|status|sp|phrase|cr|lf|
+     *                                     header|sp|value|cr|lf|
+     *                                     ...
+     *                                     header|sp|value|cr|lf|
+     *                                     cr|lf|
+     *                                     body
+     * @param responseBytes
+     */                                    
     public void decode(byte[] responseBytes){                       
         //store version
                 if(responseBytes.length == 0){
@@ -74,26 +81,11 @@ public class HTTPResponseDecoder {
         responseMap.put("body", byteArrayHelper.tostring(body));
     }
     
-    public String getMethod(){
-        try{
-            String s = responseMap.get("method");
-            return s;
-        }
-        catch(Exception ex){
-            return "";
-        }
-    }
-    
-    public String getURL(){
-        try{
-            String s = responseMap.get("url");
-            return s;
-        }
-        catch(Exception ex){
-            return "";
-        }
-    }
-    
+    /**
+             * Get 'version' information from the byte array received
+             * 
+             * @return version. if there is no such thing, return empty string
+             */
     public String getVersion(){
         try{
             String s = responseMap.get("version");
@@ -104,6 +96,41 @@ public class HTTPResponseDecoder {
         }
     }
     
+    /**
+             * Get 'status' information from the byte array received
+             * 
+             * @return status. if there is no such thing, return empty string
+             */
+    public String getStatus(){
+        try{
+            String s = responseMap.get("status");
+            return s;
+        }
+        catch(Exception ex){
+            return "";
+        }
+    }
+    
+    /**
+             * Get 'phrase' information from the byte array received
+             * 
+             * @return header. if there is no such thing, return empty string
+             */
+    public String getPhrase(){
+        try{
+            String s = responseMap.get("phrase");
+            return s;
+        }
+        catch(Exception ex){
+            return "";
+        }
+    }
+    
+    /**
+             * Get 'header' information from the byte array received
+             * 
+             * @return header. if there is no such thing, return empty string
+             */
     public String getHeader(){
         try{
             String s = responseMap.get("header");
@@ -114,6 +141,11 @@ public class HTTPResponseDecoder {
         }
     }
     
+    /**
+             * Get 'value' information from the byte array received
+             * 
+             * @return value. if there is no such thing, return empty string
+             */
     public String getValue(){
         try{
             String s = responseMap.get("value");
@@ -124,6 +156,11 @@ public class HTTPResponseDecoder {
         }
     }
     
+    /**
+             * Get 'body' information from the byte array received
+             * 
+             * @return body. if there is no such thing, return empty string
+             */
     public String getBody(){
         try{
             String s = responseMap.get("body");

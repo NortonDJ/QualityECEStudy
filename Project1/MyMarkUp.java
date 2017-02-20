@@ -7,17 +7,21 @@ import java.util.Queue;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 /**
- * Created by nortondj on 2/19/17.
- */
+* This class helps find embeded files and read through contents
+* 
+* @author  Darren Norton, Yizhong Chen
+* @since   Feb-19th-2017 
+*/
 public class MyMarkUp {
-
+    /**
+             * This is a default constructor 
+             */
     public MyMarkUp(){
 
     }
 
-    public static void main(String[] args){
+    /*public static void main(String[] args){
         MyMarkUp mmu = new MyMarkUp();
         WebPage wp = new WebPage();
         System.out.println(System.getProperty("user.dir"));
@@ -40,8 +44,13 @@ public class MyMarkUp {
         }
         //System.out.println(mmu.findAttachments(f));
 
-    }
-
+    }*/
+    /**
+             * Read through the file
+             * 
+             * @param file
+             * @return contents
+             */
     public String readFile(File file) throws Exception {
         try {
             Scanner in = new Scanner(new FileReader(file));
@@ -57,6 +66,12 @@ public class MyMarkUp {
         }
     }
 
+    /**
+             * find attached file
+             * 
+             * @param file
+             * @return queue of attachment
+             */
     public Queue<String> findAttachments(File file){
         Queue<String> attachments = new LinkedList<String>();
         try{
@@ -90,6 +105,12 @@ public class MyMarkUp {
         return attachments;
     }
 
+    /**
+             * find attached file
+             * 
+             * @param file
+             * @return queue of attachment
+             */
     public Queue<String> findAttachments(String contents){
         Queue<String> attachments = new LinkedList<String>();
         try{
@@ -122,5 +143,4 @@ public class MyMarkUp {
         }
         return attachments;
     }
-
 }

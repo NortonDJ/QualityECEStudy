@@ -3,8 +3,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
-//This class represents the server application
+/**
+* This class represents the server application
+* 
+* @author  Darren Norton, Yizhong Chen
+* @since   Feb-19th-2017 
+*/
 public class ServerApp
 {
     private DateFormat format;
@@ -43,6 +47,10 @@ public class ServerApp
         s.run();
     }
 
+    /**
+             * This is a constructor for ServerApp
+             * Form a TransportLayer, get delay time, format, builder, decoder and language
+             */
     public ServerApp(int dprop, int dtrans){
         this.format = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
         this.dprop = dprop;
