@@ -61,6 +61,9 @@ public class CacheClientApp extends ClientApp {
                 //get the response information
                 int statusCode = responseDecoder.getStatus();
                 String phrase = responseDecoder.getPhrase();
+                
+                System.out.println(statusCode);
+                System.out.println(phrase);
                 //print them
                 String contents;
                 //if the response says the information is up to date, get it
