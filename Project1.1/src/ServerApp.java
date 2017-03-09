@@ -153,14 +153,14 @@ public class ServerApp {
                 System.out.println("Client version = " + dClient);
                 System.out.println("Server version = " + dCurrent);
                 if (dCurrent.after(dClient)) {
-                    System.out.println("CLIENT HAS OUTDATED VERSION, send 200");
+                    System.out.println("CLIENT HAS OUTDATED VERSION, send 200\n");
                     //if the current version is newer than the client's
                     //version, send a 200 and the current version
                     message = language.readFile(f);
                     statusCode = 200;
                     phrase = "OK";
                 } else {
-                    System.out.println("CLIENT HAS CORRECT VERSION, send 304");
+                    System.out.println("CLIENT HAS CORRECT VERSION, send 304\n");
                     //the current version is older or the same as the
                     //client's version, send a 304.
                     message = "";
