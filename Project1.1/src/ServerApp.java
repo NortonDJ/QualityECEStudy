@@ -3,24 +3,23 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
 /**
-* This class represents the server application
-* 
-* @author  Darren Norton, Yizhong Chen
-* @since   Feb-19th-2017 
-*/
-public class ServerApp
-{
+ * This class represents the server application
+ *
+ * @author Darren Norton, Yizhong Chen
+ * @since Feb-19th-2017
+ */
+public class ServerApp {
     protected DateFormat format;
     protected TransportLayer transportLayer;
     protected int dprop;  // ms
     protected int dtrans; // ms per byte
-    protected HTTPRequestDecoder decoder;
-    protected HTTPResponseBuilder builder;
+    protected HTTPRequestDecoder requestDecoder;
+    protected HTTPResponseEncoder responseEncoder;
     protected MyMarkUp language;
 
-    public static void main(String[] args) throws Exception
-    {
+    public static void main(String[] args) throws Exception {
         try {
             int dprop;  //ms
             int dtrans; //ms per byte
@@ -50,8 +49,7 @@ public class ServerApp
             }
             ServerApp s = new ServerApp(dprop, dtrans);
             s.run();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             System.out.println("Bye!");
             System.exit(-1);
@@ -59,78 +57,77 @@ public class ServerApp
     }
 
     /**
-             * This is a constructor for ServerApp
-             * Form a TransportLayer, get delay time, format, builder, decoder and language
-             */
-    public ServerApp(int dprop, int dtrans){
+     * This is a constructor for ServerApp
+     * Form a TransportLayer, get delay time, format, responseEncoder, requestDecoder and language
+     */
+    public ServerApp(int dprop, int dtrans) {
         this.format = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
         this.dprop = dprop;
         this.dtrans = dtrans;
         transportLayer = new TransportLayer(true, dprop, dtrans);
-        this.builder = new HTTPResponseBuilder();
-        this.decoder = new HTTPRequestDecoder();
+        this.responseEncoder = new HTTPResponseEncoder();
+        this.requestDecoder = new HTTPRequestDecoder();
         this.language = new MyMarkUp();
     }
 
-    public String getCurTime(){
+    public String getCurTime() {
         Calendar cal = Calendar.getInstance();
         return (format.format(cal.getTime()));
     }
 
-    public void sendResponse(byte[] response){
-        transportLayer.send( response );
-
-        //if the http version is 1.0f, then disconnect (force a handshake again)
-        if(decoder.getVersion() == 1.0f){
-            transportLayer.disconnect();
-        }
+    public void sendResponse(byte[] response) {
+        transportLayer.send(response);
     }
 
-    public byte[] receiveRequest(){
+    public byte[] receiveRequest() {
         //receive message from client, and send the "received" message back.
         byte[] byteArray = transportLayer.receive();
         return byteArray;
     }
 
-    public byte[] formResponse(byte[] request){
-        //send the decoder the request
-        decoder.decode(request);
-
+    public HTTPResponse formResponse(HTTPRequest req) {
         //server supports both versions
-        float version = decoder.getVersion();
-        String method = decoder.getMethod();
+        float version = req.getVersion();
+        String method = req.getMethod();
 
         //if the method was "GET" handle it by GET
-        if(method.equals("GET")){
-            return (handleGET(version));
-        }
-        else{
-            return builder.build(version,404, "NOT FOUND",
-                    "Unknown method of request");
+        if (method.equals("GET")) {
+            HTTPResponse resp = handleGET(req);
+            return resp;
+        } else {
+            HTTPResponse resp = new HTTPResponse(version, 404, "NOT FOUND");
+            resp.setBody("Unknown method of request");
+            return resp;
         }
     }
 
 
-    public void run(){
-        while( true )
-        {
+    public void run() {
+        while (true) {
             byte[] request = receiveRequest();
-            if(request==null)
+            if (request == null)
                 break;
+            HTTPRequest req = requestDecoder.decode(request);
 
-            String str = new String (request);
+            HTTPResponse resp = formResponse(req);
 
-            byte[] response = formResponse(request);
+            byte[] response = responseEncoder.encode(resp);
+
             sendResponse(response);
+
+            //if the http version is 1.0f, then disconnect (force a handshake again)
+            if (resp.getVersion() == 1.0f) {
+                transportLayer.disconnect();
+            }
         }
     }
 
-    public byte[] handleGET(float version){
-        try{
+    public HTTPResponse handleGET(HTTPRequest req) {
+        float version = req.getVersion();
+        try {
             //load the necessary headers
-            String ifmodified = decoder.getHeader("ifmodified");
-            String url = decoder.getURL();
-
+            String ifmodified = req.getHeader("ifmodified");
+            String url = req.getUrl();
             //initialize message, phrase, and status code
             String message = "";
             int statusCode = 0;
@@ -138,38 +135,38 @@ public class ServerApp
 
             //Create a file object from the url
             File f = new File(url);
-            if(ifmodified.isEmpty()){
+            if (ifmodified.isEmpty()) {
                 //if it doesn't exist, then its just a plain get request
                 message = language.readFile(f);
                 statusCode = 200;
                 phrase = "OK";
-            }
-            else{
+            } else {
                 Date dClient = format.parse(ifmodified);
                 Date dCurrent = new Date(f.lastModified());
-                if(dCurrent.after(dClient)){
+                if (dCurrent.after(dClient)) {
                     //if the current version is newer than the client's
                     //version, send a 200 and the current version
                     message = language.readFile(f);
                     statusCode = 200;
                     phrase = "OK";
-                }
-                else{
+                } else {
                     //the current version is older or the same as the
                     //client's version, send a 304.
                     message = "";
                     statusCode = 304;
-                    phrase ="NOT MODIFIED";
+                    phrase = "NOT MODIFIED";
                 }
             }
-            return builder.build(version, statusCode, phrase, message);
-        }
-        catch(Exception e){
+            HTTPResponse resp = new HTTPResponse(version, statusCode, phrase);
+            resp.setBody(message);
+            return resp;
+        } catch (Exception e) {
             //the file could not be opened, thus we don't know the
             //resource
             e.printStackTrace();
-            return builder.build(version, 404, "NOT FOUND",
-                    "The requested resource could not be found");
+            HTTPResponse resp = new HTTPResponse(version, 404, "NOT FOUND");
+            resp.setBody("The requested resource could not be found.");
+            return resp;
         }
     }
 }

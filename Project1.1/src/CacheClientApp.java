@@ -35,9 +35,9 @@ public class CacheClientApp extends ClientApp {
 
     public byte[] GETRequest(String file, float httpversion){
         if(cache.containsKey(file)){
-            requestBuilder.mapHeader("ifmodified", cacheTimes.get(file));
+            requestEncoder.mapHeader("ifmodified", cacheTimes.get(file));
         }
-        byte[] request = requestBuilder.build("GET", file, httpversion);
+        byte[] request = requestEncoder.build("GET", file, httpversion);
         tl.send(request);
         byte[] response = tl.receive();
         responseDecoder.decode(response);

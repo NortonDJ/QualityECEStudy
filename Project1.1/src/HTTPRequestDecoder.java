@@ -7,167 +7,75 @@ import java.util.*;
 * @since   Feb-19th-2017 
 */
 public class HTTPRequestDecoder {
-    HashMap<String, String> requestMap;
-    public HTTPRequestDecoder(){
-        requestMap = new HashMap<String, String>();
+    public HTTPRequestDecoder() {
     }
-    
+
     /**
      * This method decode the request message(byte array) it received according to the following format
      * the  format of byte array received: method|sp|URL|sp|version|cr|lf|
-     *                                     header|sp|value|cr|lf|
-     *                                     ...
-     *                                     header|sp|value|cr|lf|
-     *                                     cr|lf|
-     *                                     body
+     * header|sp|value|cr|lf|
+     * ...
+     * header|sp|value|cr|lf|
+     * cr|lf|
+     * body
+     *
      * @param responseBytes
-     */   
-    public HashMap<String, String> decode(byte[] requestBytes){
+     */
+    public HTTPRequest decode(byte[] requestBytes) {
         //store Method
         int i = 0;
         char check_sp = 16;
         char check_cr = 15;
-        
-        while(requestBytes[i]!=check_sp){
+
+        while (requestBytes[i] != check_sp) {
             i++;
         }
-        byte[] method = Arrays.copyOfRange(requestBytes,0,i);
-        String methodString = ByteArrayHelper.tostring(method);
-        requestMap.put("method", ByteArrayHelper.tostring(method));
-        
+        byte[] method = Arrays.copyOfRange(requestBytes, 0, i);
+        String methodStr = ByteArrayHelper.tostring(method);
+
         //store URL
         int j = i + 1;
-        while(requestBytes[j]!=check_sp){
+        while (requestBytes[j] != check_sp) {
             j++;
         }
-        byte[] url = Arrays.copyOfRange(requestBytes,i+1,j);
-        requestMap.put("url", ByteArrayHelper.tostring(url));
-        
+        byte[] url = Arrays.copyOfRange(requestBytes, i + 1, j);
+        String urlStr = ByteArrayHelper.tostring(url);
+
         //store Version
         int k = j + 1;
-        while(requestBytes[k]!=check_cr){
+        while (requestBytes[k] != check_cr) {
             k++;
         }
-        byte[] version = Arrays.copyOfRange(requestBytes,j+1,k);
-        requestMap.put("version", new Float(ByteArrayHelper.toFloat(version)).toString());
-      
+        byte[] version = Arrays.copyOfRange(requestBytes, j + 1, k);
+        float fversion = ByteArrayHelper.toFloat(version);
+
+        HTTPRequest req = new HTTPRequest(methodStr, urlStr, fversion);
         int n = k + 2;
-        while(requestBytes[n]!= check_cr){
+        while (requestBytes[n] != check_cr) {
             //store header
             int m = n;
-            while(requestBytes[m]!=check_sp){
+            while (requestBytes[m] != check_sp) {
                 m++;
             }
-            byte[] header =  Arrays.copyOfRange(requestBytes, n ,m);
-            
-            
+            byte[] header = Arrays.copyOfRange(requestBytes, n, m);
+            String headerStr = ByteArrayHelper.tostring(header);
+
             //store value
             int x = m + 1;
-            while(requestBytes[x]!=check_cr){
+            while (requestBytes[x] != check_cr) {
                 x++;
             }
             byte[] value = Arrays.copyOfRange(requestBytes, m + 1, x);
-            requestMap.put(ByteArrayHelper.tostring(header), ByteArrayHelper.tostring(value));
-            
+            String valueStr = ByteArrayHelper.tostring(value);
+            req.mapHeader(headerStr, valueStr);
             n = x + 2;
         }
-        
-        byte[] body = Arrays.copyOfRange(requestBytes, n+2, requestBytes.length);
-        requestMap.put("body", ByteArrayHelper.tostring(body));
-        return requestMap;
+
+        byte[] body = Arrays.copyOfRange(requestBytes, n + 2, requestBytes.length);
+        req.setBody(ByteArrayHelper.tostring(body));
+
+        return req;
     }
-    
-    /**
-             * Get 'method' information from the byte array received
-             * 
-             * @return method. if there is no such thing, return empty string
-             */
-    public String getMethod(){
-        try{
-            String s = requestMap.get("method");
-            return s;
-        }
-        catch(Exception ex){
-            return "";
-        }
-    }
-    
-    /**
-             * Get 'URL' information from the byte array received
-             * 
-             * @return URL. if there is no such thing, return empty string
-             */
-    public String getURL(){
-        try{
-            String s = requestMap.get("url");
-            return s;
-        }
-        catch(Exception ex){
-            return "";
-        }
-    }
-    
-    /**
-             * Get 'version' information from the byte array received
-             * 
-             * @return version. if there is no such thing, return empty string
-             */
-    public Float getVersion(){
-        try{
-            String s = requestMap.get("version");
-            float f = Float.parseFloat(s);
-            return f;
-        }
-        catch(Exception ex){
-            return 0.0f;
-        }
-    }
-    
-    /**
-             * Get 'header' information from the byte array received
-             * 
-             * @return header. if there is no such thing, return empty string
-             */
-    public String getHeader(String header){
-        try{
-            String s = requestMap.get(header);
-            if(s == null){
-                return "";
-            }
-            return s;
-        }
-        catch(Exception ex){
-            return "";
-        }
-    }
-    
-    /**
-             * Get 'value' information from the byte array received
-             * 
-             * @return value. if there is no such thing, return empty string
-             */
-    public String getValue(){
-        try{
-            String s = requestMap.get("value");
-            return s;
-        }
-        catch(Exception ex){
-            return "";
-        }
-    }
-    
-    /**
-             * Get 'value' information from the byte array received
-             * 
-             * @return value. if there is no such thing, return empty string
-             */
-    public String getBody(){
-        try{
-            String s = requestMap.get("body");
-            return s;
-        }
-        catch(Exception ex){
-            return "";
-        }
-    }
+
 }
+

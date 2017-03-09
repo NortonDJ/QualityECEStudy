@@ -1,7 +1,4 @@
-import com.sun.corba.se.spi.activation.Server;
-
 import java.io.File;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -58,11 +55,11 @@ public class ImprovedServerApp extends ServerApp {
     }
     
     public byte[] formResponse(byte[] request){
-        //send the decoder the request
-        decoder.decode(request);
+        //send the requestDecoder the request
+        requestDecoder.decode(request);
         //server supports both versions
-        float version = decoder.getVersion();
-        String method = decoder.getMethod();
+        float version = requestDecoder.getVersion();
+        String method = requestDecoder.getMethod();
         //if the method was "GET" handle it by GET
         if(method.equals("GET")){
             return (handleGET(version));
@@ -71,7 +68,7 @@ public class ImprovedServerApp extends ServerApp {
             return (handleDUM(version));
         }
         else{
-            return builder.build(version,404, "NOT FOUND",
+            return responseEncoder.build(version,404, "NOT FOUND",
                     "Unknown method of request");
         }
     }
@@ -79,7 +76,7 @@ public class ImprovedServerApp extends ServerApp {
     public byte[] handleDUM(float version){
         try{
             //load the necessary headers
-            String url = decoder.getURL();
+            String url = requestDecoder.getURL();
             
             //initialize message, phrase, and status code
             String message = "";
@@ -116,13 +113,13 @@ public class ImprovedServerApp extends ServerApp {
             message = page.constructPage();
             statusCode = 666;
             phrase = "DUMP SUCCESSFUL";
-            return builder.build(version, statusCode, phrase, message);
+            return responseEncoder.build(version, statusCode, phrase, message);
         }
         catch(Exception e){
             //the file could not be opened, thus we don't know the
             //resource
             e.printStackTrace();
-            return builder.build(version, 404, "NOT FOUND",
+            return responseEncoder.build(version, 404, "NOT FOUND",
                     "The requested resource could not be found");
         }
     }

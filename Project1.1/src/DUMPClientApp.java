@@ -1,7 +1,5 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.Queue;
 
 /**
  * Created by nortondj on 2/20/17.
@@ -26,7 +24,7 @@ public class DUMPClientApp extends ClientApp{
     }
 
     public byte[] DUMRequest(String file, float httpversion){
-        byte[] request = requestBuilder.build("DUM", file, httpversion);
+        byte[] request = requestEncoder.build("DUM", file, httpversion);
         tl.send(request);
         byte[] response = tl.receive();
         if(response == null){

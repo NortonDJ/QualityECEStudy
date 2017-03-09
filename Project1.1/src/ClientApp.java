@@ -9,7 +9,7 @@ import java.util.Queue;
 //This class represents the client application
 public class ClientApp {
     protected TransportLayer tl;
-    protected HTTPRequestBuilder requestBuilder;
+    protected HTTPRequestEncoder requestEncoder;
     protected HTTPResponseDecoder responseDecoder;
     protected WebPage page;
     protected MyMarkUp mmu;
@@ -66,25 +66,26 @@ public class ClientApp {
     public ClientApp(float version) {
         this.format = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
         this.responseDecoder = new HTTPResponseDecoder();
-        this.requestBuilder = new HTTPRequestBuilder();
+        this.requestEncoder = new HTTPRequestEncoder();
         this.tl = new TransportLayer(false, 0, 0);
         this.page = new WebPage();
         this.mmu = new MyMarkUp();
         this.version = version;
     }
 
-    public byte[] GETRequest(String file, float httpversion){
-        byte[] request = requestBuilder.build("GET", file, httpversion);
+    public HTTPResponse GETRequest(String file, float httpversion){
+        HTTPRequest req = new HTTPRequest("GET", file, httpversion);
+        byte[] request = requestEncoder.encode(req);
         tl.send(request);
         byte[] response = tl.receive();
         if(response == null){
             System.out.println("RESPONSE IS NULL");
         }
-        responseDecoder.decode(response);
+        HTTPResponse resp = responseDecoder.decode(response);
         if(httpversion == 1.0f){
             tl.disconnect();
         }
-        return response;
+        return resp;
     }
 
     public long run(String startingFile){
@@ -97,11 +98,11 @@ public class ClientApp {
                 String filename = workQ.poll();
 
                 //send a get request for an embedded file
-                GETRequest(filename,version);
+                HTTPResponse response = GETRequest(filename,version);
                 //get the response information
-                String contents = responseDecoder.getBody();
-                int statusCode = responseDecoder.getStatus();
-                String phrase = responseDecoder.getPhrase();
+                String contents = response.getBody();
+                int statusCode = response.getStatusCode();
+                String phrase = response.getPhrase();
                 //print them
                 System.out.println("Status Code: " + statusCode);
                 System.out.println("Phrase: " + phrase);
