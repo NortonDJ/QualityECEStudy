@@ -75,7 +75,9 @@ public class ClientApp {
 
     public HTTPResponse GETRequest(String file, float httpversion){
         HTTPRequest req = new HTTPRequest("GET", file, httpversion);
+        System.out.println("*************************************************");
         System.out.println("Client App made request: \n" + req);
+        System.out.println("*************************************************\n");
 
         byte[] request = requestEncoder.encode(req);
         tl.send(request);
@@ -86,7 +88,9 @@ public class ClientApp {
         }
 
         HTTPResponse resp = responseDecoder.decode(response);
+        System.out.println("*************************************************");
         System.out.println("Client App received response: \n" + resp);
+        System.out.println("*************************************************\n");
         if(httpversion == 1.0f){
             tl.disconnect();
         }

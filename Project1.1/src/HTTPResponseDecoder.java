@@ -28,15 +28,11 @@ public class HTTPResponseDecoder {
      */
     public HTTPResponse decode(byte[] responseBytes) {
         //store version
-        for(byte b : responseBytes){
-            System.out.println(b + ", ");
-        }
         int i = 0;
         while (responseBytes[i] != ByteArrayHelper.SP) {
             i++;
         }
         byte[] version = Arrays.copyOfRange(responseBytes, 0, i);
-        System.out.println(i-1);
         float fversion = ByteArrayHelper.toFloat(version);
 
         //store status

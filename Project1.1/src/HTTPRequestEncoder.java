@@ -83,13 +83,18 @@ public class HTTPRequestEncoder
     public void putHeaderLine(String header, String value) {
 
         // Add the header bytes
-        byte[] headerBytes = ByteArrayHelper.toByteArray(header);
-        
+        byte[] headerBytes = header.getBytes();
+        for(byte b : headerBytes){
+            fullMessage.add(b);
+        }
+
         fullMessage.add(ByteArrayHelper.SP);
 
         // Add the value bytes
         byte[] valueBytes = value.getBytes();
-        
+        for(byte b : valueBytes){
+            fullMessage.add(b);
+        }
         // Terminate the line
         fullMessage.add(ByteArrayHelper.CR);
         fullMessage.add(ByteArrayHelper.LF);

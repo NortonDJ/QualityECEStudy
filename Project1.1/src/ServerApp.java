@@ -108,10 +108,14 @@ public class ServerApp {
             if (request == null)
                 break;
             HTTPRequest req = requestDecoder.decode(request);
+            System.out.println("*************************************************");
             System.out.println("ServerApp received request: \n" + req);
+            System.out.println("*************************************************\n");
 
             HTTPResponse resp = formResponse(req);
+            System.out.println("*************************************************");
             System.out.println("ServerApp sent response: \n" + resp);
+            System.out.println("*************************************************\n");
 
             byte[] response = responseEncoder.encode(resp);
 
@@ -143,15 +147,20 @@ public class ServerApp {
                 statusCode = 200;
                 phrase = "OK";
             } else {
+                System.out.println("Server received ifmodified header!");
                 Date dClient = format.parse(ifmodified);
                 Date dCurrent = new Date(f.lastModified());
+                System.out.println("Client version = " + dClient);
+                System.out.println("Server version = " + dCurrent);
                 if (dCurrent.after(dClient)) {
+                    System.out.println("CLIENT HAS OUTDATED VERSION, send 200");
                     //if the current version is newer than the client's
                     //version, send a 200 and the current version
                     message = language.readFile(f);
                     statusCode = 200;
                     phrase = "OK";
                 } else {
+                    System.out.println("CLIENT HAS CORRECT VERSION, send 304");
                     //the current version is older or the same as the
                     //client's version, send a 304.
                     message = "";

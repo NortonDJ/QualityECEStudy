@@ -86,7 +86,7 @@ public class HTTPResponseEncoder {
         // Add the header bytes
         byte[] headerBytes = ByteArrayHelper.toByteArray(header);
         for(byte b : headerBytes){
-            fullMessage.add(Byte.valueOf(b));
+            fullMessage.add(b);
         }
 
         fullMessage.add(ByteArrayHelper.SP);
@@ -94,7 +94,7 @@ public class HTTPResponseEncoder {
         // Add the value bytes
         byte[] valueBytes = ByteArrayHelper.toByteArray(value);
         for(byte b: valueBytes) {
-            fullMessage.add(Byte.valueOf(b));
+            fullMessage.add(b);
         }
 
         // Terminate the line

@@ -25,15 +25,18 @@ public class DUMPClientApp extends ClientApp{
 
     public HTTPResponse DUMRequest(String file, float httpversion){
         HTTPRequest req = new HTTPRequest("DUM", file, httpversion);
+        System.out.println("*************************************************");
         byte[] request = requestEncoder.encode(req);
+        System.out.println("*************************************************\n");
         tl.send(request);
 
         byte[] response = tl.receive();
         if(response == null){
             System.out.println("RESPONSE IS NULL");
         }
-
+        System.out.println("*************************************************");
         HTTPResponse resp = responseDecoder.decode(response);
+        System.out.println("*************************************************\n");
         if(httpversion == 1.0f){
             tl.disconnect();
         }

@@ -24,7 +24,6 @@ public class HTTPRequestDecoder {
     public HTTPRequest decode(byte[] requestBytes) {
         //store Method
         int i = 0;
-
         while (requestBytes[i] != ByteArrayHelper.SP) {
             i++;
         }

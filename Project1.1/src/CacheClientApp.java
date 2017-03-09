@@ -1,4 +1,6 @@
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -18,18 +20,20 @@ public class CacheClientApp extends ClientApp {
     }
 
     public static void main(String[] args){
-        try{
-        float version = Float.parseFloat(args[0]);
-        CacheClientApp cca = new CacheClientApp(version);
-            String file = "example4.txt";
-            cca.run(file);
-            System.out.println("EDIT AND SAVE THE FILE NOW");
+
+        try {
+            float version = Float.parseFloat(args[0]);
+            CacheClientApp cca = new CacheClientApp(version);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            String line = reader.readLine();
+            cca.run(line);
             Thread.sleep(10000);
-            File f = new File(file);
-            cca.run(file);
+            cca.run(line);
         }
         catch(Exception e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
+            System.out.println("Bye!");
+            System.exit(-1);
         }
     }
 
@@ -38,11 +42,18 @@ public class CacheClientApp extends ClientApp {
         if(cache.containsKey(file)){
             req.mapHeader("ifmodified", cacheTimes.get(file));
         }
+        System.out.println("*************************************************");
+        System.out.println("Client App made request: \n" + req);
+        System.out.println("*************************************************\n");
         byte[] request = requestEncoder.encode(req);
         tl.send(request);
 
         byte[] response = tl.receive();
         HTTPResponse resp = responseDecoder.decode(response);
+        System.out.println("*************************************************");
+        System.out.println("Client App received response: \n" + resp);
+        System.out.println("*************************************************\n");
+
 
         if(httpversion == 1.0f){
             tl.disconnect();
@@ -64,10 +75,6 @@ public class CacheClientApp extends ClientApp {
                 //get the response information
                 int statusCode = resp.getStatusCode();
                 String phrase = resp.getPhrase();
-                
-                System.out.println(statusCode);
-                System.out.println(phrase);
-                //print them
                 String contents;
                 //if the response says the information is up to date, get it
                 //from the cache
