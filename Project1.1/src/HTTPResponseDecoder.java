@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.*;
 import java.nio.ByteBuffer;
 
@@ -27,19 +28,20 @@ public class HTTPResponseDecoder {
      */
     public HTTPResponse decode(byte[] responseBytes) {
         //store version
-
+        for(byte b : responseBytes){
+            System.out.println(b + ", ");
+        }
         int i = 0;
-        char check_sp = 16;
-        char check_cr = 15;
-        while (responseBytes[i] != check_sp) {
+        while (responseBytes[i] != ByteArrayHelper.SP) {
             i++;
         }
-        byte[] version = Arrays.copyOfRange(responseBytes, 0, i - 1);
+        byte[] version = Arrays.copyOfRange(responseBytes, 0, i);
+        System.out.println(i-1);
         float fversion = ByteArrayHelper.toFloat(version);
 
         //store status
         int j = i + 1;
-        while (responseBytes[j] != check_sp) {
+        while (responseBytes[j] != ByteArrayHelper.SP) {
             j++;
         }
         byte[] status = Arrays.copyOfRange(responseBytes, i + 1, j);
@@ -47,7 +49,7 @@ public class HTTPResponseDecoder {
 
         //store phrase
         int k = j + 1;
-        while (responseBytes[k] != check_cr) {
+        while (responseBytes[k] != ByteArrayHelper.CR) {
             k++;
         }
         byte[] phrase = Arrays.copyOfRange(responseBytes, j + 1, k);
@@ -55,10 +57,10 @@ public class HTTPResponseDecoder {
 
         HTTPResponse resp = new HTTPResponse(fversion, statusCode, strPhrase);
         int n = k + 2;
-        while (responseBytes[n] != (check_cr)) {
+        while (responseBytes[n] != (ByteArrayHelper.CR)) {
             //store header
             int m = n;
-            while (responseBytes[m] != check_sp) {
+            while (responseBytes[m] != ByteArrayHelper.SP) {
                 m++;
             }
             byte[] header = Arrays.copyOfRange(responseBytes, n, m - 1);
@@ -66,7 +68,7 @@ public class HTTPResponseDecoder {
 
             //store value
             int x = m + 1;
-            while (responseBytes[x] != check_cr) {
+            while (responseBytes[x] != ByteArrayHelper.CR) {
                 x++;
             }
             byte[] value = Arrays.copyOfRange(responseBytes, m + 1, x - 1);

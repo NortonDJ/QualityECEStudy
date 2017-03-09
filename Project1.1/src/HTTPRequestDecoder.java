@@ -24,10 +24,8 @@ public class HTTPRequestDecoder {
     public HTTPRequest decode(byte[] requestBytes) {
         //store Method
         int i = 0;
-        char check_sp = 16;
-        char check_cr = 15;
 
-        while (requestBytes[i] != check_sp) {
+        while (requestBytes[i] != ByteArrayHelper.SP) {
             i++;
         }
         byte[] method = Arrays.copyOfRange(requestBytes, 0, i);
@@ -35,7 +33,7 @@ public class HTTPRequestDecoder {
 
         //store URL
         int j = i + 1;
-        while (requestBytes[j] != check_sp) {
+        while (requestBytes[j] != ByteArrayHelper.SP) {
             j++;
         }
         byte[] url = Arrays.copyOfRange(requestBytes, i + 1, j);
@@ -43,7 +41,7 @@ public class HTTPRequestDecoder {
 
         //store Version
         int k = j + 1;
-        while (requestBytes[k] != check_cr) {
+        while (requestBytes[k] != ByteArrayHelper.CR) {
             k++;
         }
         byte[] version = Arrays.copyOfRange(requestBytes, j + 1, k);
@@ -51,10 +49,10 @@ public class HTTPRequestDecoder {
 
         HTTPRequest req = new HTTPRequest(methodStr, urlStr, fversion);
         int n = k + 2;
-        while (requestBytes[n] != check_cr) {
+        while (requestBytes[n] != ByteArrayHelper.CR) {
             //store header
             int m = n;
-            while (requestBytes[m] != check_sp) {
+            while (requestBytes[m] != ByteArrayHelper.SP) {
                 m++;
             }
             byte[] header = Arrays.copyOfRange(requestBytes, n, m);
@@ -62,7 +60,7 @@ public class HTTPRequestDecoder {
 
             //store value
             int x = m + 1;
-            while (requestBytes[x] != check_cr) {
+            while (requestBytes[x] != ByteArrayHelper.CR) {
                 x++;
             }
             byte[] value = Arrays.copyOfRange(requestBytes, m + 1, x);

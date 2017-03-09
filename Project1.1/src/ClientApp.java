@@ -75,6 +75,8 @@ public class ClientApp {
 
     public HTTPResponse GETRequest(String file, float httpversion){
         HTTPRequest req = new HTTPRequest("GET", file, httpversion);
+        System.out.println("Client App made request: \n" + req);
+
         byte[] request = requestEncoder.encode(req);
         tl.send(request);
 
@@ -84,6 +86,7 @@ public class ClientApp {
         }
 
         HTTPResponse resp = responseDecoder.decode(response);
+        System.out.println("Client App received response: \n" + resp);
         if(httpversion == 1.0f){
             tl.disconnect();
         }
@@ -105,9 +108,7 @@ public class ClientApp {
                 String contents = response.getBody();
                 int statusCode = response.getStatusCode();
                 String phrase = response.getPhrase();
-                //print them
-                System.out.println("Status Code: " + statusCode);
-                System.out.println("Phrase: " + phrase);
+
                 if(statusCode != 200){
                     //Webpage could not be constructed
                     System.out.println("The webpage could not be constructed");

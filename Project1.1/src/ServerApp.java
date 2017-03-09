@@ -108,8 +108,10 @@ public class ServerApp {
             if (request == null)
                 break;
             HTTPRequest req = requestDecoder.decode(request);
+            System.out.println("ServerApp received request: \n" + req);
 
             HTTPResponse resp = formResponse(req);
+            System.out.println("ServerApp sent response: \n" + resp);
 
             byte[] response = responseEncoder.encode(resp);
 
@@ -163,7 +165,6 @@ public class ServerApp {
         } catch (Exception e) {
             //the file could not be opened, thus we don't know the
             //resource
-            e.printStackTrace();
             HTTPResponse resp = new HTTPResponse(version, 404, "NOT FOUND");
             resp.setBody("The requested resource could not be found.");
             return resp;
