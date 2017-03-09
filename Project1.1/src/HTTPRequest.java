@@ -65,6 +65,17 @@ public class HTTPRequest {
         }
     }
 
+    public String toString(){
+        String s = "Method: " + this.method + "\n";
+        s += "Url: " + this.url + "\n";
+        s += "Version: " + this.version + "\n";
+        for(String header : headerLines.keySet()){
+            s +=header + ": " + headerLines.get(header) + "\n";
+        }
+        s += "Body: " + this.body + "\n";
+        return s;
+    }
+
 
 
 

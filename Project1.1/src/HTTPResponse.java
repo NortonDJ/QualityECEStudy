@@ -52,4 +52,14 @@ public class HTTPResponse {
         return this.body;
     }
 
+    public String toString(){
+        String s = "Version: " + this.version + "\n";
+        s += "Status: " + this.statusCode + "\n";
+        s += "Phrase: " + this.phrase + "\n";
+        for(String header : headerLines.keySet()){
+            s += header + ": " + headerLines.get(header) + "\n";
+        }
+        s += "Body: " + this.body + "\n";
+        return s;
+    }
 }
