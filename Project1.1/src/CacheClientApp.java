@@ -33,18 +33,21 @@ public class CacheClientApp extends ClientApp {
         }
     }
 
-    public byte[] GETRequest(String file, float httpversion){
+    public HTTPResponse GETRequest(String file, float httpversion){
+        HTTPRequest req = new HTTPRequest("GET", file, httpversion);
         if(cache.containsKey(file)){
-            requestEncoder.mapHeader("ifmodified", cacheTimes.get(file));
+            req.mapHeader("ifmodified", cacheTimes.get(file));
         }
-        byte[] request = requestEncoder.build("GET", file, httpversion);
+        byte[] request = requestEncoder.encode(req);
         tl.send(request);
+
         byte[] response = tl.receive();
-        responseDecoder.decode(response);
+        HTTPResponse resp = responseDecoder.decode(response);
+
         if(httpversion == 1.0f){
             tl.disconnect();
         }
-        return response;
+        return resp;
     }
 
     public long run(String startingFile){
@@ -57,10 +60,10 @@ public class CacheClientApp extends ClientApp {
                 String filename = workQ.poll();
 
                 //send a get request for an embedded file
-                GETRequest(filename,version);
+                HTTPResponse resp = GETRequest(filename,version);
                 //get the response information
-                int statusCode = responseDecoder.getStatus();
-                String phrase = responseDecoder.getPhrase();
+                int statusCode = resp.getStatusCode();
+                String phrase = resp.getPhrase();
                 
                 System.out.println(statusCode);
                 System.out.println(phrase);
@@ -68,12 +71,12 @@ public class CacheClientApp extends ClientApp {
                 String contents;
                 //if the response says the information is up to date, get it
                 //from the cache
-                if(responseDecoder.getStatus() == 304) {
+                if(statusCode == 304) {
                     contents = cache.get(filename);
                 }
-                else if(responseDecoder.getStatus() == 200){
+                else if(statusCode == 200){
                     //otherwise it would have sent the information
-                    contents = responseDecoder.getBody();
+                    contents = resp.getBody();
                     cacheTimes.put(filename, getCurTime());
                 }
                 else{

@@ -23,18 +23,21 @@ public class DUMPClientApp extends ClientApp{
         }
     }
 
-    public byte[] DUMRequest(String file, float httpversion){
-        byte[] request = requestEncoder.build("DUM", file, httpversion);
+    public HTTPResponse DUMRequest(String file, float httpversion){
+        HTTPRequest req = new HTTPRequest("DUM", file, httpversion);
+        byte[] request = requestEncoder.encode(req);
         tl.send(request);
+
         byte[] response = tl.receive();
         if(response == null){
             System.out.println("RESPONSE IS NULL");
         }
-        responseDecoder.decode(response);
+
+        HTTPResponse resp = responseDecoder.decode(response);
         if(httpversion == 1.0f){
             tl.disconnect();
         }
-        return response;
+        return resp;
     }
 
     public long run(String startingFile){
@@ -44,11 +47,11 @@ public class DUMPClientApp extends ClientApp{
             String filename = startingFile;
 
             //send a DUMP request for an embedded file
-            DUMRequest(filename,version);
+            HTTPResponse resp = DUMRequest(filename,version);
             //get the response information
-            String contents = responseDecoder.getBody();
-            int statusCode = responseDecoder.getStatus();
-            String phrase = responseDecoder.getPhrase();
+            String contents = resp.getBody();
+            int statusCode = resp.getStatusCode();
+            String phrase = resp.getPhrase();
             //print them
             System.out.println("Status Code: " + statusCode);
             System.out.println("Phrase: " + phrase);

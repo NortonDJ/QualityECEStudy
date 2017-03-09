@@ -54,30 +54,31 @@ public class ImprovedServerApp extends ServerApp {
         }
     }
     
-    public byte[] formResponse(byte[] request){
-        //send the requestDecoder the request
-        requestDecoder.decode(request);
+    public HTTPResponse formResponse(HTTPRequest req){
         //server supports both versions
-        float version = requestDecoder.getVersion();
-        String method = requestDecoder.getMethod();
+        float version = req.getVersion();
+        String method = req.getMethod();
         //if the method was "GET" handle it by GET
         if(method.equals("GET")){
-            return (handleGET(version));
+            HTTPResponse resp = handleGET(req);
+            return (resp);
         }
         else if(method.equals("DUM")){
-            return (handleDUM(version));
+            HTTPResponse resp = handleDUM(req);
+            return (resp);
         }
         else{
-            return responseEncoder.build(version,404, "NOT FOUND",
-                    "Unknown method of request");
+            HTTPResponse resp = new HTTPResponse(version, 404, "NOT FOUND");
+            resp.setBody("Unknown method of request");
+            return resp;
         }
     }
 
-    public byte[] handleDUM(float version){
+    public HTTPResponse handleDUM(HTTPRequest req){
+        float version = req.getVersion();
         try{
             //load the necessary headers
-            String url = requestDecoder.getURL();
-            
+            String url = req.getUrl();
             //initialize message, phrase, and status code
             String message = "";
             int statusCode = 0;
@@ -113,14 +114,17 @@ public class ImprovedServerApp extends ServerApp {
             message = page.constructPage();
             statusCode = 666;
             phrase = "DUMP SUCCESSFUL";
-            return responseEncoder.build(version, statusCode, phrase, message);
+            HTTPResponse resp = new HTTPResponse(version, statusCode, phrase);
+            resp.setBody(message);
+            return resp;
         }
         catch(Exception e){
             //the file could not be opened, thus we don't know the
             //resource
             e.printStackTrace();
-            return responseEncoder.build(version, 404, "NOT FOUND",
-                    "The requested resource could not be found");
+            HTTPResponse resp = new HTTPResponse(version, 404, "NOT FOUND");
+            resp.setBody("The requested resource could not be found");
+            return resp;
         }
     }
 }

@@ -77,10 +77,12 @@ public class ClientApp {
         HTTPRequest req = new HTTPRequest("GET", file, httpversion);
         byte[] request = requestEncoder.encode(req);
         tl.send(request);
+
         byte[] response = tl.receive();
         if(response == null){
             System.out.println("RESPONSE IS NULL");
         }
+
         HTTPResponse resp = responseDecoder.decode(response);
         if(httpversion == 1.0f){
             tl.disconnect();
