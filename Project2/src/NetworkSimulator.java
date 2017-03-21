@@ -7,18 +7,21 @@ public class NetworkSimulator
     /**
      * Main method with follwing variables
      * @param args[0] file with messages
-     * @param args[1] time between messages
-     * @param args[2] loss probability
-     * @param args[3] curroption probability
+     * @param args[1] time between messages (int)
+     * @param args[2] loss probability (float)
+     * @param args[3] corruption probability (float)
+     * @param args[4] window size (int)
+     * @param args[5] protocol type (int)
+     * @param args[6] debugging trace (int)
      */
     public static void main(String[] args)
     {
         //current event to process
         Event currentEvent;
         //checking to see if enough arguements have been sent    
-        if(args.length<5)
+        if(args.length<7)
         {
-            System.out.println("need at least 5 arguements");
+            System.out.println("need at least 7 arguements");
             System.exit(1);
         }
         //reading in file line by line. Each line will be one message
@@ -39,51 +42,46 @@ public class NetworkSimulator
         rt.setProtocol(Integer.parseInt(args[5]));
         DEBUG = Integer.parseInt(args[6]);
         //this loop will run while there are events in the priority queue
-        while(true)
-        {
+        while(true) {
             //get next event
             currentEvent = tl.returnNextEvent();
             //if no event present, break out
             if(currentEvent==null)
                 break;
             //if event is time to send a message, call the send message function of the sender application.   
-            if(currentEvent.getType()==Event.MESSAGESEND)
-            {
+            if(currentEvent.getType()==Event.MESSAGESEND) {
                 sa.sendMessage();
                 if(DEBUG>0)
-                    System.out.println("Message sent from sender to receiver at time " + currentEvent.getTime());   
+                    System.out.println("Message sent from sender to receiver at time " + currentEvent.getTime());
             }
             //if event is a message arrival
-            else if (currentEvent.getType()==Event.MESSAGEARRIVE)
-            {
+            else if (currentEvent.getType()==Event.MESSAGEARRIVE) {
                 //if it arrives at the sender, call the get packet from the sender
                 if(currentEvent.getHost()==Event.SENDER){
                     if(DEBUG>0)
-                        System.out.println("Message arriving from receiver to sender at time " + currentEvent.getTime()); 
+                        System.out.println("Message arriving from receiver to sender at time " + currentEvent.getTime());
                     st.receiveMessage(currentEvent.getPacket());
-                }  
+                }
                 //if it arrives at the receiver, call the get packet from the receiver
-                else{
+                else {
                     if(DEBUG>0)
                         System.out.println("Message arriving from sender to receiver at time " + currentEvent.getTime());
                     rt.receiveMessage(currentEvent.getPacket());
                 }
             }
             //If event is an expired timer, call the timerExpired method in the sender transport.
-            else if (currentEvent.getType()==Event.TIMER)
-            {
+            else if (currentEvent.getType()==Event.TIMER) {
                 if(DEBUG>0)
                     System.out.println("Timer expired at time " + currentEvent.getTime());
 
                 tl.stopTimer();
                 st.timerExpired();
             }
-            else if (currentEvent.getType()==Event.KILLEDTIMER)
-            {//do nothing if it is just a turned off timer.
+            else if (currentEvent.getType()==Event.KILLEDTIMER) {
+                //do nothing if it is just a turned off timer.
             }
             //this should not happen.
-            else
-            {
+            else {
                 System.out.println("Unidentified event type!");
                 System.exit(1);
             }
@@ -92,8 +90,7 @@ public class NetworkSimulator
     }
 
     //reading in file line by line.
-    public static ArrayList<String> readFile(String fileName)
-    {
+    public static ArrayList<String> readFile(String fileName) {
         ArrayList<String> messageArray = new ArrayList<String>();
         Scanner sc=null;
         try{
