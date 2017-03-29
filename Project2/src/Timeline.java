@@ -27,9 +27,9 @@ public class Timeline
         totalMessagesToSend = numOfMessages;
         ran=new Random();
         timeSoFar=0;
-        sentSoFar=1; //set to one because we send the fisrt packet right away
+        sentSoFar=1; //set to one because we send the first packet right away
         lastArrivalTime=0;
-        createSendEvent();//sengin first packet
+        createSendEvent();//sending first packet
         timerPointer=null;
 
     }
@@ -53,7 +53,7 @@ public class Timeline
     }
     
     /**
-     * Creating a send event.First generating a random enumber using the exponential distribution with average timeBetweenSends and then adding the event.
+     * Creating a send event.First generating a random number using the exponential distribution with average timeBetweenSends and then adding the event.
      */
 
     public void createSendEvent()
@@ -62,7 +62,7 @@ public class Timeline
         tmp=(tmp==0)?0.00001:tmp;
         int time = (int)(timeBetweenSends*(-Math.log(tmp))+timeSoFar);
         if(NetworkSimulator.DEBUG>2)
-            System.out.println("inserting fututre send event at " + timeSoFar + " with time: " + time );
+            System.out.println("inserting future send event at " + timeSoFar + " with time: " + time );
         events.add(new Event(time,Event.MESSAGESEND,Event.SENDER));
     }
 
@@ -81,7 +81,7 @@ public class Timeline
         if(NetworkSimulator.DEBUG>2)
         {
             String tmp = (to==Event.SENDER)? "sender" : "receiver";
-            System.out.println("inserting futurre arrive event at " + timeSoFar + " with time: " + lastArrivalTime + "to :" +tmp);
+            System.out.println("inserting future arrive event at " + timeSoFar + " with time: " + lastArrivalTime + "to :" +tmp);
         }
         events.add(new Event(lastArrivalTime,Event.MESSAGEARRIVE,to,pkt));
 
@@ -95,7 +95,7 @@ public class Timeline
     {
         if(timerPointer!=null)
         {
-            System.out.println("Timer is allready on!");
+            System.out.println("Timer is already on!");
             return;
         }
         timerPointer = new Event(timeSoFar+increment,Event.TIMER,Event.SENDER);
