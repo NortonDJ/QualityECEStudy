@@ -54,7 +54,10 @@ public class NetworkSimulator
         SenderApplication sa = new SenderApplication(messageArray, st);
 
 
-        ReceiverTransport rt = new ReceiverTransport(nl);
+        //create the receiver application to send to the factory
+        ReceiverApplication ra = new ReceiverApplication();
+        //create the receiver transport from the factory
+        ReceiverTransport rt = factory.makeReceiver(protocol, winSize, ra);
 
         //current event to process
         Event currentEvent;
