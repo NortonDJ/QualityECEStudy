@@ -2,32 +2,17 @@
 /**
  * A class which represents the receiver transport layer
  */
-public class ReceiverTransport
+public abstract class ReceiverTransport implements Protocol
 {
-    private ReceiverApplication ra;
-    private NetworkLayer nl;
-    private boolean usingTCP;
+    protected ReceiverApplication ra;
+    protected NetworkLayer nl;
+    protected int windowSize;
 
-    public ReceiverTransport(NetworkLayer nl){
-        ra = new ReceiverApplication();
+    public ReceiverTransport(NetworkLayer nl, ReceiverApplication ra, int windowSize){
+        this.ra = ra;
         this.nl=nl;
+        this.windowSize = windowSize;
         initialize();
-    }
-
-    public void initialize()
-    {
-    }
-
-    public void receiveMessage(Packet pkt)
-    {
-    }
-
-    public void setProtocol(int n)
-    {
-        if(n>0)
-            usingTCP=true;
-        else
-            usingTCP=false;
     }
 
 }

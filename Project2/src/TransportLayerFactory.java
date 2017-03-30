@@ -21,4 +21,12 @@ public class TransportLayerFactory {
         }
     }
 
+    public ReceiverTransport makeReceiver(int protocol, int windowSize, ReceiverApplication ra){
+        switch(protocol){
+            case (0) : return new ReceiverGBNProtocol(this.nl, ra, windowSize);
+            case (1) : //continue down
+            default : return new ReceiverTCPProtocol(this.nl, ra, windowSize);
+        }
+    }
+
 }
