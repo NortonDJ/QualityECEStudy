@@ -15,4 +15,8 @@ public class SenderTCPProtocol extends SenderTransport {
 
     public void timerExpired() {}
 
+    public boolean verifyPacket(Packet pkt){
+        return true;
+    }
+
 }

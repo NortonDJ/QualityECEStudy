@@ -23,4 +23,8 @@ public class ReceiverTCPProtocol extends ReceiverTransport {
 
     }
 
+    public boolean verifyPacket(Packet pkt){
+        return true;
+    }
+
 }

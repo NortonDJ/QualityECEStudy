@@ -11,4 +11,6 @@ public interface Protocol {
 
     public void timerExpired();
 
+    public boolean verifyPacket(Packet pkt);
+
 }

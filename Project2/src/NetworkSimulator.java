@@ -59,6 +59,7 @@ public class NetworkSimulator
         //create the receiver transport from the factory
         ReceiverTransport rt = factory.makeReceiver(protocol, winSize, ra);
 
+
         //current event to process
         Event currentEvent;
         //this loop will run while there are events in the priority queue

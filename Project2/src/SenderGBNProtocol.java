@@ -36,6 +36,7 @@ public class SenderGBNProtocol extends SenderTransport {
     }
 
     public void receiveMessage(Packet pkt) {
+        //TODO make a method that checks if a pkt is corrupt
         if (pkt.isCorrupt()) {
             //DO NOTHING
         } else {
@@ -55,5 +56,9 @@ public class SenderGBNProtocol extends SenderTransport {
                 nl.sendPacket(sentPkts.get(i), to);
             }
         }
+    }
+
+    public boolean verifyPacket(Packet pkt){
+        return true;
     }
 }
