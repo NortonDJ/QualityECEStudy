@@ -16,43 +16,62 @@ public class NetworkSimulator
      */
     public static void main(String[] args)
     {
-        //current event to process
-        Event currentEvent;
-        //checking to see if enough arguements have been sent    
+        //checking to see if enough arguements have been sent
         if(args.length<7)
         {
             System.out.println("need at least 7 arguements");
             System.exit(1);
         }
+        String filename = args[0];
+        int timeBtwnMsg = Integer.parseInt(args[1]);
+        float pLoss = Float.parseFloat(args[2]);
+        float pCorr = Float.parseFloat(args[3]);
+        int winSize = Integer.parseInt(args[4]);
+        int protocol = Integer.parseInt(args[5]);
+        int debug = Integer.parseInt(args[6]);
+
+        NetworkSimulator.run(filename, timeBtwnMsg, pLoss, pCorr, winSize,
+                protocol, debug);
+    }
+
+    public static void run(String filename, int timeBtwnMsgs, float pLoss,
+                           float pCorr, int winSize, int protocol, int debug){
+        DEBUG = debug;
+
         //reading in file line by line. Each line will be one message
-        ArrayList<String> messageArray = readFile(args[0]);
+        ArrayList<String> messageArray = readFile(filename);
         //creating a new timeline with an average time between packets.
-        Timeline tl = new Timeline(Integer.parseInt(args[1]), messageArray.size());
-        //creating a new network layer with specific loss and curroption probability.
-        NetworkLayer nl = new NetworkLayer(Float.parseFloat(args[2]),Float.parseFloat(args[3]),tl);
-        SenderApplication sa = new SenderApplication(messageArray,nl);
-        SenderTransport st = sa.getSenderTransport();
-        //sender and receiver transport needs access to timeline to set timer.
-        st.setTimeLine(tl);
+        Timeline tl = new Timeline(timeBtwnMsgs, messageArray.size());
+        //creating a new network layer with specific loss and corruption probability.
+        NetworkLayer nl = new NetworkLayer(pLoss, pCorr, tl);
+
+
+        //create a factory to create transport layers
+        TransportLayerFactory factory = new TransportLayerFactory(nl,tl);
+        //create the sender transport from the factory
+        SenderTransport st = factory.makeSender(protocol,winSize);
+        //create the application with the transport layer
+        SenderApplication sa = new SenderApplication(messageArray, st);
+
+
         ReceiverTransport rt = new ReceiverTransport(nl);
-        //setting window size
-        st.setWindowSize(Integer.parseInt(args[4]));
-        //setting protocol type
-        st.setProtocol(Integer.parseInt(args[5]));
-        rt.setProtocol(Integer.parseInt(args[5]));
-        DEBUG = Integer.parseInt(args[6]);
+
+        //current event to process
+        Event currentEvent;
         //this loop will run while there are events in the priority queue
         while(true) {
             //get next event
             currentEvent = tl.returnNextEvent();
             //if no event present, break out
-            if(currentEvent==null)
+            if(currentEvent==null) {
                 break;
-            //if event is time to send a message, call the send message function of the sender application.   
+            }
+            //if event is time to send a message, call the send message function of the sender application.
             if(currentEvent.getType()==Event.MESSAGESEND) {
                 sa.sendMessage();
-                if(DEBUG>0)
+                if(DEBUG>0) {
                     System.out.println("Message sent from sender to receiver at time " + currentEvent.getTime());
+                }
             }
             //if event is a message arrival
             else if (currentEvent.getType()==Event.MESSAGEARRIVE) {

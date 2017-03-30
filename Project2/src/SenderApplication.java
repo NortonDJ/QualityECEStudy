@@ -8,15 +8,12 @@ public class SenderApplication
     private SenderTransport st; //transport layer used
     private ArrayList<String> messages; //all messages the application will send
     private int index; //how many messages has the application sent so far
-    private Timeline tl; //the timeline associated with the simulation
-    
-    public SenderApplication(ArrayList<String> messages, NetworkLayer nl)
+
+    public SenderApplication(ArrayList<String> messages, SenderTransport st)
     {
-        st = new SenderTransport(nl);
+        this.st = st;
         this.messages=messages;
-        index=0;    
-        
-        
+        index=0;
     }
     
     public SenderTransport getSenderTransport()
