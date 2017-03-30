@@ -10,7 +10,6 @@ public class SenderGBNProtocol extends SenderTransport {
     private int base;
     private ArrayList<Packet> sentPkts;
     private static int timeOut = 10;
-    private static int to = 1;
 
     public SenderGBNProtocol(NetworkLayer nl, Timeline tl, int n){
         super(nl, tl, n);
@@ -18,6 +17,9 @@ public class SenderGBNProtocol extends SenderTransport {
 
     public void initialize(){
         sentPkts = new ArrayList<Packet>();
+        for(int i = 0; i < tl.getTotalMessagesToSend(); i++){
+            sentPkts.add(null);
+        }
         nextSeqNum = 0;
         base = 0;
     }

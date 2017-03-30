@@ -120,5 +120,9 @@ public class Timeline
         timerPointer=null;
     }
 
+    public int getTotalMessagesToSend(){
+        return totalMessagesToSend;
+    }
+
     
 }

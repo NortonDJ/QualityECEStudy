@@ -22,6 +22,8 @@ public class NetworkSimulator
             System.out.println("need at least 7 arguements");
             System.exit(1);
         }
+        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+
         String filename = args[0];
         int timeBtwnMsg = Integer.parseInt(args[1]);
         float pLoss = Float.parseFloat(args[2]);
@@ -29,6 +31,15 @@ public class NetworkSimulator
         int winSize = Integer.parseInt(args[4]);
         int protocol = Integer.parseInt(args[5]);
         int debug = Integer.parseInt(args[6]);
+
+        System.out.println("INPUT PARAMETERS:" +
+                "\nFILENAME: " + filename +
+                "\nTIME BETWEEN MESSAGES: " + timeBtwnMsg +
+                "\nPROBABILITY OF LOSS: " + pLoss +
+                "\nPROBABILITY OF CORRUPTION: " + pCorr +
+                "\nWINDOW SIZE: " + winSize +
+                "\nPROTOCOL: " + protocol +
+                "\nDEBUG: " + debug);
 
         NetworkSimulator.run(filename, timeBtwnMsg, pLoss, pCorr, winSize,
                 protocol, debug);
