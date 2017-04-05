@@ -13,6 +13,14 @@ public class Packet
 
     Random ran; //random number generator
 
+    public Packet(Packet p){
+        this.msg = new Message(p.msg.getMessage());
+        this.seqnum = p.seqnum;
+        this.acknum = p.acknum;
+        this.checksum = p.checksum;
+        this.ran = p.ran;
+    }
+
     public Packet(Message msg, int seqnum, int acknum, int checksum)
     {
         this.msg=msg;
