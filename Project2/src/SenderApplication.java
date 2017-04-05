@@ -24,7 +24,7 @@ public class SenderApplication
     public void sendMessage()
     {
 
-        System.out.println("Sender is sending message: " + messages.get(index));
+        //System.out.println("Sender is sending message: " + messages.get(index));
         st.sendMessage(new Message(messages.get(index++)));
 
     }
