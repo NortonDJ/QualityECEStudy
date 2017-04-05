@@ -19,17 +19,20 @@ public class ReceiverGBNProtocol extends ReceiverTransport {
 
     public void receiveMessage(Packet pkt) {
         System.out.println("RECEIVER GBN RECEIVED: " + pkt.toString());
-        if(verifyPacket(pkt) || pkt.getSeqnum() == expectedSeqNum){
+        if(verifyPacket(pkt) && pkt.getSeqnum() == expectedSeqNum){
             Message msg = pkt.getMessage();
             ra.receiveMessage(msg);
-            Packet ack = new Packet(new Message("I'm an ACK"), -1, expectedSeqNum, -1);
-            nl.sendPacket(ack, to);
+            sendAck(expectedSeqNum);
             expectedSeqNum++;
+        } else {
+            sendAck(expectedSeqNum - 1);
         }
-        else{
-            Packet ack = new Packet(new Message("I'm an ACK"), -1, expectedSeqNum, -1);
-            nl.sendPacket(ack, to);
-        }
+    }
+
+    public void sendAck(int acknum){
+        Packet ack = new Packet(new Message("I'm an ACK"), -1, acknum, -1);
+        System.out.println("RECEIVER GBN SENDING:  " + ack.toString());
+        nl.sendPacket(ack, to);
     }
 
     public void timerExpired() {
