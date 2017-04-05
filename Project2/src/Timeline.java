@@ -128,5 +128,7 @@ public class Timeline
         return this.events.toString();
     }
 
-    
+    public int sizeOfQueue(){
+        return events.size();
+    }
 }

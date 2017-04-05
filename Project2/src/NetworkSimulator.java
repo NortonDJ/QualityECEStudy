@@ -5,7 +5,7 @@ public class NetworkSimulator
 {
     public static int DEBUG;
     /**
-     * Main method with follwing variables
+     * Main method with following variables
      * @param args[0] file with messages
      * @param args[1] time between messages (int)
      * @param args[2] loss probability (float)
@@ -74,7 +74,11 @@ public class NetworkSimulator
         //current event to process
         Event currentEvent;
         //this loop will run while there are events in the priority queue
+        int count = 0;
         while(true) {
+            if(count > 50){
+                break;
+            }
             //get next event
             currentEvent = tl.returnNextEvent();
             //if no event present, break out
@@ -119,7 +123,7 @@ public class NetworkSimulator
                 System.out.println("Unidentified event type!");
                 System.exit(1);
             }
-
+            count++;
         }
     }
 

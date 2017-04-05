@@ -36,7 +36,7 @@ public class NetworkLayer
         if(NetworkSimulator.DEBUG>1)
             System.out.println("Packet seq:" + pkt.getSeqnum() + " ack: " + pkt.getAcknum() + " sent");
         tl.createArriveEvent(pkt,to);
-        System.out.println(tl);
+        //System.out.println(tl);
     }
 
 }
