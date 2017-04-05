@@ -62,6 +62,15 @@ public class Packet
         {this.acknum=this.acknum+1;}
 
     }
+
+    public String toString(){
+        String s = "";
+        s += "ACK: " + acknum;
+        s += ", SEQNUM: " + seqnum;
+        s += ", CHECKSUM: " + checksum;
+        s += ", MESSAGE: " + msg.getMessage();
+        return s;
+    }
     
 
 }

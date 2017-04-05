@@ -5,8 +5,8 @@ import java.util.*;
 
 public class NetworkLayer
 {
-    float lossProbability; //probablity of losing a packet
-    float currProbability; //probability of curropting a packet
+    float lossProbability; //probability of losing a packet
+    float currProbability; //probability of corrupting a packet
     Timeline tl; 
     Random ran; //random number generator for losing packets.
 
@@ -18,7 +18,7 @@ public class NetworkLayer
         ran = new Random();
     }
 
-    //sending packet if it is not lost, and curropting it if necessary.
+    //sending packet if it is not lost, and corrupting it if necessary.
     public void sendPacket(Packet pkt, int to)
     {
         if(ran.nextDouble()<lossProbability)
@@ -36,6 +36,7 @@ public class NetworkLayer
         if(NetworkSimulator.DEBUG>1)
             System.out.println("Packet seq:" + pkt.getSeqnum() + " ack: " + pkt.getAcknum() + " sent");
         tl.createArriveEvent(pkt,to);
+        System.out.println(tl);
     }
 
 }

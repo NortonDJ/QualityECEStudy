@@ -7,7 +7,7 @@ public abstract class ReceiverTransport implements Protocol
     protected ReceiverApplication ra;
     protected NetworkLayer nl;
     protected int windowSize;
-    protected static int to = 2;
+    protected static int to = 0;
 
     public ReceiverTransport(NetworkLayer nl, ReceiverApplication ra, int windowSize){
         this.ra = ra;

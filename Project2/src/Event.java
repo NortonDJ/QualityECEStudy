@@ -9,10 +9,10 @@ public class Event implements Comparable<Event>
     int host; //host where event is happening
     Packet pkt; //pkt related to event if relevant (only arrive events)
 
-    public static int MESSAGESEND = 0;  
-    public static int MESSAGEARRIVE=1;
-    public static int TIMER = 2;
-    public static int KILLEDTIMER=3;
+    public static final int MESSAGESEND = 0;
+    public static final int MESSAGEARRIVE=1;
+    public static final int TIMER = 2;
+    public static final int KILLEDTIMER=3;
     public static int SENDER = 0;
     public static int RECEIVER=1;
 
@@ -84,6 +84,22 @@ public class Event implements Comparable<Event>
     {
         return this.time-e.time;
 
+    }
+
+    public String toString(){
+        switch (type){
+            case MESSAGESEND:
+                return ("MESSAGESEND: Time: " + time + " Host: " + host);
+            case MESSAGEARRIVE:
+                return ("MESSAGEARIVE: Time: " + time + " Host: " + host
+                + " Packet: " + pkt);
+            case TIMER:
+                return ("TIMER: Time: " + time + " Host: " + host);
+            case KILLEDTIMER:
+                return ("KILLEDTIMER: Time: " + time + " Host: " + host);
+            default:
+                return ("Unidentified event");
+        }
     }
 
 }

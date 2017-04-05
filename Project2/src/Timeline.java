@@ -124,5 +124,9 @@ public class Timeline
         return totalMessagesToSend;
     }
 
+    public String toString(){
+        return this.events.toString();
+    }
+
     
 }

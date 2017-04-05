@@ -18,6 +18,7 @@ public class ReceiverGBNProtocol extends ReceiverTransport {
     }
 
     public void receiveMessage(Packet pkt) {
+        System.out.println("RECEIVER GBN RECEIVED: " + pkt.toString());
         if(verifyPacket(pkt) || pkt.getSeqnum() == expectedSeqNum){
             Message msg = pkt.getMessage();
             ra.receiveMessage(msg);

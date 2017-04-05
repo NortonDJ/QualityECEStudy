@@ -5,11 +5,10 @@ import java.util.ArrayList;
  */
 public class SenderGBNProtocol extends SenderTransport {
 
-    private boolean usingTCP;
     private int nextSeqNum;
     private int base;
     private ArrayList<Packet> sentPkts;
-    private static int timeOut = 10;
+    private static int timeOut = 100;
 
     public SenderGBNProtocol(NetworkLayer nl, Timeline tl, int n){
         super(nl, tl, n);
@@ -39,7 +38,8 @@ public class SenderGBNProtocol extends SenderTransport {
 
     public void receiveMessage(Packet pkt) {
         //TODO make a method that checks if a pkt is corrupt
-        if (pkt.isCorrupt()) {
+        System.out.println("SENDER GBN RECEIVED: " + pkt.toString());
+        if (!verifyPacket(pkt)) {
             //DO NOTHING
         } else {
             base = pkt.getAcknum() + 1;
