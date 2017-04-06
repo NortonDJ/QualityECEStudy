@@ -14,7 +14,7 @@ public class ReceiverGBNProtocol extends ReceiverTransport {
     }
 
     public void initialize() {
-        expectedSeqNum = 1;
+        expectedSeqNum = 0;
     }
 
     public void sendMessage(Message msg) {

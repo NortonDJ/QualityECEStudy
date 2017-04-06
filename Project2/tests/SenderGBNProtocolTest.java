@@ -43,8 +43,8 @@ class SenderGBNProtocolTest {
             st.sendMessage(new Message(messageArray.get(i)));
         }
 
-        assertEquals(1, st.getBase());
-        assertEquals(4, st.getNextSeqNum());
+        assertEquals(0, st.getBase());
+        assertEquals(3, st.getNextSeqNum());
     }
 
     @Test
@@ -54,8 +54,8 @@ class SenderGBNProtocolTest {
             st.sendMessage(new Message(messageArray.get(i)));
         }
 
-        assertEquals(1, st.getBase());
-        assertEquals(4, st.getNextSeqNum());
+        assertEquals(0, st.getBase());
+        assertEquals(3, st.getNextSeqNum());
     }
 
     @Test
@@ -138,8 +138,8 @@ class SenderGBNProtocolTest {
         }
         Packet ack = new Packet(new Message("I'm an ACK"), -1, 10, -1);
         st.receiveMessage(ack);
-        assertEquals(1, st.getBase());
-        assertEquals(4, st.getNextSeqNum());
+        assertEquals(0, st.getBase());
+        assertEquals(3, st.getNextSeqNum());
     }
 
     @Test
@@ -148,10 +148,10 @@ class SenderGBNProtocolTest {
         for(int i = 0; i < 8; i++){
             st.sendMessage(new Message(messageArray.get(i)));
         }
-        Packet ack = new Packet(new Message("I'm an ACK"), -1, 1, -1);
-        //packets 1,2,3 should be out
+        Packet ack = new Packet(new Message("I'm an ACK"), -1, 0, -1);
+        //packets 0,1,2 should be out
         st.receiveMessage(ack);
-        //by receiving ack for 1, it should send 4, and not resend 2,3
+        //by receiving ack for 0, it should send 3, and not resend 1,2
         ArrayList<Integer> seqNumCounts = new ArrayList<Integer>();
         for(int i = 0; i < 100; i++){
             seqNumCounts.add(0);
@@ -163,9 +163,9 @@ class SenderGBNProtocolTest {
                 seqNumCounts.set(seqNum, seqNumCounts.get(seqNum) + 1);
             }
         }
+        assertEquals(new Integer(1), seqNumCounts.get(1));
         assertEquals(new Integer(1), seqNumCounts.get(2));
         assertEquals(new Integer(1), seqNumCounts.get(3));
-        assertEquals(new Integer(1), seqNumCounts.get(4));
 
     }
 

@@ -37,37 +37,13 @@ class ReceiverGBNProtocolTest {
 
     @Test
     public void receiveExpectedSeqNumMovesExpectSeqNum(){
-        rt.receiveMessage(new Packet(new Message("Hello"),1,-1,-1));
-        assertEquals(2,rt.getExpectedSeqNum());
+        rt.receiveMessage(new Packet(new Message("Hello"),0,-1,-1));
+        assertEquals(1,rt.getExpectedSeqNum());
     }
 
     @Test
     public void receiveExpectedSeqNumSendsCorrectACK(){
-        rt.receiveMessage(new Packet(new Message("Hello"),1,-1,-1));
-        ArrayList<Integer> ackNumCounts = new ArrayList<Integer>();
-        for(int i = 0; i < 100; i++){
-            ackNumCounts.add(0);
-        }
-        while(tl.sizeOfQueue() != 0){
-            Event e = tl.returnNextEvent();
-            if(e.getType() == Event.MESSAGEARRIVE) {
-                int acknum = e.getPacket().getAcknum();
-                ackNumCounts.set(acknum, ackNumCounts.get(acknum) + 1);
-            }
-        }
-        assertEquals(new Integer(1), ackNumCounts.get(1));
-    }
-
-    @Test
-    public void receiveExpectedSeqNumSendsOnlyCorrectACK(){
-        int sizeOfQueue = tl.sizeOfQueue();
-        rt.receiveMessage(new Packet(new Message("Hello"),1,-1,-1));
-        assertEquals(sizeOfQueue + 1, tl.sizeOfQueue());
-    }
-
-    @Test
-    public void receiveUnExpectedSeqNumFirstPacketSendsACK0(){
-        rt.receiveMessage(new Packet(new Message("Hello"),5,-1,-1));
+        rt.receiveMessage(new Packet(new Message("Hello"),0,-1,-1));
         ArrayList<Integer> ackNumCounts = new ArrayList<Integer>();
         for(int i = 0; i < 100; i++){
             ackNumCounts.add(0);
@@ -83,9 +59,33 @@ class ReceiverGBNProtocolTest {
     }
 
     @Test
+    public void receiveExpectedSeqNumSendsOnlyCorrectACK(){
+        int sizeOfQueue = tl.sizeOfQueue();
+        rt.receiveMessage(new Packet(new Message("Hello"),0,-1,-1));
+        assertEquals(sizeOfQueue + 1, tl.sizeOfQueue());
+    }
+
+    @Test
+    public void receiveUnExpectedSeqNumFirstPacketSendsACK0(){
+        rt.receiveMessage(new Packet(new Message("Hello"),4,-1,-1));
+        ArrayList<Integer> ackNumCounts = new ArrayList<Integer>();
+        for(int i = 0; i < 100; i++){
+            ackNumCounts.add(0);
+        }
+        while(tl.sizeOfQueue() != 0){
+            Event e = tl.returnNextEvent();
+            if(e.getType() == Event.MESSAGEARRIVE) {
+                int acknum = e.getPacket().getAcknum();
+                ackNumCounts.set(acknum+1, ackNumCounts.get(acknum+1) + 1);
+            }
+        }
+        assertEquals(new Integer(1), ackNumCounts.get(0));
+    }
+
+    @Test
     public void receiveGreaterThanExpectedSeqNumSendsMostRecentlyAcked(){
         for(int i = 0; i < 3; i++){
-            rt.receiveMessage(new Packet(new Message("Hello"),i+1,-1,-1));
+            rt.receiveMessage(new Packet(new Message("Hello"),i,-1,-1));
         }
         rt.receiveMessage(new Packet(new Message("Hello"),15,-1,-1));;
         ArrayList<Integer> ackNumCounts = new ArrayList<Integer>();
@@ -96,7 +96,7 @@ class ReceiverGBNProtocolTest {
             Event e = tl.returnNextEvent();
             if(e.getType() == Event.MESSAGEARRIVE) {
                 int acknum = e.getPacket().getAcknum();
-                ackNumCounts.set(acknum, ackNumCounts.get(acknum) + 1);
+                ackNumCounts.set(acknum+1, ackNumCounts.get(acknum+1) + 1);
             }
         }
         assertEquals(new Integer(1), ackNumCounts.get(1));
@@ -108,7 +108,7 @@ class ReceiverGBNProtocolTest {
     @Test
     public void receiveLessThanExpectedSeqNumSendsMostRecentlyAcked(){
         for(int i = 0; i < 3; i++){
-            rt.receiveMessage(new Packet(new Message("Hello"),i+1,-1,-1));
+            rt.receiveMessage(new Packet(new Message("Hello"),i,-1,-1));
         }
         rt.receiveMessage(new Packet(new Message("Hello"),2,-1,-1));
         ArrayList<Integer> ackNumCounts = new ArrayList<Integer>();
@@ -119,7 +119,7 @@ class ReceiverGBNProtocolTest {
             Event e = tl.returnNextEvent();
             if(e.getType() == Event.MESSAGEARRIVE) {
                 int acknum = e.getPacket().getAcknum();
-                ackNumCounts.set(acknum, ackNumCounts.get(acknum) + 1);
+                ackNumCounts.set(acknum+1, ackNumCounts.get(acknum+1) + 1);
             }
         }
         assertEquals(new Integer(1), ackNumCounts.get(1));

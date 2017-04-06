@@ -34,13 +34,12 @@ public class SenderGBNProtocol extends SenderTransport {
 
     public void initialize(){
         sentPkts = new ArrayList<Packet>();
-        sentPkts.add(null); // create an empty buffer at sentPkts[0]
-        nextSeqNum = 1;
-        base = 1;
+        nextSeqNum = 0;
+        base = 0;
     }
 
     public void sendMessage(Message msg) {
-        Packet p = new Packet(msg,sentPkts.size(),-1,-1);
+        Packet p = new Packet(msg,nextSeqNum,-1,-1);
         sentPkts.add(p);
         if (canSendNext()) {
             sendNextPkt();
