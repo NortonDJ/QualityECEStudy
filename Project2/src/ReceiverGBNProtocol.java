@@ -3,6 +3,10 @@
  */
 public class ReceiverGBNProtocol extends ReceiverTransport {
 
+    public int getExpectedSeqNum() {
+        return expectedSeqNum;
+    }
+
     private int expectedSeqNum;
 
     public ReceiverGBNProtocol(NetworkLayer nl, ReceiverApplication ra, int windowSize) {
@@ -18,7 +22,7 @@ public class ReceiverGBNProtocol extends ReceiverTransport {
     }
 
     public void receiveMessage(Packet pkt) {
-        System.out.println("RECEIVER GBN RECEIVED: " + pkt.toString());
+        System.out.println("RECEIVER GBN RECEIVED:  " + pkt.toString());
         if(verifyPacket(pkt) && pkt.getSeqnum() == expectedSeqNum){
             Message msg = pkt.getMessage();
             ra.receiveMessage(msg);
@@ -31,7 +35,7 @@ public class ReceiverGBNProtocol extends ReceiverTransport {
 
     public void sendAck(int acknum){
         Packet ack = new Packet(new Message("I'm an ACK"), -1, acknum, -1);
-        System.out.println("RECEIVER GBN SENDING:  " + ack.toString());
+        System.out.println("RECEIVER GBN SENDING:   " + ack.toString());
         nl.sendPacket(ack, to);
     }
 

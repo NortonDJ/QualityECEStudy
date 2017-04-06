@@ -76,9 +76,6 @@ public class NetworkSimulator
         //this loop will run while there are events in the priority queue
         int count = 0;
         while(true) {
-            if(count > 50){
-                break;
-            }
             //get next event
             currentEvent = tl.returnNextEvent();
             //if no event present, break out

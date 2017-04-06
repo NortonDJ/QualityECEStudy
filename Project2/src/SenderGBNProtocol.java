@@ -20,7 +20,7 @@ public class SenderGBNProtocol extends SenderTransport {
     private int nextSeqNum;
     private int base;
     private ArrayList<Packet> sentPkts;
-    private static int timeOut = 15;
+    private static int timeOut = 100;
 
     public SenderGBNProtocol(NetworkLayer nl, Timeline tl, int n){
         super(nl, tl, n);
@@ -39,13 +39,13 @@ public class SenderGBNProtocol extends SenderTransport {
         if (canSendNext()) {
             sendNextPkt();
         } else {
-            System.out.println("SENDER GBN BUFFERED: " + msg.getMessage());
+            System.out.println("SENDER GBN BUFFERED:  " + msg.getMessage());
         }
     }
 
     private void sendNextPkt(){
         Packet toSend = new Packet(sentPkts.get(nextSeqNum));
-        System.out.println("SENDER GBN SENDING:    " + toSend.toString());
+        System.out.println("SENDER GBN SENDING:     " + toSend.toString());
         nl.sendPacket(toSend, to);
         if (base == nextSeqNum) {
             tl.startTimer(timeOut);
@@ -54,7 +54,7 @@ public class SenderGBNProtocol extends SenderTransport {
     }
 
     public void receiveMessage(Packet pkt) {
-        System.out.println("SENDER GBN RECEIVED:   " + pkt.toString());
+        System.out.println("SENDER GBN RECEIVED:    " + pkt.toString());
         if (!verifyPacket(pkt)) {
             //DO NOTHING
         } else {
@@ -72,11 +72,16 @@ public class SenderGBNProtocol extends SenderTransport {
     }
 
     public void timerExpired() {
+        System.out.println("TIMER EXPIRED");
         tl.startTimer(timeOut);
-        for (int i = base; i < nextSeqNum; i++) {
-            if (sentPkts.get(i) != null) {
-                nl.sendPacket(sentPkts.get(i), to);
-            }
+        resendDueToTimeout();
+    }
+
+    public void resendDueToTimeout(){
+        for(int i = base; i < nextSeqNum; i++){
+            Packet toSend = new Packet(sentPkts.get(i));
+            System.out.println("SENDER GBN RESENDING:   " + toSend.toString());
+            nl.sendPacket(toSend, to);
         }
     }
 
