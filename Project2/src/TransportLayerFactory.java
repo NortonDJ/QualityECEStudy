@@ -21,7 +21,7 @@ public class TransportLayerFactory {
 
             default :
                 System.out.println("Setting Sender Transport protocol to TCP.");
-                return new SenderTCPProtocol(this.nl, this.tl, windowSize);
+                return new SenderTCPProtocol(this.nl, this.tl, windowSize, timeOut);
         }
     }
 
