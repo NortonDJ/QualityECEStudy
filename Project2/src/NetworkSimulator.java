@@ -60,7 +60,7 @@ public class NetworkSimulator
         //create a factory to create transport layers
         TransportLayerFactory factory = new TransportLayerFactory(nl,tl);
         //create the sender transport from the factory
-        SenderTransport st = factory.makeSender(protocol,winSize);
+        SenderTransport st = factory.makeSender(protocol,winSize, 100);
         //create the application with the transport layer
         SenderApplication sa = new SenderApplication(messageArray, st);
 

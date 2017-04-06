@@ -20,10 +20,16 @@ public class SenderGBNProtocol extends SenderTransport {
     private int nextSeqNum;
     private int base;
     private ArrayList<Packet> sentPkts;
-    private static int timeOut = 100;
 
-    public SenderGBNProtocol(NetworkLayer nl, Timeline tl, int n){
+    public void setTimeOut(int timeOut) {
+        this.timeOut = timeOut;
+    }
+
+    private int timeOut = 100;
+
+    public SenderGBNProtocol(NetworkLayer nl, Timeline tl, int n, int timeOut){
         super(nl, tl, n);
+        this.timeOut = timeOut;
     }
 
     public void initialize(){

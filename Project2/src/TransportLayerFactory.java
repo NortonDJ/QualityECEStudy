@@ -11,11 +11,11 @@ public class TransportLayerFactory {
         this.tl = tl;
     }
 
-    public SenderTransport makeSender(int protocol, int windowSize){
+    public SenderTransport makeSender(int protocol, int windowSize, int timeOut){
         switch(protocol){
             case (0) :
                 System.out.println("Setting Sender Transport protocol to GBN.");
-                return new SenderGBNProtocol(this.nl, this.tl, windowSize);
+                return new SenderGBNProtocol(this.nl, this.tl, windowSize, timeOut);
 
             case (1) : //continue down
 

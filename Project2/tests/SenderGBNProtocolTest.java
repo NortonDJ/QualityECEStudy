@@ -23,6 +23,7 @@ class SenderGBNProtocolTest {
         int winSize = 3;
         int protocol = 0;
         int debug = 0;
+        int timeOut = 100;
 
         //reading in file line by line. Each line will be one message
         messageArray = NetworkSimulator.readFile(filename);
@@ -31,7 +32,7 @@ class SenderGBNProtocolTest {
         //creating a new network layer with specific loss and corruption probability.
         nl = new NetworkLayer(pLoss, pCorr, tl);
         //create the sender transport from the factory
-        st = new SenderGBNProtocol(nl,tl,winSize);
+        st = new SenderGBNProtocol(nl,tl,winSize,100);
 
     }
 
