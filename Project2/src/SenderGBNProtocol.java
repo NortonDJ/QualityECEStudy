@@ -8,24 +8,20 @@ public class SenderGBNProtocol extends SenderTransport {
     public int getNextSeqNum() {
         return nextSeqNum;
     }
-
     public int getBase() {
         return base;
     }
-
     public ArrayList<Packet> getSentPkts() {
         return sentPkts;
+    }
+    public void setTimeOut(int timeOut) {
+        this.timeOut = timeOut;
     }
 
     private int nextSeqNum;
     private int base;
     private ArrayList<Packet> sentPkts;
-
-    public void setTimeOut(int timeOut) {
-        this.timeOut = timeOut;
-    }
-
-    private int timeOut = 100;
+    private int timeOut;
 
     public SenderGBNProtocol(NetworkLayer nl, Timeline tl, int n, int timeOut){
         super(nl, tl, n);
@@ -42,13 +38,13 @@ public class SenderGBNProtocol extends SenderTransport {
         Packet p = new Packet(msg,nextSeqNum,-1,-1);
         sentPkts.add(p);
         if (canSendNext()) {
-            sendNextPkt();
+            sendNextPacket();
         } else {
             System.out.println("SENDER GBN BUFFERED:  " + msg.getMessage());
         }
     }
 
-    private void sendNextPkt(){
+    private void sendNextPacket(){
         Packet toSend = new Packet(sentPkts.get(nextSeqNum));
         System.out.println("SENDER GBN SENDING:     " + toSend.toString());
         nl.sendPacket(toSend, to);
@@ -104,7 +100,7 @@ public class SenderGBNProtocol extends SenderTransport {
 
     public void sendBufferedPkts(){
          while(canSendNext()){
-            sendNextPkt();
+            sendNextPacket();
         }
     }
 
