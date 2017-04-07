@@ -114,7 +114,7 @@ public class SenderTCPProtocol extends SenderTransport {
     }
 
     public boolean ackIsDuplicate(int acknum) {
-        if (acknum == dupACKNum && dupACKCount > 0) {
+        if (acknum == dupACKNum) {
             return true;
         } else {
             return false;
@@ -122,7 +122,7 @@ public class SenderTCPProtocol extends SenderTransport {
     }
 
     public boolean ackNumMakesSense(int acknum) {
-        if (acknum <= base || acknum > nextSeqNum) {
+        if (acknum < base || acknum > nextSeqNum) {
             return false;
         } else {
             return true;
