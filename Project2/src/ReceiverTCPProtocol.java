@@ -24,8 +24,8 @@ public class ReceiverTCPProtocol extends ReceiverTransport {
         if(verifyPacket(pkt) && pkt.getSeqnum() == expectedSeqNum){
             Message msg = pkt.getMessage();
             ra.receiveMessage(msg);
-            sendAck(expectedSeqNum);
             expectedSeqNum++;
+            sendAck(expectedSeqNum);
         } else {
             sendAck(expectedSeqNum - 1);
         }

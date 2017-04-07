@@ -5,9 +5,6 @@ import java.util.ArrayList;
  */
 public class SenderTCPProtocol extends SenderTransport {
 
-    private int dupACKCount; //counter from 0 to 3, 0 meaning ack received not dup
-    private int dupACKNum;  //tracker for dup ack's acknum
-
     public int getDupACKCount() {
         return dupACKCount;
     }
@@ -24,22 +21,15 @@ public class SenderTCPProtocol extends SenderTransport {
         return base;
     }
 
-    public int getRound() {
-        return round;
-    }
-
-    public boolean isStarted() {
-        return started;
-    }
-
-    private ArrayList<Packet> sentPkts;
+    private int dupACKCount; //counter from 0 to 3, 0 meaning ack received not dup
+    private int dupACKNum;  //tracker for dup ack's acknum
+    private ArrayList<Packet> packetArrayList;
     private int timeOut;
     private int nextSeqNum;
     private int base;
-    private int round;
-    private boolean started;
 
-    public SenderTCPProtocol(NetworkLayer nl, Timeline tl, int n, int timeOut){
+
+    public SenderTCPProtocol(NetworkLayer nl, Timeline tl, int n, int timeOut) {
         super(nl, tl, n);
         this.timeOut = timeOut;
     }
@@ -48,27 +38,26 @@ public class SenderTCPProtocol extends SenderTransport {
         dupACKCount = -1;
         dupACKNum = -1;
         nextSeqNum = 0;
-        round = 0;
         base = 0;
-        started = false;
-        sentPkts = new ArrayList<Packet>();
+        packetArrayList = new ArrayList<Packet>();
     }
 
     public void sendMessage(Message msg) {
-        Packet p = new Packet(msg,sentPkts.size(),-1,-1);
-        sentPkts.add(p);
-        if (!started) {
-            Packet toSend = new Packet(sentPkts.get(nextSeqNum));
-            System.out.println("SENDER TCP SENDING:     " + toSend.toString());
-            nl.sendPacket(toSend, to);
-            started = true;
-            tl.startTimer(timeOut);
-            nextSeqNum++;
-        } else {
-            System.out.println("SENDER TCP BUFFERED:  " + msg.getMessage());
+        Packet p = new Packet(msg, packetArrayList.size(), -1, -1);
+        packetArrayList.add(p);
+        if (canSendNext()) {
+            sendNextPacket();
         }
+        System.out.println("SENDER TCP BUFFERED:  " + msg.getMessage());
     }
 
+    private void sendNextPacket() {
+        Packet toSend = new Packet(packetArrayList.get(nextSeqNum));
+        System.out.println("SENDER TCP SENDING:     " + toSend.toString());
+        nl.sendPacket(toSend, to);
+        tl.startTimer(timeOut);
+        nextSeqNum++;
+    }
 
     public void receiveMessage(Packet pkt) {
         System.out.println("SENDER TCP RECEIVED:    " + pkt.toString());
@@ -76,66 +65,56 @@ public class SenderTCPProtocol extends SenderTransport {
             //DO NOTHING
         } else {
             int acknum = pkt.getAcknum();
-            if(ackIsDuplicate(acknum)) {
-                dupACKCount++;
-                if(dupACKCount == 3){
-                    //fastRetransmit will reset duplicate ack count
-                    fastRetransmit();
-                } else {
-                    // DO NOTHING, dupACKCount has already by incremented
-                }
-            } else { // ACK IS NOT DUPLICATE
-                if(ackNumMakesSense(acknum)) {
-                    trackAck(acknum);
-                    base = acknum + 1;
-                    if (base == nextSeqNum) {
-                        finishRound();
-                        beginNextRound();
-                    } else {
-                        // DO NOTHING
+            if (ackNumMakesSense(acknum)) {
+                if (ackIsDuplicate(acknum)) {
+                    dupACKCount++;
+                    if (dupACKCount == 3) {
+                        fastRetransmit();
                     }
                 } else {
-                    // DO NOTHING, if the ack doesnt make sense, ignore it
+                    trackAck(acknum);
+                    base = acknum;
+                    if (base == nextSeqNum) {
+                        tl.stopTimer();
+                    } else {
+                        tl.startTimer(timeOut);
+                    }
+                    sendBufferedPkts();
                 }
             }
         }
     }
 
-    public void timerExpired() {}
+    public void timerExpired() {
+        System.out.println("TIMER EXPIRED");
+        tl.startTimer(timeOut);
+        resendDueToTimeout();
+    }
 
-    public boolean verifyPacket(Packet pkt){
+    public void resendDueToTimeout() {
+        Packet toSend = new Packet(packetArrayList.get(base));
+        System.out.println("SENDER TCP RESENDING:   " + toSend.toString());
+        nl.sendPacket(toSend, to);
+    }
+
+    public boolean verifyPacket(Packet pkt) {
         return true;
     }
 
-    public void fastRetransmit(){}
-
-    public void finishRound(){
-        round++;
-    }
-
-    public void beginNextRound(){
-        for(int i = 0; i < Math.pow(2,round) && nextSeqNum < sentPkts.size(); i++){
-            sendNextPacket();
-        }
-    }
-
-    public void sendNextPacket(){
-        Packet toSend = new Packet(sentPkts.get(nextSeqNum));
-        System.out.println("SENDER TCP SENDING:     " + toSend.toString());
+    public void fastRetransmit() {
+        Packet toSend = new Packet(packetArrayList.get(dupACKNum));
+        System.out.println("SENDER TCP RESENDING:   " + toSend.toString());
         nl.sendPacket(toSend, to);
-        if (base == nextSeqNum) {
-            tl.startTimer(timeOut);
-        }
-        nextSeqNum++;
+        tl.startTimer(timeOut);
     }
 
-    public void trackAck(int acknum){
+    public void trackAck(int acknum) {
         dupACKNum = acknum;
         dupACKCount = 0;
     }
 
-    public boolean ackIsDuplicate(int acknum){
-        if(acknum == dupACKNum && dupACKCount >= 0) {
+    public boolean ackIsDuplicate(int acknum) {
+        if (acknum == dupACKNum && dupACKCount > 0) {
             return true;
         } else {
             return false;
@@ -143,11 +122,26 @@ public class SenderTCPProtocol extends SenderTransport {
     }
 
     public boolean ackNumMakesSense(int acknum) {
-        if (acknum < base || acknum > nextSeqNum) {
+        if (acknum <= base || acknum > nextSeqNum) {
             return false;
         } else {
             return true;
         }
     }
+
+    public boolean canSendNext() {
+        if (nextSeqNum < base + windowSize && nextSeqNum < packetArrayList.size()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void sendBufferedPkts() {
+        while (canSendNext()) {
+            sendNextPacket();
+        }
+    }
+
 
 }
