@@ -14,9 +14,10 @@ public class Timeline
     private int timeSoFar; // time which has passed so far
     private Random ran; //random number generator
     private int lastArrivalTime;  //last arrival time so far
-    private Event timerPointer; //pointer to currently running timer
-    
-    
+    private Event senderTimerPointer; //pointer to currently running timer
+    private Event receiverTimerPointer; //pointer to currently running timer
+
+
     /**
      * A constructor to initialize variables.
      */
@@ -30,7 +31,7 @@ public class Timeline
         sentSoFar=1; //set to one because we send the first packet right away
         lastArrivalTime=0;
         createSendEvent();//sending first packet
-        timerPointer=null;
+        senderTimerPointer =null;
 
     }
     /**
@@ -81,43 +82,62 @@ public class Timeline
         if(NetworkSimulator.DEBUG>2)
         {
             String tmp = (to==Event.SENDER)? "sender" : "receiver";
-            System.out.println("inserting future arrive event at " + timeSoFar + " with time: " + lastArrivalTime + "to :" +tmp);
+            System.out.println("inserting future arrive event at " + timeSoFar + " with time: " + lastArrivalTime + " to: " +tmp);
         }
         events.add(new Event(lastArrivalTime,Event.MESSAGEARRIVE,to,pkt));
 
     }
     
     /**
-     * Starting timer.If it si already started it prints out an error message. setting timerPointer to point at timer event.
+     * Starting timer.If it si already started it prints out an error message. setting senderTimerPointer to point at timer event.
      * @ param increment timeout for timer
      */
-    public void startTimer(int increment)
+    public void startTimer(int increment, int host)
     {
-        if(timerPointer!=null)
-        {
-            System.out.println("Timer is already on!");
-            return;
+        if(host == Event.SENDER) {
+            if (senderTimerPointer != null) {
+                System.out.println("Timer is already on!");
+                return;
+            }
+            senderTimerPointer = new Event(timeSoFar + increment, Event.TIMER, Event.SENDER);
+            events.add(senderTimerPointer);
+            if (NetworkSimulator.DEBUG > 2)
+                System.out.println("inserting future sender timer event at time: " + timeSoFar + " for " + increment);
+        } else {
+            if (receiverTimerPointer != null) {
+                System.out.println("Timer is already on!");
+                return;
+            }
+            receiverTimerPointer = new Event(timeSoFar + increment, Event.TIMER, Event.RECEIVER);
+            events.add(receiverTimerPointer);
+            if (NetworkSimulator.DEBUG > 2)
+                System.out.println("inserting future receiver timer event at time: " + timeSoFar + " for " + increment);
         }
-        timerPointer = new Event(timeSoFar+increment,Event.TIMER,Event.SENDER);
-        events.add(timerPointer);
-        if(NetworkSimulator.DEBUG>2)
-            System.out.println("inserting future timer event at time: " + timeSoFar + " for " +  increment);
-
     }
     /**
-     * Kills timer and sets timerPointer to null
+     * Kills timer and sets senderTimerPointer to null
+     * @param host
      */
 
-    public void stopTimer()
+    public void stopTimer(int host)
     {
-        if(timerPointer==null)
-        {
-            System.out.println("Timer is not on!");
-            return;
-        }     
-        
-        timerPointer.killTimer();
-        timerPointer=null;
+        if(host == Event.SENDER) {
+            if (senderTimerPointer == null) {
+                System.out.println("Sender Timer is not on!");
+                return;
+            }
+
+            senderTimerPointer.killTimer();
+            senderTimerPointer = null;
+        } else {
+            if (receiverTimerPointer == null) {
+                System.out.println("Receiver Timer is not on!");
+                return;
+            }
+
+            receiverTimerPointer.killTimer();
+            receiverTimerPointer = null;
+        }
     }
 
     public int getTotalMessagesToSend(){

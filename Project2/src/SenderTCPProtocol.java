@@ -55,7 +55,7 @@ public class SenderTCPProtocol extends SenderTransport {
         Packet toSend = new Packet(packetArrayList.get(nextSeqNum));
         System.out.println("SENDER TCP SENDING:     " + toSend.toString());
         nl.sendPacket(toSend, to);
-        tl.startTimer(timeOut);
+        tl.startTimer(timeOut, me);
         nextSeqNum++;
     }
 
@@ -75,9 +75,9 @@ public class SenderTCPProtocol extends SenderTransport {
                     trackAck(acknum);
                     base = acknum;
                     if (base == nextSeqNum) {
-                        tl.stopTimer();
+                        tl.stopTimer(me);
                     } else {
-                        tl.startTimer(timeOut);
+                        tl.startTimer(timeOut, me);
                     }
                     sendBufferedPkts();
                 }
@@ -87,7 +87,7 @@ public class SenderTCPProtocol extends SenderTransport {
 
     public void timerExpired() {
         System.out.println("TIMER EXPIRED");
-        tl.startTimer(timeOut);
+        tl.startTimer(timeOut, me);
         resendDueToTimeout();
     }
 
@@ -105,7 +105,7 @@ public class SenderTCPProtocol extends SenderTransport {
         Packet toSend = new Packet(packetArrayList.get(dupACKNum));
         System.out.println("SENDER TCP RESENDING:   " + toSend.toString());
         nl.sendPacket(toSend, to);
-        tl.startTimer(timeOut);
+        tl.startTimer(timeOut, me);
     }
 
     public void trackAck(int acknum) {

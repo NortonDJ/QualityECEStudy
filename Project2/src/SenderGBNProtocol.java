@@ -49,7 +49,7 @@ public class SenderGBNProtocol extends SenderTransport {
         System.out.println("SENDER GBN SENDING:     " + toSend.toString());
         nl.sendPacket(toSend, to);
         if (base == nextSeqNum) {
-            tl.startTimer(timeOut);
+            tl.startTimer(timeOut, me);
         }
         nextSeqNum++;
     }
@@ -63,9 +63,9 @@ public class SenderGBNProtocol extends SenderTransport {
             if(ackNumMakesSense(acknum)) {
                 base = acknum + 1;
                 if (base == nextSeqNum) {
-                    tl.stopTimer();
+                    tl.stopTimer(me);
                 } else {
-                    tl.startTimer(timeOut);
+                    tl.startTimer(timeOut, me);
                 }
                 sendBufferedPkts();
             }
@@ -74,7 +74,7 @@ public class SenderGBNProtocol extends SenderTransport {
 
     public void timerExpired() {
         System.out.println("TIMER EXPIRED");
-        tl.startTimer(timeOut);
+        tl.startTimer(timeOut, me);
         resendDueToTimeout();
     }
 

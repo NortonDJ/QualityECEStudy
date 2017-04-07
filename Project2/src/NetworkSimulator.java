@@ -106,11 +106,23 @@ public class NetworkSimulator
             }
             //If event is an expired timer, call the timerExpired method in the sender transport.
             else if (currentEvent.getType()==Event.TIMER) {
-                if(DEBUG>0)
-                    System.out.println("Timer expired at time " + currentEvent.getTime());
+                int host = currentEvent.getHost();
+                if(DEBUG>0) {
+                    String hostString;
+                    if (host == Event.SENDER) {
+                        hostString = "Sender";
+                    } else {
+                        hostString = "Receiver";
+                    }
+                    System.out.println(hostString + " Timer expired at time " + currentEvent.getTime());
+                }
 
-                tl.stopTimer();
-                st.timerExpired();
+                tl.stopTimer(host);
+                if(host == Event.SENDER) {
+                    st.timerExpired();
+                } else {
+                    rt.timerExpired();
+                }
             }
             else if (currentEvent.getType()==Event.KILLEDTIMER) {
                 //do nothing if it is just a turned off timer.

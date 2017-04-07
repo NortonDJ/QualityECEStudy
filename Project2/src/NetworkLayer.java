@@ -24,17 +24,17 @@ public class NetworkLayer
         if(ran.nextDouble()<lossProbability)
         {
             if(NetworkSimulator.DEBUG>1)
-                System.out.println("Packet seq:" + pkt.getSeqnum() + " ack: " + pkt.getAcknum() + " lost");
+                System.out.println("Packet seq: " + pkt.getSeqnum() + " ack: " + pkt.getAcknum() + " lost");
             return;    
         }
         if(ran.nextDouble()<currProbability)
         {
             if(NetworkSimulator.DEBUG>1)
-                System.out.println("Packet seq:" + pkt.getSeqnum() + " ack: " + pkt.getAcknum() + " curropted");
+                System.out.println("Packet seq: " + pkt.getSeqnum() + " ack: " + pkt.getAcknum() + " corrupted");
             pkt.corrupt();
         }
         if(NetworkSimulator.DEBUG>1)
-            System.out.println("Packet seq:" + pkt.getSeqnum() + " ack: " + pkt.getAcknum() + " sent");
+            System.out.println("Packet seq: " + pkt.getSeqnum() + " ack: " + pkt.getAcknum() + " sent");
         tl.createArriveEvent(pkt,to);
         //System.out.println(tl);
     }
