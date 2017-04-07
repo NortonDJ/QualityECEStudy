@@ -16,7 +16,7 @@ public class ReceiverTCPProtocol extends ReceiverTransport {
     }
 
     public void sendMessage(Message msg) {
-
+        // You're the receiver... you can't do that (;_;)
     }
 
     public void receiveMessage(Packet pkt) {
