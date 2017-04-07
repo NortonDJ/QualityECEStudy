@@ -22,7 +22,7 @@ public class SenderTCPProtocol extends SenderTransport {
     }
 
     private int dupACKCount; //counter from 0 to 3, 0 meaning ack received not dup
-    private int dupACKNum;  //tracker for dup ack's acknum
+    private int dupACKNum;  //tracker for dup ack's ackNum
     private ArrayList<Packet> packetArrayList;
     private int timeOut;
     private int nextSeqNum;
@@ -64,16 +64,16 @@ public class SenderTCPProtocol extends SenderTransport {
         if (!verifyPacket(pkt)) {
             //DO NOTHING
         } else {
-            int acknum = pkt.getAcknum();
-            if (ackNumMakesSense(acknum)) {
-                if (ackIsDuplicate(acknum)) {
+            int ackNum = pkt.getAcknum();
+            if (ackNumMakesSense(ackNum)) {
+                if (ackIsDuplicate(ackNum)) {
                     dupACKCount++;
                     if (dupACKCount == 3) {
                         fastRetransmit();
                     }
                 } else {
-                    trackAck(acknum);
-                    base = acknum;
+                    trackAck(ackNum);
+                    base = ackNum;
                     if (base == nextSeqNum) {
                         tl.stopTimer(me);
                     } else {
@@ -108,21 +108,21 @@ public class SenderTCPProtocol extends SenderTransport {
         tl.startTimer(timeOut, me);
     }
 
-    public void trackAck(int acknum) {
-        dupACKNum = acknum;
+    public void trackAck(int ackNum) {
+        dupACKNum = ackNum;
         dupACKCount = 0;
     }
 
-    public boolean ackIsDuplicate(int acknum) {
-        if (acknum == dupACKNum) {
+    public boolean ackIsDuplicate(int ackNum) {
+        if (ackNum == dupACKNum) {
             return true;
         } else {
             return false;
         }
     }
 
-    public boolean ackNumMakesSense(int acknum) {
-        if (acknum < base || acknum > nextSeqNum) {
+    public boolean ackNumMakesSense(int ackNum) {
+        if (ackNum < base || ackNum > nextSeqNum) {
             return false;
         } else {
             return true;

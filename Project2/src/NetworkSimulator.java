@@ -49,6 +49,9 @@ public class NetworkSimulator
                            float pCorr, int winSize, int protocol, int debug){
         DEBUG = debug;
 
+        int senderTimeOut = 100;
+        int receiverTimeOut = 100;
+
         //reading in file line by line. Each line will be one message
         ArrayList<String> messageArray = readFile(filename);
         //creating a new timeline with an average time between packets.
@@ -60,7 +63,7 @@ public class NetworkSimulator
         //create a factory to create transport layers
         TransportLayerFactory factory = new TransportLayerFactory(nl,tl);
         //create the sender transport from the factory
-        SenderTransport st = factory.makeSender(protocol,winSize, 100);
+        SenderTransport st = factory.makeSender(protocol,winSize, senderTimeOut);
         //create the application with the transport layer
         SenderApplication sa = new SenderApplication(messageArray, st);
 
@@ -68,7 +71,7 @@ public class NetworkSimulator
         //create the receiver application to send to the factory
         ReceiverApplication ra = new ReceiverApplication();
         //create the receiver transport from the factory
-        ReceiverTransport rt = factory.makeReceiver(protocol, winSize, ra);
+        ReceiverTransport rt = factory.makeReceiver(protocol, winSize, ra, receiverTimeOut);
 
 
         //current event to process

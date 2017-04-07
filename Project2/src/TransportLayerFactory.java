@@ -25,7 +25,7 @@ public class TransportLayerFactory {
         }
     }
 
-    public ReceiverTransport makeReceiver(int protocol, int windowSize, ReceiverApplication ra){
+    public ReceiverTransport makeReceiver(int protocol, int windowSize, ReceiverApplication ra, int timeOut){
         switch(protocol){
             case (0) :
                 System.out.println("Setting Receiver Transport protocol to GBN.");
@@ -33,7 +33,7 @@ public class TransportLayerFactory {
             case (1) : //continue down
             default :
                 System.out.println("Setting Receiver Transport protocol to TCP.");
-                return new ReceiverTCPProtocol(this.nl, ra, windowSize);
+                return new ReceiverTCPProtocol(this.nl, ra, windowSize, timeOut);
         }
     }
 

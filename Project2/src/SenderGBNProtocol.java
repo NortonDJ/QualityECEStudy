@@ -59,9 +59,9 @@ public class SenderGBNProtocol extends SenderTransport {
         if (!verifyPacket(pkt)) {
             //DO NOTHING
         } else {
-            int acknum = pkt.getAcknum();
-            if(ackNumMakesSense(acknum)) {
-                base = acknum + 1;
+            int ackNum = pkt.getAcknum();
+            if(ackNumMakesSense(ackNum)) {
+                base = ackNum + 1;
                 if (base == nextSeqNum) {
                     tl.stopTimer(me);
                 } else {
@@ -104,8 +104,8 @@ public class SenderGBNProtocol extends SenderTransport {
         }
     }
 
-    public boolean ackNumMakesSense(int acknum) {
-        if (acknum < base || acknum > nextSeqNum) {
+    public boolean ackNumMakesSense(int ackNum) {
+        if (ackNum < base || ackNum > nextSeqNum) {
             return false;
         } else {
             return true;
