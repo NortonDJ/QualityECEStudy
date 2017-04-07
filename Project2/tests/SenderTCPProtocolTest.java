@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
@@ -12,7 +13,7 @@ class SenderTCPProtocolTest {
     private ArrayList<String> messageArray;
     private Timeline tl;
     private NetworkLayer nl;
-    private SenderGBNProtocol st;
+    private SenderTCPProtocol st;
 
     @BeforeEach
     void setUp() {
@@ -32,8 +33,58 @@ class SenderTCPProtocolTest {
         //creating a new network layer with specific loss and corruption probability.
         nl = new NetworkLayer(pLoss, pCorr, tl);
         //create the sender transport from the factory
-        st = new SenderGBNProtocol(nl,tl,winSize,100);
+        st = new SenderTCPProtocol(nl,tl,winSize,100);
 
+    }
+
+    @Test
+    void startsRoundOnInitialSend(){
+        st.sendMessage(new Message(messageArray.get(0)));
+        assertEquals(0, st.getRound());
+        assertTrue(st.isStarted());
+    }
+
+    @Test
+    void finishesRound0Sends0IfNone(){
+        st.sendMessage(new Message(messageArray.get(0)));
+        Packet ack = new Packet(new Message("I'm an ACK"), -1, 0, -1);
+        st.receiveMessage(ack);
+        assertEquals(1,st.getNextSeqNum());
+    }
+
+    @Test
+    void finishedRound0Sends2If2(){
+        for(int i = 0; i < 10; i++) {
+            st.sendMessage(new Message(messageArray.get(i)));
+        }
+        Packet ack = new Packet(new Message("I'm an ACK"), -1, 0, -1);
+        st.receiveMessage(ack);
+        assertEquals(3,st.getNextSeqNum());
+        assertEquals(1, st.getBase());
+    }
+
+    @Test
+    void finishedRound0Sends1If1(){
+        for(int i = 0; i < 2; i++) {
+            st.sendMessage(new Message(messageArray.get(i)));
+        }
+        Packet ack = new Packet(new Message("I'm an ACK"), -1, 0, -1);
+        st.receiveMessage(ack);
+        assertEquals(2,st.getNextSeqNum());
+        assertEquals(1, st.getBase());
+    }
+
+    @Test
+    void finishedRound1Sends4If4(){
+        for(int i = 0; i < 10; i++) {
+            st.sendMessage(new Message(messageArray.get(i)));
+        }
+        Packet ack = new Packet(new Message("I'm an ACK"), -1, 0, -1);
+        st.receiveMessage(ack);
+        Packet ack2 = new Packet(new Message("I'm an ACK"), -1, 2, -1);
+        st.receiveMessage(ack2);
+        assertEquals(7,st.getNextSeqNum());
+        assertEquals(3, st.getBase());
     }
 
 }

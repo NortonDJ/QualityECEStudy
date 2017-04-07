@@ -7,6 +7,31 @@ public class SenderTCPProtocol extends SenderTransport {
 
     private int dupACKCount; //counter from 0 to 3, 0 meaning ack received not dup
     private int dupACKNum;  //tracker for dup ack's acknum
+
+    public int getDupACKCount() {
+        return dupACKCount;
+    }
+
+    public int getDupACKNum() {
+        return dupACKNum;
+    }
+
+    public int getNextSeqNum() {
+        return nextSeqNum;
+    }
+
+    public int getBase() {
+        return base;
+    }
+
+    public int getRound() {
+        return round;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
     private ArrayList<Packet> sentPkts;
     private int timeOut;
     private int nextSeqNum;
@@ -30,7 +55,7 @@ public class SenderTCPProtocol extends SenderTransport {
     }
 
     public void sendMessage(Message msg) {
-        Packet p = new Packet(msg,nextSeqNum,-1,-1);
+        Packet p = new Packet(msg,sentPkts.size(),-1,-1);
         sentPkts.add(p);
         if (!started) {
             Packet toSend = new Packet(sentPkts.get(nextSeqNum));
@@ -89,7 +114,7 @@ public class SenderTCPProtocol extends SenderTransport {
     }
 
     public void beginNextRound(){
-        for(int i = 0; i < Math.pow(2,round); i++){
+        for(int i = 0; i < Math.pow(2,round) && nextSeqNum < sentPkts.size(); i++){
             sendNextPacket();
         }
     }
