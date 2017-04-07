@@ -35,7 +35,7 @@ public class SenderGBNProtocol extends SenderTransport {
     }
 
     public void sendMessage(Message msg) {
-        Packet p = new Packet(msg,nextSeqNum,-1,-1);
+        Packet p = new Packet(msg,sentPkts.size(),-1,-1);
         sentPkts.add(p);
         if (canSendNext()) {
             sendNextPacket();
