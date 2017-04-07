@@ -11,8 +11,8 @@ public class SenderGBNProtocol extends SenderTransport {
     public int getBase() {
         return base;
     }
-    public ArrayList<Packet> getSentPkts() {
-        return sentPkts;
+    public ArrayList<Packet> getPacketArrayList() {
+        return packetArrayList;
     }
     public void setTimeOut(int timeOut) {
         this.timeOut = timeOut;
@@ -20,7 +20,7 @@ public class SenderGBNProtocol extends SenderTransport {
 
     private int nextSeqNum;
     private int base;
-    private ArrayList<Packet> sentPkts;
+    private ArrayList<Packet> packetArrayList;
     private int timeOut;
 
     public SenderGBNProtocol(NetworkLayer nl, Timeline tl, int n, int timeOut){
@@ -29,14 +29,14 @@ public class SenderGBNProtocol extends SenderTransport {
     }
 
     public void initialize(){
-        sentPkts = new ArrayList<Packet>();
+        packetArrayList = new ArrayList<Packet>();
         nextSeqNum = 0;
         base = 0;
     }
 
     public void sendMessage(Message msg) {
-        Packet p = new Packet(msg,sentPkts.size(),-1,-1);
-        sentPkts.add(p);
+        Packet p = new Packet(msg, packetArrayList.size(),-1,-1);
+        packetArrayList.add(p);
         if (canSendNext()) {
             sendNextPacket();
         } else {
@@ -45,7 +45,7 @@ public class SenderGBNProtocol extends SenderTransport {
     }
 
     private void sendNextPacket(){
-        Packet toSend = new Packet(sentPkts.get(nextSeqNum));
+        Packet toSend = new Packet(packetArrayList.get(nextSeqNum));
         System.out.println("SENDER GBN SENDING:     " + toSend.toString());
         nl.sendPacket(toSend, to);
         if (base == nextSeqNum) {
@@ -80,7 +80,7 @@ public class SenderGBNProtocol extends SenderTransport {
 
     public void resendDueToTimeout(){
         for(int i = base; i < nextSeqNum; i++){
-            Packet toSend = new Packet(sentPkts.get(i));
+            Packet toSend = new Packet(packetArrayList.get(i));
             System.out.println("SENDER GBN RESENDING:   " + toSend.toString());
             nl.sendPacket(toSend, to);
         }
@@ -91,7 +91,7 @@ public class SenderGBNProtocol extends SenderTransport {
     }
 
     public boolean canSendNext(){
-        if(nextSeqNum < base + windowSize && nextSeqNum < sentPkts.size()){
+        if(nextSeqNum < base + windowSize && nextSeqNum < packetArrayList.size()){
             return true;
         } else {
             return false;
