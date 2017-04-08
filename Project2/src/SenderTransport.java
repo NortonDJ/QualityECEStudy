@@ -26,6 +26,7 @@ public abstract class SenderTransport implements Protocol {
 
     /**
      * Set if corruption is allowed in this layer
+     * @param boolean corruptionAllowed
      */
     public void enableCorruption(boolean corruptionAllowed){
         this.corruptionAllowed = corruptionAllowed;

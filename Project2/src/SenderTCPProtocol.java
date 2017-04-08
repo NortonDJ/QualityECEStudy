@@ -81,8 +81,8 @@ public class SenderTCPProtocol extends SenderTransport {
         Packet toSend = new Packet(packetArrayList.get(base));
         System.out.println("SENDER TCP RESENDING:   " + toSend.toString());
         nl.sendPacket(toSend, to);
-        resetDupACKCount();
-        resetDupACKNum();
+        dupACKCount = -1;
+        dupACKNum = base;
     }
 
     public boolean verifyPacket(Packet pkt) {
@@ -97,8 +97,7 @@ public class SenderTCPProtocol extends SenderTransport {
         Packet toSend = new Packet(packetArrayList.get(dupACKNum));
         System.out.println("SENDER TCP RESENDING:   " + toSend.toString());
         nl.sendPacket(toSend, to);
-        resetDupACKCount();
-        resetDupACKNum();
+        dupACKCount = 0;
         tl.startTimer(timeOut, me);
     }
 
@@ -137,14 +136,6 @@ public class SenderTCPProtocol extends SenderTransport {
         }
     }
 
-    public void resetDupACKCount(){
-        dupACKCount = -1;
-    }
-    
-    public void resetDupACKNum(){
-        dupACKNum = base;
-    }
-    
     public int getDupACKCount() {
         return dupACKCount;
     }
