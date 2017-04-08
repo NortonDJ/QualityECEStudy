@@ -51,7 +51,9 @@ public class ReceiverTCPProtocol extends ReceiverTransport {
     }
 
     public void sendAck(int ackNum) {
-        Packet ack = new Packet(new Message("I'm an ACK"), -1, ackNum, -1);
+        Message msg = new Message("I'm an ACK");
+        int seqNum = -1;
+        Packet ack = new Packet(msg, seqNum, ackNum, generateCheckSum(msg,seqNum,ackNum));
         System.out.println("RECEIVER TCP SENDING:   " + ack.toString());
         nl.sendPacket(ack, to);
     }

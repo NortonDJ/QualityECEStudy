@@ -5,29 +5,12 @@ import java.util.ArrayList;
  */
 public class SenderTCPProtocol extends SenderTransport {
 
-    public int getDupACKCount() {
-        return dupACKCount;
-    }
-
-    public int getDupACKNum() {
-        return dupACKNum;
-    }
-
-    public int getNextSeqNum() {
-        return nextSeqNum;
-    }
-
-    public int getBase() {
-        return base;
-    }
-
     private int dupACKCount; //counter from 0 to 3, 0 meaning ack received not dup
     private int dupACKNum;  //tracker for dup ack's ackNum
     private ArrayList<Packet> packetArrayList;
     private int timeOut;
     private int nextSeqNum;
     private int base;
-
 
     public SenderTCPProtocol(NetworkLayer nl, Timeline tl, int n, int timeOut) {
         super(nl, tl, n);
@@ -43,7 +26,9 @@ public class SenderTCPProtocol extends SenderTransport {
     }
 
     public void sendMessage(Message msg) {
-        Packet p = new Packet(msg, packetArrayList.size(), -1, -1);
+        int seqNum = packetArrayList.size();
+        int ackNum = -1;
+        Packet p = new Packet(msg, seqNum, ackNum, generateCheckSum(msg,seqNum,ackNum));
         packetArrayList.add(p);
         if (canSendNext()) {
             sendNextPacket();
@@ -62,9 +47,7 @@ public class SenderTCPProtocol extends SenderTransport {
 
     public void receiveMessage(Packet pkt) {
         System.out.println("SENDER TCP RECEIVED:    " + pkt.toString());
-        if (!verifyPacket(pkt)) {
-            //DO NOTHING
-        } else {
+        if (verifyPacket(pkt)) {
             int ackNum = pkt.getAcknum();
             if (ackNumMakesSense(ackNum)) {
                 if (ackIsDuplicate(ackNum)) {
@@ -83,6 +66,8 @@ public class SenderTCPProtocol extends SenderTransport {
                     sendBufferedPkts();
                 }
             }
+        } else {
+            // DO NOTHING
         }
     }
 
@@ -146,6 +131,22 @@ public class SenderTCPProtocol extends SenderTransport {
         while (canSendNext()) {
             sendNextPacket();
         }
+    }
+
+    public int getDupACKCount() {
+        return dupACKCount;
+    }
+
+    public int getDupACKNum() {
+        return dupACKNum;
+    }
+
+    public int getNextSeqNum() {
+        return nextSeqNum;
+    }
+
+    public int getBase() {
+        return base;
     }
 
 

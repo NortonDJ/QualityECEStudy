@@ -35,7 +35,9 @@ public class SenderGBNProtocol extends SenderTransport {
     }
 
     public void sendMessage(Message msg) {
-        Packet p = new Packet(msg, packetArrayList.size(),-1,-1);
+        int seqNum = packetArrayList.size();
+        int ackNum = -1;
+        Packet p = new Packet(msg, seqNum, ackNum, generateCheckSum(msg,seqNum,ackNum));
         packetArrayList.add(p);
         if (canSendNext()) {
             sendNextPacket();
@@ -56,9 +58,7 @@ public class SenderGBNProtocol extends SenderTransport {
 
     public void receiveMessage(Packet pkt) {
         System.out.println("SENDER GBN RECEIVED:    " + pkt.toString());
-        if (!verifyPacket(pkt)) {
-            //DO NOTHING
-        } else {
+        if (verifyPacket(pkt)) {
             int ackNum = pkt.getAcknum();
             if(ackNumMakesSense(ackNum)) {
                 base = ackNum + 1;
@@ -69,6 +69,8 @@ public class SenderGBNProtocol extends SenderTransport {
                 }
                 sendBufferedPkts();
             }
+        } else {
+            // DO NOTHING
         }
     }
 

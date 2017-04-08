@@ -22,4 +22,13 @@ public abstract class SenderTransport implements Protocol {
         this.corruptionAllowed = corruptionAllowed;
     }
 
+    public int generateCheckSum(Message m, int seqNum, int ackNum){
+        int checkSum = seqNum + ackNum;
+        String s = m.getMessage();
+        for(char c : s.toCharArray()){
+            checkSum += c;
+        }
+        return checkSum;
+    }
+
 }

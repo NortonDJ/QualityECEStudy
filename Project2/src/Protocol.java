@@ -15,4 +15,6 @@ public interface Protocol {
 
     public void enableCorruption(boolean corruptionAllowed);
 
+    public int generateCheckSum(Message m, int seqNum, int ackNum);
+
 }

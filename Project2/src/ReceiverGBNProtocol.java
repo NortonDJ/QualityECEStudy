@@ -33,8 +33,10 @@ public class ReceiverGBNProtocol extends ReceiverTransport {
         }
     }
 
-    public void sendAck(int acknum){
-        Packet ack = new Packet(new Message("I'm an ACK"), -1, acknum, -1);
+    public void sendAck(int ackNum){
+        Message msg = new Message("I'm an ACK");
+        int seqNum = -1;
+        Packet ack = new Packet(msg, seqNum, ackNum, generateCheckSum(msg,seqNum,ackNum));
         System.out.println("RECEIVER GBN SENDING:   " + ack.toString());
         nl.sendPacket(ack, to);
     }
