@@ -21,7 +21,7 @@ public class SenderGBNProtocol extends SenderTransport {
     }
 
     /**
-     * initialize the 
+     * initialize the Go-back-n of sender's transport layer
      */
     public void initialize(){
         packetArrayList = new ArrayList<Packet>();
@@ -29,6 +29,10 @@ public class SenderGBNProtocol extends SenderTransport {
         base = 0;
     }
 
+    /**
+     * Send message in Go-Back-n protocol
+     * @param message content
+     */
     public void sendMessage(Message msg) {
         int seqNum = packetArrayList.size();
         int ackNum = -1;
@@ -40,7 +44,10 @@ public class SenderGBNProtocol extends SenderTransport {
             System.out.println("SENDER GBN BUFFERED:  " + msg.getMessage());
         }
     }
-
+    
+    /**
+     * Send next packet in Go-Back-n protocol
+     */
     private void sendNextPacket(){
         Packet toSend = new Packet(packetArrayList.get(nextSeqNum));
         System.out.println("SENDER GBN SENDING:     " + toSend.toString());
@@ -51,6 +58,10 @@ public class SenderGBNProtocol extends SenderTransport {
         nextSeqNum++;
     }
 
+    /**
+     * sender receive message in Go-Back-n protocol
+     * @param packet received
+     */
     public void receiveMessage(Packet pkt) {
         System.out.println("SENDER GBN RECEIVED:    " + pkt.toString());
         if (verifyPacket(pkt)) {
@@ -69,12 +80,18 @@ public class SenderGBNProtocol extends SenderTransport {
         }
     }
 
+    /**
+     * when time out expired, call resending packet 
+     */
     public void timerExpired() {
         System.out.println("TIMER EXPIRED");
         tl.startTimer(timeOut, me);
         resendDueToTimeout();
     }
 
+    /**
+     * method of resending packet 
+     */
     public void resendDueToTimeout(){
         for(int i = base; i < nextSeqNum; i++){
             Packet toSend = new Packet(packetArrayList.get(i));
@@ -83,6 +100,10 @@ public class SenderGBNProtocol extends SenderTransport {
         }
     }
 
+    /**
+     * check if the received packet correct 
+     * @param packet
+     */
     public boolean verifyPacket(Packet pkt){
         if(corruptionAllowed) {
             return !pkt.isCorrupt();
@@ -91,6 +112,9 @@ public class SenderGBNProtocol extends SenderTransport {
         }
     }
 
+    /**
+     * check if next packet can be sent
+     */
     public boolean canSendNext(){
         if(nextSeqNum < base + windowSize && nextSeqNum < packetArrayList.size()){
             return true;
@@ -98,13 +122,19 @@ public class SenderGBNProtocol extends SenderTransport {
             return false;
         }
     }
-
+    
+    /**
+     * send next packet
+     */
     public void sendBufferedPkts(){
          while(canSendNext()){
             sendNextPacket();
         }
     }
 
+    /**
+     * check if the ack number correct
+     */
     public boolean ackNumMakesSense(int ackNum) {
         if (ackNum < base || ackNum > nextSeqNum) {
             return false;
@@ -113,15 +143,31 @@ public class SenderGBNProtocol extends SenderTransport {
         }
     }
     
+    /**
+     * get seqence number of next packet
+     */
     public int getNextSeqNum() {
         return nextSeqNum;
     }
+    
+    /**
+     * the highest packet number that has not been received
+     */
     public int getBase() {
         return base;
     }
+    
+    /**
+     * get the list of packets
+     */
     public ArrayList<Packet> getPacketArrayList() {
         return packetArrayList;
     }
+    
+    /**
+     * set time out
+     * @param time out
+     */
     public void setTimeOut(int timeOut) {
         this.timeOut = timeOut;
     }
