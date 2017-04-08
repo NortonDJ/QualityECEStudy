@@ -10,11 +10,11 @@ public class Event implements Comparable<Event>
     Packet pkt; //pkt related to event if relevant (only arrive events)
 
     public static final int MESSAGESEND = 0;
-    public static final int MESSAGEARRIVE=1;
+    public static final int MESSAGEARRIVE = 1;
     public static final int TIMER = 2;
-    public static final int KILLEDTIMER=3;
+    public static final int KILLEDTIMER = 3;
     public static int SENDER = 0;
-    public static int RECEIVER=1;
+    public static int RECEIVER = 1;
 
     /**
      * Initializing new event without packet. This will be used for sending events
