@@ -33,7 +33,7 @@ class SenderGBNProtocolTest {
         nl = new NetworkLayer(pLoss, pCorr, tl);
         //create the sender transport from the factory
         st = new SenderGBNProtocol(nl,tl,winSize,100);
-
+        st.enableCorruption(false);
     }
 
     @Test

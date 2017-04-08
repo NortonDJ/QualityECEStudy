@@ -34,7 +34,7 @@ class ReceiverTCPProtocolTest {
         nl = new NetworkLayer(pLoss, pCorr, tl);
         ra = new ReceiverApplication();
         rt = new ReceiverTCPProtocol(nl, ra, winSize, receiverTimeOut);
-
+        rt.enableCorruption(false);
     }
     @Test
     public void receiveExpectedSeqNumMovesExpectSeqNum(){
@@ -87,6 +87,27 @@ class ReceiverTCPProtocolTest {
     }
 
     @Test
+    public void receiveUnExpectedSeqNumNotFirstPacketSendsACKESN(){
+        rt.receiveMessage(new Packet(new Message("Hello"),0,-1,-1));
+        rt.receiveMessage(new Packet(new Message("Hello"),5,-1,-1));
+        ArrayList<Integer> ackNumCounts = new ArrayList<Integer>();
+        for(int i = 0; i < 100; i++){
+            ackNumCounts.add(0);
+        }
+        while(tl.sizeOfQueue() != 0){
+            Event e = tl.returnNextEvent();
+            if(e.getType() == Event.MESSAGEARRIVE) {
+                int acknum = e.getPacket().getAcknum();
+                ackNumCounts.set(acknum, ackNumCounts.get(acknum) + 1);
+            }
+        }
+        assertEquals(new Integer(0), ackNumCounts.get(0));
+        assertEquals(new Integer(2), ackNumCounts.get(1));
+        assertEquals(new Integer(0), ackNumCounts.get(2));
+        assertEquals(new Integer(0), ackNumCounts.get(6));
+    }
+
+    @Test
     public void receiveLesserUnExpectedSeqNumSendsACKExpectedSeqNum(){
         for(int i = 0; i < 3; i++) {
             rt.receiveMessage(new Packet(new Message("Hello"), i, -1, -1));
@@ -125,7 +146,7 @@ class ReceiverTCPProtocolTest {
 
     @Test
     public void deliverOutOfOrderPacketsInOrderIgnoresPacketsOutsideOfWindow(){
-        for(int i = 4; i >= 0; i--) {
+        for(int i = 3; i >= 0; i--) {
             rt.receiveMessage(new Packet(new Message("Hello" + i), i, -1, -1));
         }
         ArrayList<Message> delivered = ra.getMessagesReceived();
@@ -133,6 +154,33 @@ class ReceiverTCPProtocolTest {
         assertEquals("Hello0", delivered.get(0).getMessage());
         assertEquals("Hello1", delivered.get(1).getMessage());
         assertEquals("Hello2", delivered.get(2).getMessage());
+    }
+
+    @Test
+    public void fillingGapSendsCUMACK(){
+        for(int i = 3; i >= 0; i--) {
+            rt.receiveMessage(new Packet(new Message("Hello" + i), i, -1, -1));
+        }
+        ArrayList<Message> delivered = ra.getMessagesReceived();
+        assertEquals(3, delivered.size());
+        assertEquals("Hello0", delivered.get(0).getMessage());
+        assertEquals("Hello1", delivered.get(1).getMessage());
+        assertEquals("Hello2", delivered.get(2).getMessage());
+        ArrayList<Integer> ackNumCounts = new ArrayList<Integer>();
+        for(int i = 0; i < 100; i++){
+            ackNumCounts.add(0);
+        }
+        while(tl.sizeOfQueue() != 0){
+            Event e = tl.returnNextEvent();
+            if(e.getType() == Event.MESSAGEARRIVE) {
+                int acknum = e.getPacket().getAcknum();
+                ackNumCounts.set(acknum, ackNumCounts.get(acknum) + 1);
+            }
+        }
+        assertEquals(new Integer(3), ackNumCounts.get(0));
+        assertEquals(new Integer(0), ackNumCounts.get(1));
+        assertEquals(new Integer(0), ackNumCounts.get(2));
+        assertEquals(new Integer(1), ackNumCounts.get(3));
     }
 
 }

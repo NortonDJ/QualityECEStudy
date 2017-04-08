@@ -13,4 +13,6 @@ public interface Protocol {
 
     public boolean verifyPacket(Packet pkt);
 
+    public void enableCorruption(boolean corruptionAllowed);
+
 }

@@ -44,6 +44,10 @@ public class ReceiverGBNProtocol extends ReceiverTransport {
     }
 
     public boolean verifyPacket(Packet pkt){
-        return true;
+        if(corruptionAllowed) {
+            return !pkt.isCorrupt();
+        } else {
+            return true;
+        }
     }
 }

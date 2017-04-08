@@ -34,6 +34,7 @@ class SenderTCPProtocolTest {
         nl = new NetworkLayer(pLoss, pCorr, tl);
         //create the sender transport from the factory
         st = new SenderTCPProtocol(nl,tl,winSize,100);
+        st.enableCorruption(false);
 
     }
 

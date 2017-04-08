@@ -99,7 +99,11 @@ public class SenderTCPProtocol extends SenderTransport {
     }
 
     public boolean verifyPacket(Packet pkt) {
-        return true;
+        if(corruptionAllowed) {
+            return !pkt.isCorrupt();
+        } else {
+            return true;
+        }
     }
 
     public void fastRetransmit() {

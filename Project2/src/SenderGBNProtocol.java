@@ -87,7 +87,11 @@ public class SenderGBNProtocol extends SenderTransport {
     }
 
     public boolean verifyPacket(Packet pkt){
-        return true;
+        if(corruptionAllowed) {
+            return !pkt.isCorrupt();
+        } else {
+            return true;
+        }
     }
 
     public boolean canSendNext(){

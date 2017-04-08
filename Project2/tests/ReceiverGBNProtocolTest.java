@@ -32,7 +32,7 @@ class ReceiverGBNProtocolTest {
         nl = new NetworkLayer(pLoss, pCorr, tl);
         ReceiverApplication ra = new ReceiverApplication();
         rt = new ReceiverGBNProtocol(nl, ra, winSize);
-
+        rt.enableCorruption(false);
     }
 
     @Test
