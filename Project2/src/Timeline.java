@@ -1,5 +1,3 @@
-
-
 import java.util.*;
 /**
  * This class represents the timeline of events in a priority queue
@@ -16,8 +14,6 @@ public class Timeline
     private int lastArrivalTime;  //last arrival time so far
     private Event senderTimerPointer; //pointer to currently running timer
     private Event receiverTimerPointer; //pointer to currently running timer
-
-
     /**
      * A constructor to initialize variables.
      */
@@ -32,7 +28,6 @@ public class Timeline
         lastArrivalTime=0;
         createSendEvent();//sending first packet
         senderTimerPointer =null;
-
     }
     /**
      * Getting next event. It it is a send event, and there are still messages that need to be sent, sending the next one.
@@ -49,7 +44,6 @@ public class Timeline
             createSendEvent();
             sentSoFar++;
         }
-
         return tmp;
     }
     

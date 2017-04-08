@@ -79,6 +79,4 @@ public class Packet
         s += ", MESSAGE: " + msg.getMessage();
         return s;
     }
-    
-
 }

@@ -1,33 +1,28 @@
 import java.util.ArrayList;
 
 /**
- * Created by nortondj on 3/30/17.
+ * A class which represents the protocol of Go-back-n of sender's transport layer
  */
 public class SenderGBNProtocol extends SenderTransport {
-
-    public int getNextSeqNum() {
-        return nextSeqNum;
-    }
-    public int getBase() {
-        return base;
-    }
-    public ArrayList<Packet> getPacketArrayList() {
-        return packetArrayList;
-    }
-    public void setTimeOut(int timeOut) {
-        this.timeOut = timeOut;
-    }
-
     private int nextSeqNum;
     private int base;
     private ArrayList<Packet> packetArrayList;
     private int timeOut;
-
+    /**
+     * Constructor of Go-Back-n sender protocol
+     * @param network layer
+     * @param timeline
+     * @param size of window
+     * @param timeout 
+     */
     public SenderGBNProtocol(NetworkLayer nl, Timeline tl, int n, int timeOut){
         super(nl, tl, n);
         this.timeOut = timeOut;
     }
 
+    /**
+     * initialize the 
+     */
     public void initialize(){
         packetArrayList = new ArrayList<Packet>();
         nextSeqNum = 0;
@@ -116,5 +111,18 @@ public class SenderGBNProtocol extends SenderTransport {
         } else {
             return true;
         }
+    }
+    
+    public int getNextSeqNum() {
+        return nextSeqNum;
+    }
+    public int getBase() {
+        return base;
+    }
+    public ArrayList<Packet> getPacketArrayList() {
+        return packetArrayList;
+    }
+    public void setTimeOut(int timeOut) {
+        this.timeOut = timeOut;
     }
 }
