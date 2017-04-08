@@ -13,6 +13,7 @@ class ReceiverTCPProtocolTest {
     private Timeline tl;
     private NetworkLayer nl;
     private ReceiverTCPProtocol rt;
+    private ReceiverApplication ra;
     @BeforeEach
     void setUp() {
         String filename = "./src/test.txt";
@@ -31,7 +32,7 @@ class ReceiverTCPProtocolTest {
         tl = new Timeline(timeBtwnMsgs, messageArray.size());
         //creating a new network layer with specific loss and corruption probability.
         nl = new NetworkLayer(pLoss, pCorr, tl);
-        ReceiverApplication ra = new ReceiverApplication();
+        ra = new ReceiverApplication();
         rt = new ReceiverTCPProtocol(nl, ra, winSize, receiverTimeOut);
 
     }
@@ -108,7 +109,30 @@ class ReceiverTCPProtocolTest {
         assertEquals(new Integer(2), ackNumCounts.get(3));
         assertEquals(new Integer(0), ackNumCounts.get(4));
 
+    }
 
+    @Test
+    public void deliverOutOfOrderPacketsInOrder(){
+        for(int i = 2; i >= 0; i--) {
+            rt.receiveMessage(new Packet(new Message("Hello" + i), i, -1, -1));
+        }
+        ArrayList<Message> delivered = ra.getMessagesReceived();
+        assertEquals(3, delivered.size());
+        assertEquals("Hello0", delivered.get(0).getMessage());
+        assertEquals("Hello1", delivered.get(1).getMessage());
+        assertEquals("Hello2", delivered.get(2).getMessage());
+    }
+
+    @Test
+    public void deliverOutOfOrderPacketsInOrderIgnoresPacketsOutsideOfWindow(){
+        for(int i = 4; i >= 0; i--) {
+            rt.receiveMessage(new Packet(new Message("Hello" + i), i, -1, -1));
+        }
+        ArrayList<Message> delivered = ra.getMessagesReceived();
+        assertEquals(3, delivered.size());
+        assertEquals("Hello0", delivered.get(0).getMessage());
+        assertEquals("Hello1", delivered.get(1).getMessage());
+        assertEquals("Hello2", delivered.get(2).getMessage());
     }
 
 }

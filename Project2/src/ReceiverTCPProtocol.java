@@ -37,7 +37,6 @@ public class ReceiverTCPProtocol extends ReceiverTransport {
             if (seqNum == expectedSeqNum) {
                 packetArrayList.set(seqNum, pkt);
                 Message msg = pkt.getMessage();
-                ra.receiveMessage(msg);
                 expectedSeqNum += deliverBuffered();
                 sendAck(expectedSeqNum);
             } else if (seqNumInWindow(seqNum)) {

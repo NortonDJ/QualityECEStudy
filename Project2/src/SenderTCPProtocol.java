@@ -47,8 +47,9 @@ public class SenderTCPProtocol extends SenderTransport {
         packetArrayList.add(p);
         if (canSendNext()) {
             sendNextPacket();
+        } else {
+            System.out.println("SENDER TCP BUFFERED:  " + msg.getMessage());
         }
-        System.out.println("SENDER TCP BUFFERED:  " + msg.getMessage());
     }
 
     private void sendNextPacket() {
