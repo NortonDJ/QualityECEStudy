@@ -51,7 +51,12 @@ public class Packet
     
     public boolean isCorrupt()
     {
-        return false;
+        int sum = seqnum + acknum;
+        String s = msg.getMessage();
+        for(char c : s.toCharArray()){
+            sum += c;
+        }
+        return sum != checksum;
     }
     
     /**

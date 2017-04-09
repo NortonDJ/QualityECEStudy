@@ -73,6 +73,9 @@ public class NetworkSimulator
         //create the receiver transport from the factory
         ReceiverTransport rt = factory.makeReceiver(protocol, winSize, ra, receiverTimeOut);
 
+        st.enableCorruption(true);
+        rt.enableCorruption(true);
+
 
         //current event to process
         Event currentEvent;
