@@ -1,0 +1,106 @@
+1. Introduction
+	When a user interacts with a messaging application on the internet, they certainly hope that the data they are sending arrive at the destination intact. This is especially true for messages in which they confess their love about computer networks to their colleagues. When users send messages, the messages are converted into bytes and transmitted over an unreliable physical network. Oddly enough, most messages manage to make it to their destinations, aside from extreme cases. Reliable data transfer (RDT) protocols in the Transport Layer allow for the successful transmission of messages from sender to receiver.
+	The goal of our program is to provide a simulation of  reliable, unidirectional, message exchange over an unreliable network through two different implementations of reliable data transfer protocols. These two protocols are Go Back N (GBN) and Transmission Control Protocol (TCP). With this simulation, we hope to characterize the relationship between the time it takes to send messages and various parameters including window size, time-out intervals, and probabilities of corruption and loss. Finally, given that we are studying two protocols, we hope to provide meaningful comparisons between the two resultant sets of data.
+
+
+2. Reliable Data Transfer Protocols
+As mentioned in the introduction, RDT protocols play an essential part in many applications where data integrity is necessary. The way the internet is constructed, there is a layer of abstraction between the applications and the networks: While the network is physically unreliable, RDT protocols abstract away the unreliableness to allow the application to view the network as reliable.
+To insure reliability, RDT protocols must protect the exchange of messages from the following:
+Loss: where a segment fails to reach its destination.
+Corruption: where a segment reaches its destination, but some of it’s fields have had their values unintentionally altered.
+Reordering: where a sequence of segments reach the destination in the wrong order.
+GBN and TCP handle these issues differently, and will be discussed further in their respective sections. As the term protocol provides, it is expected that these RDT protocols use an expected exchange of messages and responses to bypass the issues caused by loss, corruption and reordering. RDT protocols are typically designed to recognize their temporal locations within a sequence of segments. It is also common to see RDT protocols use timers to act accordingly to segment loss. The challenge to RDT protocol design is to find a way to utilize communication between the sender and receiver to infer characteristics of the network, and then using this information to reduce the time it takes to transmit messages.
+
+2.1 Go Back N (GBN)
+2.1.1 Exchange of Messages
+	The principles behind the exchange of messages in Go Back N stem from its name. The idea is that given a window size N, for the sender, the sender will try to have at most N sent segments who are waiting for acknowledgement from the receiver. The scenario in which the network is perfect and has no loss or corruption is depicted in Figure 2.1. Notice, the basic exchange of messages between the sender and receiver is one ACK for each segment received. As soon as the sender receives an ACK in its window, it will try to send another segment, maybe more than one, assuming that there are segments waiting and the window allows for it. The description of how this process changes in the non-perfect scenario is discussed in the Handling Errors section.
+The main principle behind generating ACKs is that the receiver wants to acknowledge the highest in order segment it has received.
+
+
+Figure 2.1 GBN expected 5 message exchange with sender window size = 3
+
+
+2.1.2 Rules About Window Changes
+
+In GBN, the receiver’s window size is always one segment wide. This helps to establish that the receiver does not need to reorder segments on its own, but instead manipulates ordering by only accepting the next in order segment. This means that the GBN receiver can save on hardware by not including a buffer.
+Since the GBN receiver only accepts the next in order segment, there has to be some sort of hope in the network to deliver messages in order, otherwise the network wouldn’t be reliable. The sender will not move its window until it has received acknowledgement of the receiver having received a segment in its window, where the specific segment sequence number is indicated in the ACK field. Consider the sender’s window of size N, starting at a base value of i in the sequence of messages to send.
+The sender will only send segments in the range of i + N
+Similarly, we can say that the sender’s base represents the highest segment that the receiver has not received. That is, of course, from the sender’s perspective, meaning that it has not received an ACK for the base..
+The communication is structurally inductive between the receiver and sender. We know the following information:
+The sender only sends segments in the range of it’s base + window size.
+The sender only moves its window if it receives an ACK within its window.
+The receiver only accepts the segment it is expecting.
+The receiver only acknowledges the highest in order segment it has received.
+
+Therefore, it is highly unlikely that the sender and receiver go out of sync with an unbounded, monotonically increasing sequence number. As long as the sender continues sending messages, eventually the receiver will deliver the messages in exactly the correct order. There will be more to come for this in the next section.
+	Some of the last notes for the rules of the window size would be regarding the potential for a cumulative acknowledgement. When the sender receives an acknowledgement for a segment that is not its base, what should it do? Assuming there is no corruption, the sender knows that the receiver would not have sent the segment, without already having received the sender’s base segment. Therefore, the sender can move its base up to the ACK number plus one, and send more messages according to the window size.
+2.1.3 Handling Errors
+
+Up until this section, the discussion has assumed no loss or corruption. Obviously, this is not the case in the modern computer networks. In case you do not believe that, a simple example would be unplugging a wired connection. Whatever information it was sending, can no longer be sent. So how does GBN handle situations regarding loss, corruption and reordering? For simplicity sake, I will discuss reordering only through the context as a result of corruption and loss, as the cases are the same.
+Figure 2.2 shows one of the first cases of loss: the loss of an ACK segment. Given that GBN uses cumulative acknowledgements, it will not have to resend the data acknowledged by the lost ACK, unless that ACK was the highest in order ACK. Figure 2.3 shows the case where the highest ACK was lost. Until now, the discussion of the timeout mechanism has been minimal, so allow us to explain what is happening. The sender keeps track of the earliest transmitted segment, and restarts it when the acknowledgement for that segment has been received. If the timer runs out, it will retransmit all of the messages from the base, up until the base + N. This is why the protocol is named Go Back N.
+
+Figure 2.2 ACK 0 and ACK 1 lost, sender receives cumulative ACK, window size = 3.
+The receiver will discard any duplicate segments it receives, and for each duplicate message, it will send the ACK for the highest in order segment it has received. After the retransmission in Figure 2.3, the receiver sends three copies of ACK 2 to signify to the sender that it has received all segments up until and including segment 2. The sender will not react to duplicate ACKs as it only retransmits during timeouts.
+The sender treats the corruption of an ACK similarly to the loss of an ACK, and will simply discard it and wait for a timeout. This can be seen in Figure 2.4, which is nearly identical to Figure 2.3.
+Figure 2.3 Sender times out due to lost ACKs, window size = 3.
+
+Figure 2.4 Sender times out due to corrupted ACK, window size = 3.
+	All of the cases of loss/corrupted ACKs of interest for this project have been discussed, but now it would be helpful to discuss how loss and corruption of data segments from the sender affect the exchange of messages. In Figure 2.5 we depict that Seq 1 has been corrupted, and the response generated from the receiver is to discard the segment, and send the ACK for the last successfully received in order segment. This causes the expected sequence number of the receiver to halt, until it has received the correct segment. As we show in Figure 2.5, if the sender has sent multiple segments and one of the earlier segments is corrupted, then the rest of the segments will be discarded. The recovery mechanism comes from duplicating ACK’s to tell the sender which segment it has received in order, and the sender’s retransmission due to a timeout.
+Figure 2.5 Receiver receives corrupted data, discards it causing the sender to timeout.
+	The corruption of a data segment can be treated similarly to the loss of a data segment and again is described in Figure 2.6. The only difference being, that the receiver doesn’t send an ACK for the segment, because it doesn’t know of its presence.
+
+
+
+
+Figure 2.6 The situation is the same for the loss of a data segment, window size = 3.
+
+2.2 Simple Transmission Control Protocol (TCP)
+2.2.1 Exchange of Messages
+
+	As a short note, the Transmission Control Protocol implemented in this project will be one of the many simplified versions of TCP. It was meant to be an upgrade of GBN, where it borrows some of GBN’s benefits and tries to limit the some of the setbacks. Cumulative acknowledgement and timeout based retransmissions are some of the features included in TCP that are borrowed from GBN.
+One of the small but significant changes from GBN is the language that the sender and receiver understand. Instead of the receiver sending receipts to the sender with ACK numbers corresponding to the last in order segment it received, it tells the sender the sequence number of the next segment it needs to receive. The general exchange in the perfect scenario is depicted in Figure 2.7. We expect in the loss-and-corruption-free scenario, that each segment reach the receiver in order, each receiving their own ACK. In the scenario in which loss and corruption can occur, TCP acts again similarly to GBN where it will send an acknowledgement, except with ACK number fields correct to TCP as mentioned above.
+
+Figure 2.7 TCP expected 5 message exchange with sender window size = 3
+
+
+
+
+2.2.2 Rules About Window Changes
+
+	As mentioned in the previous subsection, cumulative acknowledgements are still used and are provided in Figure 2.8 as a way of easing into the discussion of the receiver’s window. It is appropriate to discuss the new colors in the legend for the receiver, more specifically the purple “Bufferable” label. The receiver, now has a window size, and it can buffer out of order segment.
+In TCP, the receiver’s window size is equal to the sender’s window size. One of the issues with Go Back N was that non-corrupt segments that arrived out of order were discarded, when in reality the data would have been acceptable to the application once the rest of the sequence has arrived. This means that the TCP receiver needs more hardware than a GBN receiver.
+The TCP receiver’s window acts similarly to the sender’s window, in that it is anchored to the base, or in the receiver’s case, the expected sequence number. When the receiver receives the expected sequence number, it checks to see if the segment has filled a gap. The receiver will deliver the message it has just received, along with previously buffered segments, provided that the gap has been completely filled and they now form a contiguous sequence up until the expected sequence number.Figure 2.8 ACK 1 and ACK 2 lost, sender receives cumulative ACK, window size = 3.
+	Similar to GBN, the structural induction of the sender-receiver communication holds, and the reasons are the same:
+The sender only sends segments in the range of it’s base + window size.
+The sender only moves its window if it receives an ACK greater than or equal to its window.
+The receiver only accepts the segments it is expecting plus its window size.
+The receiver always cumulatively acknowledges sequence numbers within the range of its own window.
+The receiver only moves its window when all segments up until the start of its window have been received.
+Again, it is therefore highly unlikely that the sender and receiver go out of sync with an unbounded, monotonically increasing sequence number. As long as the sender continues sending messages, eventually the receiver will deliver the messages in exactly the correct order. The delivery of ordered messages assuming at least one segment was lost, should take less time than GBN due to the buffering on the receiver’s end.
+
+
+2.2.3 Handling Errors
+Figure 2.9 illustrates the behavior of TCP in the case of the loss of an ACK segment. Like GBN, TCP takes advantage of the cumulative acknowledgement sent by the receiver so that it will not have to resend the data acknowledged by the lost ACK.  Notice here that when a timeout occurs in TCP, only one segment is retransmitted. This is an improvement over GBN’s “send up to N segments” strategy in the common case as it reduces the amount of sender traffic. It should be noted that if the window size is large and only the last segment arrives at the receiver, GBN will take less time to retransmit all of the messages if they go through uncorrupted on the second round.
+
+Figure 2.9 Sender times out due to lost ACKs, window size = 3.
+
+As seen in Figure 2.10 The TCP sender treats the corruption of an ACK a little bit differently to the loss of an ACK. TCP will track how many times it has received duplicate ACKs, with the idea that if it can identify that a segment did not reach the receiver, then it can recover before the timeout occurs. If three duplicate ACKs are received by the sender, it will fast retransmit the indicated segment as seen in Figure 2.11. This is supposed to be the improvement over GBN, and many times is the case if the three duplicate ACKs actually arrive quickly enough. 
+Figure 2.11 shows the advantage of TCP over GBN as it accomplished sending an entire window of segments over window size + 1 (as compared to twice the window size in GBN for the same scenario). If there are not three duplicate ACKs within the timeout frame, then it will retransmit the same way as the case of a loss. 
+Figure 2.10 Sender times out due to corrupted ACK, window size = 3.
+
+Figure 2.11 Receiving 3 duplicate ACKs before the timer expires causes a fast retransmit, window size = 5.
+	Lastly, we want to explain the procedure for dealing with corrupted or lost data segments. In Figure 2.12, the receiver receives corrupted data and sends an ACK for that corrupted segment. Typically the ACK would have the field of the next in order segment it is expecting, it just happens that in this case, the corrupted segment is the expected segment. If the conditions allow, this ACK could trigger a three duplicate ACK situation and cause a fast retransmission, but we elected to show the case in which there are not enough duplicate ACKs before a timeout.The situation for the lost segment is nearly the same, minus one ACK in Figure 2.13.
+
+Figure 2.12 Receiver receives corrupted data, sends ACK, sender times out.
+
+
+
+Figure 2.13 The situation is the same for the loss of a data segment, window size = 3.
+
+Our Code
+Correctness Results
+Results Analysis
+Conclusion
+References
+Division of Labor
+

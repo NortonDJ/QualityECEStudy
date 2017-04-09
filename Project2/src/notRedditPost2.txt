@@ -1,0 +1,5 @@
+Why would you want to do this? There's no reason to build a GUI based app using C++. Since you're already using visual studio, use C# and save yourself the aggravation.
+permalinkembed
+[–]r4ndomn3ss [S] 1 point an hour ago 
+Why there is no reason? please elaborate.
+I don't know anything C#, never touch them and I only selected C++ on visual studio installation.
