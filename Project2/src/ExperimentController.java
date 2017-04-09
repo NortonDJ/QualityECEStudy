@@ -9,7 +9,7 @@ public class ExperimentController {
 
     public static void main(String[] args){
         ExperimentController ec = new ExperimentController();
-        String test = "t2.txt";
+        String test = "t3.txt";
         ec.testTimeFuncOfPCorr(test);
         ec.testTimeFuncOfPLoss(test);
         ec.testTimeFuncOfWinSize(test);

@@ -54,7 +54,6 @@ public class SenderGBNProtocol extends SenderTransport {
         System.out.println("SENDER GBN SENDING:     " + toSend.toString());
         nl.sendPacket(toSend, to);
         if (base == nextSeqNum) {
-            tl.stopTimer(me);
             tl.startTimer(timeOut, me);
         }
         numTransmissions++;
@@ -78,7 +77,6 @@ public class SenderGBNProtocol extends SenderTransport {
                 if (base == nextSeqNum) {
                     tl.stopTimer(me);
                 } else {
-                    tl.stopTimer(me);
                     tl.startTimer(timeOut, me);
                 }
                 // try to send the next packet(s)

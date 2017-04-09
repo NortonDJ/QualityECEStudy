@@ -87,8 +87,6 @@ public class SenderTCPProtocol extends SenderTransport {
                     if (base == nextSeqNum) {
                         tl.stopTimer(me);
                     } else {
-                        //restart timer
-                        tl.stopTimer(me);
                         tl.startTimer(timeOut, me);
                     }
                     //the sender has received an ack, send the next packet(s)
