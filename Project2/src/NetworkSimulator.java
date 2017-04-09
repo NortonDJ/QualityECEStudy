@@ -53,7 +53,7 @@ public class NetworkSimulator
         int sentFromSenderCount = 0;
         //receiverTimeOut not used, could be used at a later point for delayed ACK
         DEBUG = debug;
-        boolean testOverRide = false;
+        boolean testOverRide = true;
 
         //reading in file line by line. Each line will be one message
         ArrayList<String> messageArray = readFile(filename);

@@ -29,7 +29,7 @@ public class SenderTCPProtocol extends SenderTransport {
      */
     public void initialize() {
         dupACKCount = -1;
-        dupACKNum = -1;
+        dupACKNum = 0;
         nextSeqNum = 0;
         base = 0;
         packetArrayList = new ArrayList<Packet>();
@@ -141,7 +141,7 @@ public class SenderTCPProtocol extends SenderTransport {
      */
     public void fastRetransmit() {
         Packet toSend = new Packet(packetArrayList.get(dupACKNum));
-        System.out.println("SENDER TCP RESENDING:   " + toSend.toString());
+        System.out.println("SENDER TCP FAST RETRANSMIT:   " + toSend.toString());
         nl.sendPacket(toSend, to);
         dupACKCount = 0;
         tl.stopTimer(me);
