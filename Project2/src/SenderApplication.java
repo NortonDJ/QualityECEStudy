@@ -9,6 +9,11 @@ public class SenderApplication
     private ArrayList<String> messages; //all messages the application will send
     private int index; //how many messages has the application sent so far
 
+    /**
+     * Constructor SenderApplication
+     * @param messages
+     * @param sender transport
+     */
     public SenderApplication(ArrayList<String> messages, SenderTransport st)
     {
         this.st = st;
@@ -16,11 +21,17 @@ public class SenderApplication
         index=0;
     }
     
+    /**
+     * get transport layer used
+     */
     public SenderTransport getSenderTransport()
     {
         return st;
     }
     
+    /**
+     * send message through transport layer
+     */
     public void sendMessage()
     {
 

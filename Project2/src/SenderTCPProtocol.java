@@ -24,7 +24,7 @@ public class SenderTCPProtocol extends SenderTransport {
     }
 
     /**
-     * initialize the TCP of sender's transport layer
+     * initialize the TCP sender's transport layer
      */
     public void initialize() {
         dupACKCount = -1;
