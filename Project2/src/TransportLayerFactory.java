@@ -1,16 +1,28 @@
 /**
- * Created by nortondj on 3/30/17.
+ * This class creates receiver and sender
  */
 public class TransportLayerFactory {
 
     private NetworkLayer nl;
     private Timeline tl;
 
+    /**
+     * Constructor of TransportLayerFactory
+     * @param network layer
+     * @param timeline
+     */
     public TransportLayerFactory(NetworkLayer nl, Timeline tl){
         this.nl = nl;
         this.tl = tl;
     }
 
+    /**
+     * create sender
+     * @param protocol type
+     * @param size of window
+     * @param timeout
+     * @return SenderTransport
+     */
     public SenderTransport makeSender(int protocol, int windowSize, int timeOut){
         switch(protocol){
             case (0) :
@@ -25,6 +37,14 @@ public class TransportLayerFactory {
         }
     }
 
+    /**
+     * create receiver
+     * @param protocol type
+     * @param size of window
+     * @param receiver application
+     * @param timeout
+     * @return ReceiverTransport
+     */
     public ReceiverTransport makeReceiver(int protocol, int windowSize, ReceiverApplication ra, int timeOut){
         switch(protocol){
             case (0) :
