@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 /**
- * Created by nortondj on 3/30/17.
+ * A class which represents the protocol of TCP of sender's transport layer
  */
 public class SenderTCPProtocol extends SenderTransport {
 
@@ -12,11 +12,20 @@ public class SenderTCPProtocol extends SenderTransport {
     private int nextSeqNum;
     private int base;
 
+    /**
+     * Constructor of TCP sender protocol
+     * @param network layer
+     * @param timeline
+     * @param timeout 
+     */
     public SenderTCPProtocol(NetworkLayer nl, Timeline tl, int n, int timeOut) {
         super(nl, tl, n);
         this.timeOut = timeOut;
     }
 
+    /**
+     * initialize the TCP of sender's transport layer
+     */
     public void initialize() {
         dupACKCount = -1;
         dupACKNum = -1;
@@ -25,6 +34,10 @@ public class SenderTCPProtocol extends SenderTransport {
         packetArrayList = new ArrayList<Packet>();
     }
 
+    /**
+     * Send message in TCP protocol
+     * @param message content
+     */
     public void sendMessage(Message msg) {
         int seqNum = packetArrayList.size();
         int ackNum = -1;
@@ -44,7 +57,10 @@ public class SenderTCPProtocol extends SenderTransport {
         tl.startTimer(timeOut, me);
         nextSeqNum++;
     }
-
+    
+    /**
+     * Send next packet in TCP protocol
+     */
     public void receiveMessage(Packet pkt) {
         System.out.println("SENDER TCP RECEIVED:    " + pkt.toString());
         if (verifyPacket(pkt)) {
@@ -71,12 +87,18 @@ public class SenderTCPProtocol extends SenderTransport {
         }
     }
 
+    /**
+     * when time out expired, call resending packet
+     */
     public void timerExpired() {
         System.out.println("TIMER EXPIRED");
         tl.startTimer(timeOut, me);
         resendDueToTimeout();
     }
 
+    /**
+     * method of resending packet 
+     */
     public void resendDueToTimeout() {
         Packet toSend = new Packet(packetArrayList.get(base));
         System.out.println("SENDER TCP RESENDING:   " + toSend.toString());
@@ -85,6 +107,11 @@ public class SenderTCPProtocol extends SenderTransport {
         dupACKNum = base;
     }
 
+    /**
+     * check if the received packet correct 
+     * @param packet
+     * @return true/false
+     */
     public boolean verifyPacket(Packet pkt) {
         if(corruptionAllowed) {
             return !pkt.isCorrupt();
@@ -93,6 +120,9 @@ public class SenderTCPProtocol extends SenderTransport {
         }
     }
 
+    /**
+     * resend packets
+     */
     public void fastRetransmit() {
         Packet toSend = new Packet(packetArrayList.get(dupACKNum));
         System.out.println("SENDER TCP RESENDING:   " + toSend.toString());
@@ -101,11 +131,19 @@ public class SenderTCPProtocol extends SenderTransport {
         tl.startTimer(timeOut, me);
     }
 
+    /**
+     * track ack amount
+     * @param ack number
+     */
     public void trackAck(int ackNum) {
         dupACKNum = ackNum;
         dupACKCount = 0;
     }
 
+    /**
+     * check if ack number has three duplicates
+     * @param ack number
+     */
     public boolean ackIsDuplicate(int ackNum) {
         if (ackNum == dupACKNum) {
             return true;
@@ -114,6 +152,11 @@ public class SenderTCPProtocol extends SenderTransport {
         }
     }
 
+    /**
+     * check if ack number has three duplicates
+     * @param ack number
+     * @return true/false
+     */
     public boolean ackNumMakesSense(int ackNum) {
         if (ackNum < base || ackNum > nextSeqNum) {
             return false;
@@ -122,6 +165,9 @@ public class SenderTCPProtocol extends SenderTransport {
         }
     }
 
+    /**
+     * check if the sender can send next packet
+     */
     public boolean canSendNext() {
         if (nextSeqNum < base + windowSize && nextSeqNum < packetArrayList.size()) {
             return true;
@@ -130,24 +176,39 @@ public class SenderTCPProtocol extends SenderTransport {
         }
     }
 
+    /**
+     * send the packets stored in buffer (could not send because the window did not move which stored in buffer)
+     */
     public void sendBufferedPkts() {
         while (canSendNext()) {
             sendNextPacket();
         }
     }
 
+    /**
+     * count the amount of duplicate acknowledgement
+     */
     public int getDupACKCount() {
         return dupACKCount;
     }
-
+    
+    /**
+     * get the amount of duplicate acknowledgement
+     */
     public int getDupACKNum() {
         return dupACKNum;
     }
 
+    /**
+     * get next sequence number
+     */
     public int getNextSeqNum() {
         return nextSeqNum;
     }
 
+    /**
+     * get base number
+     */
     public int getBase() {
         return base;
     }
