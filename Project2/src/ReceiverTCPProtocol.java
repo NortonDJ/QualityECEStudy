@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 /**
- * 
+ * A class which represents the protocol of TCP receiver transport layer
  */
 public class ReceiverTCPProtocol extends ReceiverTransport {
     public int getExpectedSeqNum() {
