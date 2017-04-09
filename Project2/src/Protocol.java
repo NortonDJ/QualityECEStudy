@@ -1,5 +1,5 @@
 /**
- * Created by nortondj on 3/30/17.
+ * interface of both Go-back-n and TCP protocol
  */
 public interface Protocol {
 

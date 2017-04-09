@@ -1,4 +1,3 @@
-
 /**
  * A class which represents the receiver transport layer
  */
@@ -12,7 +11,7 @@ public abstract class ReceiverTransport implements Protocol
     protected boolean corruptionAllowed = true;
 
     /**
-     * Constructor of Go-Back-n receiver protocol
+     * Constructor of receiver protocol
      * @param network layer
      * @param receiver application
      * @param timeout 
