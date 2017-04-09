@@ -1,14 +1,8 @@
 /**
- * Created by nortondj on 3/30/17.
+ * 
  */
 public class ReceiverGBNProtocol extends ReceiverTransport {
-
-    public int getExpectedSeqNum() {
-        return expectedSeqNum;
-    }
-
     private int expectedSeqNum;
-
     public ReceiverGBNProtocol(NetworkLayer nl, ReceiverApplication ra, int windowSize) {
         super(nl, ra, windowSize);
     }
@@ -51,5 +45,9 @@ public class ReceiverGBNProtocol extends ReceiverTransport {
         } else {
             return true;
         }
+    }
+    
+    public int getExpectedSeqNum() {
+        return expectedSeqNum;
     }
 }
