@@ -10,6 +10,7 @@ public abstract class SenderTransport implements Protocol {
     protected static int to = Event.RECEIVER;
     protected static int me = Event.SENDER;
     protected boolean corruptionAllowed = true;
+    protected int numTransmissions;
 
     /**
      * Constructor of sender transport layer
@@ -45,6 +46,10 @@ public abstract class SenderTransport implements Protocol {
             checkSum += c;
         }
         return checkSum;
+    }
+
+    public int getNumTransmissions(){
+        return numTransmissions;
     }
 
 }

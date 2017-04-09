@@ -88,9 +88,9 @@ class SenderGBNProtocolNoCorruptionTest {
         for(int i = 0; i < 5; i++){
             st.sendMessage(new Message(messageArray.get(i)));
         }
-        Packet ack = new Packet(new Message("I'm an ACK"), -1, 3, -1);
+        Packet ack = new Packet(new Message("I'm an ACK"), -1, 2, -1);
         st.receiveMessage(ack);
-        assertEquals(4, st.getBase());
+        assertEquals(3, st.getBase());
     }
 
     @Test
@@ -99,10 +99,10 @@ class SenderGBNProtocolNoCorruptionTest {
         for(int i = 0; i < 8; i++){
             st.sendMessage(new Message(messageArray.get(i)));
         }
-        Packet ack = new Packet(new Message("I'm an ACK"), -1, 3, -1);
+        Packet ack = new Packet(new Message("I'm an ACK"), -1, 2, -1);
         st.receiveMessage(ack);
-        //when the sender receives the ack for 3, we expect that it send 4,5,6
-        assertEquals(7, st.getNextSeqNum());
+        //when the sender receives the ack for 2, we expect that it send 3,4,5
+        assertEquals(6, st.getNextSeqNum());
     }
 
     @Test
@@ -122,12 +122,12 @@ class SenderGBNProtocolNoCorruptionTest {
         for(int i = 0; i < 8; i++){
             st.sendMessage(new Message(messageArray.get(i)));
         }
-        Packet ack = new Packet(new Message("I'm an ACK"), -1, 3, -1);
+        Packet ack = new Packet(new Message("I'm an ACK"), -1, 2, -1);
         st.receiveMessage(ack);
         Packet ack2 = new Packet(new Message("I'm an ACK"), -1, 1, -1);
         st.receiveMessage(ack2);
-        assertEquals(4, st.getBase());
-        assertEquals(7, st.getNextSeqNum());
+        assertEquals(3, st.getBase());
+        assertEquals(6, st.getNextSeqNum());
     }
 
     @Test

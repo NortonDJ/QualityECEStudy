@@ -33,11 +33,15 @@ public class ReceiverGBNProtocol extends ReceiverTransport {
      */
     public void receiveMessage(Packet pkt) {
         System.out.println("RECEIVER GBN RECEIVED:  " + pkt.toString());
-        if(verifyPacket(pkt) && pkt.getSeqnum() == expectedSeqNum){
-            Message msg = pkt.getMessage();
-            ra.receiveMessage(msg);
-            sendAck(expectedSeqNum);
-            expectedSeqNum++;
+        if(verifyPacket(pkt)){
+            if(pkt.getSeqnum() == expectedSeqNum) {
+                Message msg = pkt.getMessage();
+                ra.receiveMessage(msg);
+                sendAck(expectedSeqNum);
+                expectedSeqNum++;
+            } else {
+                sendAck(expectedSeqNum - 1);
+            }
         } else {
             System.out.println("RECEIVER GBN RECOGNIZED CORRUPT PACKET");
             sendAck(expectedSeqNum - 1);

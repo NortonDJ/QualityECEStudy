@@ -4,6 +4,7 @@ import java.io.FileReader;
 public class NetworkSimulator
 {
     public static int DEBUG;
+    private static int endTime;
     /**
      * Main method with following variables
      * @param args[0] file with messages
@@ -42,14 +43,17 @@ public class NetworkSimulator
                 "\nDEBUG: " + debug);
 
         NetworkSimulator.run(filename, timeBtwnMsg, pLoss, pCorr, winSize,
-                protocol, debug, 15, 15);
+                protocol, debug, 50, 50);
     }
 
     public static Results run(String filename, int timeBtwnMsgs, float pLoss,
                            float pCorr, int winSize, int protocol, int debug,
                            int senderTimeOut, int receiverTimeOut){
+        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+        int sentFromSenderCount = 0;
         //receiverTimeOut not used, could be used at a later point for delayed ACK
         DEBUG = debug;
+        boolean testOverRide = false;
 
         //reading in file line by line. Each line will be one message
         ArrayList<String> messageArray = readFile(filename);
@@ -88,11 +92,12 @@ public class NetworkSimulator
                 if (currentEvent == null) {
                     break;
                 }
+                endTime = currentEvent.getTime();
                 //if event is time to send a message, call the send message function of the sender application.
                 if (currentEvent.getType() == Event.MESSAGESEND) {
                     sa.sendMessage();
                     if (DEBUG > 0) {
-                        System.out.println("Message sent from sender to receiver at time " + currentEvent.getTime());
+                        System.out.println("Message sent from application at time " + currentEvent.getTime());
                     }
                 }
                 //if event is a message arrival
@@ -107,7 +112,18 @@ public class NetworkSimulator
                     else {
                         if (DEBUG > 0)
                             System.out.println("Message arriving from sender to receiver at time " + currentEvent.getTime());
-                        rt.receiveMessage(currentEvent.getPacket());
+                        if(sentFromSenderCount == 0 && testOverRide){
+                            System.out.println("CORRUPTING FIRST PACKET");
+                            currentEvent.getPacket().corrupt();
+                            sentFromSenderCount++;
+                            rt.receiveMessage(currentEvent.getPacket());
+                        } else if (sentFromSenderCount == 1 && testOverRide){
+                            System.out.println("DROPPING SECOND PACKET FROM SENDER");
+                            sentFromSenderCount++;
+                        } else {
+                            rt.receiveMessage(currentEvent.getPacket());
+                            sentFromSenderCount++;
+                        }
                     }
                 }
                 //If event is an expired timer, call the timerExpired method in the sender transport.
@@ -139,7 +155,7 @@ public class NetworkSimulator
                 }
                 count++;
             }
-            Results r = new Results(tl.getTotalMessagesToSend(), currentEvent.getTime());
+            Results r = new Results(tl.getTotalMessagesToSend(), endTime, st.getNumTransmissions());
         } catch (UnsupportedOperationException e){
             System.out.println("Network Simulator recognized simulation is over.");
             String protocolString = "";
@@ -149,9 +165,13 @@ public class NetworkSimulator
                 protocolString = "TCP";
             }
             System.out.println("Time to send: " + tl.getTotalMessagesToSend() +
-                    " messages using " +protocolString +" = " + currentEvent.getTime());
-        } finally {
-            Results r = new Results(tl.getTotalMessagesToSend(), currentEvent.getTime());
+                    " messages using " +protocolString +" = " + endTime);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            System.out.println("Program exited");
+            Results r = new Results(tl.getTotalMessagesToSend(), endTime, st.getNumTransmissions());
             return r;
         }
     }
@@ -165,8 +185,12 @@ public class NetworkSimulator
         }catch(Exception e)
         {System.out.println("Could not open file " + e);}
 
-        while(sc.hasNextLine())
-            messageArray.add(sc.nextLine());
+        while(sc.hasNextLine()) {
+            String s = sc.nextLine();
+            if (!s.isEmpty()) {
+                messageArray.add(s);
+            }
+        }
         return messageArray;
     }
 

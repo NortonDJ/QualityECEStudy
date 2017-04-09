@@ -33,6 +33,7 @@ public class SenderTCPProtocol extends SenderTransport {
         nextSeqNum = 0;
         base = 0;
         packetArrayList = new ArrayList<Packet>();
+        numTransmissions = 0;
     }
 
     /**
@@ -60,6 +61,7 @@ public class SenderTCPProtocol extends SenderTransport {
         nl.sendPacket(toSend, to);
         tl.startTimer(timeOut, me);
         nextSeqNum++;
+        numTransmissions++;
     }
 
     /**
@@ -85,6 +87,8 @@ public class SenderTCPProtocol extends SenderTransport {
                     if (base == nextSeqNum) {
                         tl.stopTimer(me);
                     } else {
+                        //restart timer
+                        tl.stopTimer(me);
                         tl.startTimer(timeOut, me);
                     }
                     //the sender has received an ack, send the next packet(s)
@@ -115,6 +119,7 @@ public class SenderTCPProtocol extends SenderTransport {
         nl.sendPacket(toSend, to);
         dupACKCount = -1;
         dupACKNum = base;
+        numTransmissions++;
     }
 
     /**
@@ -139,7 +144,9 @@ public class SenderTCPProtocol extends SenderTransport {
         System.out.println("SENDER TCP RESENDING:   " + toSend.toString());
         nl.sendPacket(toSend, to);
         dupACKCount = 0;
+        tl.stopTimer(me);
         tl.startTimer(timeOut, me);
+        numTransmissions++;
     }
 
     /**
