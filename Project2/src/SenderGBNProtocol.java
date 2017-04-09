@@ -64,15 +64,16 @@ public class SenderGBNProtocol extends SenderTransport {
      */
     public void receiveMessage(Packet pkt) {
         System.out.println("SENDER GBN RECEIVED:    " + pkt.toString());
-        if (verifyPacket(pkt)) {
+        if (verifyPacket(pkt)) { // if packet is not corrupt
             int ackNum = pkt.getAcknum();
-            if(ackNumMakesSense(ackNum)) {
+            if(ackNumMakesSense(ackNum)) { //if ack is in window
                 base = ackNum + 1;
                 if (base == nextSeqNum) {
                     tl.stopTimer(me);
                 } else {
                     tl.startTimer(timeOut, me);
                 }
+                // try to send the next packet(s)
                 sendBufferedPkts();
             }
         } else {

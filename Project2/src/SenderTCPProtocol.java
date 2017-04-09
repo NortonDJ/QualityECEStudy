@@ -39,10 +39,12 @@ public class SenderTCPProtocol extends SenderTransport {
      * @param message content
      */
     public void sendMessage(Message msg) {
+        // add packet to sender's buffer/storage
         int seqNum = packetArrayList.size();
         int ackNum = -1;
         Packet p = new Packet(msg, seqNum, ackNum, generateCheckSum(msg,seqNum,ackNum));
         packetArrayList.add(p);
+        // try to send the next packet
         if (canSendNext()) {
             sendNextPacket();
         } else {
@@ -63,22 +65,23 @@ public class SenderTCPProtocol extends SenderTransport {
      */
     public void receiveMessage(Packet pkt) {
         System.out.println("SENDER TCP RECEIVED:    " + pkt.toString());
-        if (verifyPacket(pkt)) {
+        if (verifyPacket(pkt)) { //if packet is not corrupt
             int ackNum = pkt.getAcknum();
-            if (ackNumMakesSense(ackNum)) {
-                if (ackIsDuplicate(ackNum)) {
+            if (ackNumMakesSense(ackNum)) { //if ack is in window
+                if (ackIsDuplicate(ackNum)) { //check if its duplicate
                     dupACKCount++;
                     if (dupACKCount == 3) {
                         fastRetransmit();
                     }
                 } else {
-                    trackAck(ackNum);
+                    trackAck(ackNum); //track the ack
                     base = ackNum;
                     if (base == nextSeqNum) {
                         tl.stopTimer(me);
                     } else {
                         tl.startTimer(timeOut, me);
                     }
+                    //the sender has received an ack, send the next packet(s)
                     sendBufferedPkts();
                 }
             }
@@ -88,7 +91,7 @@ public class SenderTCPProtocol extends SenderTransport {
     }
 
     /**
-     * when time out expired, call resending packet
+     * when time out expired, call resending routine
      */
     public void timerExpired() {
         System.out.println("TIMER EXPIRED");
@@ -132,7 +135,7 @@ public class SenderTCPProtocol extends SenderTransport {
     }
 
     /**
-     * track ack amount
+     * track ack sets the current acknum to be followed
      * @param ack number
      */
     public void trackAck(int ackNum) {
@@ -153,7 +156,7 @@ public class SenderTCPProtocol extends SenderTransport {
     }
 
     /**
-     * check if ack number has three duplicates
+     * check if ack is in window
      * @param ack number
      * @return true/false
      */
@@ -177,7 +180,8 @@ public class SenderTCPProtocol extends SenderTransport {
     }
 
     /**
-     * send the packets stored in buffer (could not send because the window did not move which stored in buffer)
+     * send the packets stored in buffer (previously could not be sent
+     * because the window was full)
      */
     public void sendBufferedPkts() {
         while (canSendNext()) {
