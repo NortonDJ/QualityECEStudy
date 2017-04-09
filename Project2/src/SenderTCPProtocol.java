@@ -14,9 +14,10 @@ public class SenderTCPProtocol extends SenderTransport {
 
     /**
      * Constructor of TCP sender protocol
-     * @param network layer
+     *
+     * @param network  layer
      * @param timeline
-     * @param timeout 
+     * @param timeout
      */
     public SenderTCPProtocol(NetworkLayer nl, Timeline tl, int n, int timeOut) {
         super(nl, tl, n);
@@ -36,13 +37,14 @@ public class SenderTCPProtocol extends SenderTransport {
 
     /**
      * Send message in TCP protocol
+     *
      * @param message content
      */
     public void sendMessage(Message msg) {
         // add packet to sender's buffer/storage
         int seqNum = packetArrayList.size();
         int ackNum = -1;
-        Packet p = new Packet(msg, seqNum, ackNum, generateCheckSum(msg,seqNum,ackNum));
+        Packet p = new Packet(msg, seqNum, ackNum, generateCheckSum(msg, seqNum, ackNum));
         packetArrayList.add(p);
         // try to send the next packet
         if (canSendNext()) {
@@ -59,7 +61,7 @@ public class SenderTCPProtocol extends SenderTransport {
         tl.startTimer(timeOut, me);
         nextSeqNum++;
     }
-    
+
     /**
      * Send next packet in TCP protocol
      */
@@ -67,6 +69,10 @@ public class SenderTCPProtocol extends SenderTransport {
         System.out.println("SENDER TCP RECEIVED:    " + pkt.toString());
         if (verifyPacket(pkt)) { //if packet is not corrupt
             int ackNum = pkt.getAcknum();
+            if(ackNum == tl.getTotalMessagesToSend()){
+                System.out.println("Sender has received the final ACK. Simulation OVER.");
+                throw new UnsupportedOperationException("We're DONE!");
+            }
             if (ackNumMakesSense(ackNum)) { //if ack is in window
                 if (ackIsDuplicate(ackNum)) { //check if its duplicate
                     dupACKCount++;
@@ -86,6 +92,7 @@ public class SenderTCPProtocol extends SenderTransport {
                 }
             }
         } else {
+            System.out.println("SENDER TCP RECOGNIZED CORRUPT PACKET");
             // DO NOTHING
         }
     }
@@ -100,7 +107,7 @@ public class SenderTCPProtocol extends SenderTransport {
     }
 
     /**
-     * method of resending packet 
+     * method of resending packet
      */
     public void resendDueToTimeout() {
         Packet toSend = new Packet(packetArrayList.get(base));
@@ -111,12 +118,13 @@ public class SenderTCPProtocol extends SenderTransport {
     }
 
     /**
-     * check if the received packet correct 
+     * check if the received packet correct
+     *
      * @param packet
      * @return true/false
      */
     public boolean verifyPacket(Packet pkt) {
-        if(corruptionAllowed) {
+        if (corruptionAllowed) {
             return !pkt.isCorrupt();
         } else {
             return true;
@@ -136,6 +144,7 @@ public class SenderTCPProtocol extends SenderTransport {
 
     /**
      * track ack sets the current acknum to be followed
+     *
      * @param ack number
      */
     public void trackAck(int ackNum) {
@@ -145,6 +154,7 @@ public class SenderTCPProtocol extends SenderTransport {
 
     /**
      * check if ack number has three duplicates
+     *
      * @param ack number
      */
     public boolean ackIsDuplicate(int ackNum) {
@@ -157,6 +167,7 @@ public class SenderTCPProtocol extends SenderTransport {
 
     /**
      * check if ack is in window
+     *
      * @param ack number
      * @return true/false
      */
@@ -195,7 +206,7 @@ public class SenderTCPProtocol extends SenderTransport {
     public int getDupACKCount() {
         return dupACKCount;
     }
-    
+
     /**
      * get the amount of duplicate acknowledgement
      */

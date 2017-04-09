@@ -66,6 +66,10 @@ public class SenderGBNProtocol extends SenderTransport {
         System.out.println("SENDER GBN RECEIVED:    " + pkt.toString());
         if (verifyPacket(pkt)) { // if packet is not corrupt
             int ackNum = pkt.getAcknum();
+            if(ackNum == tl.getTotalMessagesToSend()){
+                System.out.println("Sender has received the final ACK. Simulation OVER.");
+                throw new UnsupportedOperationException("We're DONE!");
+            }
             if(ackNumMakesSense(ackNum)) { //if ack is in window
                 base = ackNum + 1;
                 if (base == nextSeqNum) {
@@ -77,6 +81,7 @@ public class SenderGBNProtocol extends SenderTransport {
                 sendBufferedPkts();
             }
         } else {
+            System.out.println("SENDER GBN RECOGNIZED CORRUPT PACKET");
             // DO NOTHING
         }
     }

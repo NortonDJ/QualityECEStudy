@@ -59,6 +59,7 @@ public class ReceiverTCPProtocol extends ReceiverTransport {
                 sendAck(expectedSeqNum);
             }
         } else {
+            System.out.println("RECEIVER TCP RECOGNIZED CORRUPT PACKET");
             sendAck(expectedSeqNum);
         }
     }

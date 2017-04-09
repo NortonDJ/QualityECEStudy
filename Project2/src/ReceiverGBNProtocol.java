@@ -39,6 +39,7 @@ public class ReceiverGBNProtocol extends ReceiverTransport {
             sendAck(expectedSeqNum);
             expectedSeqNum++;
         } else {
+            System.out.println("RECEIVER GBN RECOGNIZED CORRUPT PACKET");
             sendAck(expectedSeqNum - 1);
         }
     }

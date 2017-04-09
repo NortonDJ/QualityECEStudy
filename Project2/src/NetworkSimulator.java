@@ -42,15 +42,14 @@ public class NetworkSimulator
                 "\nDEBUG: " + debug);
 
         NetworkSimulator.run(filename, timeBtwnMsg, pLoss, pCorr, winSize,
-                protocol, debug);
+                protocol, debug, 15, 15);
     }
 
     public static void run(String filename, int timeBtwnMsgs, float pLoss,
-                           float pCorr, int winSize, int protocol, int debug){
+                           float pCorr, int winSize, int protocol, int debug,
+                           int senderTimeOut, int receiverTimeOut){
+        //receiverTimeOut not used, could be used at a later point for delayed ACK
         DEBUG = debug;
-
-        int senderTimeOut = 100;
-        int receiverTimeOut = 100;
 
         //reading in file line by line. Each line will be one message
         ArrayList<String> messageArray = readFile(filename);
@@ -78,67 +77,78 @@ public class NetworkSimulator
 
 
         //current event to process
-        Event currentEvent;
+        Event currentEvent = null;
         //this loop will run while there are events in the priority queue
         int count = 0;
-        while(true) {
-            //get next event
-            currentEvent = tl.returnNextEvent();
-            //if no event present, break out
-            if(currentEvent==null) {
-                break;
-            }
-            //if event is time to send a message, call the send message function of the sender application.
-            if(currentEvent.getType()==Event.MESSAGESEND) {
-                sa.sendMessage();
-                if(DEBUG>0) {
-                    System.out.println("Message sent from sender to receiver at time " + currentEvent.getTime());
+        try {
+            while (true) {
+                //get next event
+                currentEvent = tl.returnNextEvent();
+                //if no event present, break out
+                if (currentEvent == null) {
+                    break;
                 }
-            }
-            //if event is a message arrival
-            else if (currentEvent.getType()==Event.MESSAGEARRIVE) {
-                //if it arrives at the sender, call the get packet from the sender
-                if(currentEvent.getHost()==Event.SENDER){
-                    if(DEBUG>0)
-                        System.out.println("Message arriving from receiver to sender at time " + currentEvent.getTime());
-                    st.receiveMessage(currentEvent.getPacket());
-                }
-                //if it arrives at the receiver, call the get packet from the receiver
-                else {
-                    if(DEBUG>0)
-                        System.out.println("Message arriving from sender to receiver at time " + currentEvent.getTime());
-                    rt.receiveMessage(currentEvent.getPacket());
-                }
-            }
-            //If event is an expired timer, call the timerExpired method in the sender transport.
-            else if (currentEvent.getType()==Event.TIMER) {
-                int host = currentEvent.getHost();
-                if(DEBUG>0) {
-                    String hostString;
-                    if (host == Event.SENDER) {
-                        hostString = "Sender";
-                    } else {
-                        hostString = "Receiver";
+                //if event is time to send a message, call the send message function of the sender application.
+                if (currentEvent.getType() == Event.MESSAGESEND) {
+                    sa.sendMessage();
+                    if (DEBUG > 0) {
+                        System.out.println("Message sent from sender to receiver at time " + currentEvent.getTime());
                     }
-                    System.out.println(hostString + " Timer expired at time " + currentEvent.getTime());
                 }
+                //if event is a message arrival
+                else if (currentEvent.getType() == Event.MESSAGEARRIVE) {
+                    //if it arrives at the sender, call the get packet from the sender
+                    if (currentEvent.getHost() == Event.SENDER) {
+                        if (DEBUG > 0)
+                            System.out.println("Message arriving from receiver to sender at time " + currentEvent.getTime());
+                        st.receiveMessage(currentEvent.getPacket());
+                    }
+                    //if it arrives at the receiver, call the get packet from the receiver
+                    else {
+                        if (DEBUG > 0)
+                            System.out.println("Message arriving from sender to receiver at time " + currentEvent.getTime());
+                        rt.receiveMessage(currentEvent.getPacket());
+                    }
+                }
+                //If event is an expired timer, call the timerExpired method in the sender transport.
+                else if (currentEvent.getType() == Event.TIMER) {
+                    int host = currentEvent.getHost();
+                    if (DEBUG > 0) {
+                        String hostString;
+                        if (host == Event.SENDER) {
+                            hostString = "Sender";
+                        } else {
+                            hostString = "Receiver";
+                        }
+                        System.out.println(hostString + " Timer expired at time " + currentEvent.getTime());
+                    }
 
-                tl.stopTimer(host);
-                if(host == Event.SENDER) {
-                    st.timerExpired();
-                } else {
-                    rt.timerExpired();
+                    tl.stopTimer(host);
+                    if (host == Event.SENDER) {
+                        st.timerExpired();
+                    } else {
+                        rt.timerExpired();
+                    }
+                } else if (currentEvent.getType() == Event.KILLEDTIMER) {
+                    //do nothing if it is just a turned off timer.
                 }
+                //this should not happen.
+                else {
+                    System.out.println("Unidentified event type!");
+                    System.exit(1);
+                }
+                count++;
             }
-            else if (currentEvent.getType()==Event.KILLEDTIMER) {
-                //do nothing if it is just a turned off timer.
+        } catch (UnsupportedOperationException e){
+            System.out.println("Network Simulator recognized simulation is over.");
+            String protocolString = "";
+            if(protocol == 0){
+                protocolString = "GBN";
+            } else {
+                protocolString = "TCP";
             }
-            //this should not happen.
-            else {
-                System.out.println("Unidentified event type!");
-                System.exit(1);
-            }
-            count++;
+            System.out.println("Time to send: " + tl.getTotalMessagesToSend() +
+                    " messages using " +protocolString +" = " + currentEvent.getTime());
         }
     }
 
