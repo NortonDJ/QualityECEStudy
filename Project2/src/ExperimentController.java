@@ -10,13 +10,13 @@ public class ExperimentController {
     public static void main(String[] args){
         ExperimentController ec = new ExperimentController();
         String test = "t2.txt";
-//        ec.testTimeFuncOfPCorr(test);
-//        ec.testTimeFuncOfPLoss(test);
+        ec.testTimeFuncOfPCorr(test);
+        ec.testTimeFuncOfPLoss(test);
         ec.testTimeFuncOfWinSize(test);
         ec.testTransFuncOfWinSize(test);
-//        ec.testTimeFuncOfMessages(test);
-//        ec.testTimeFuncTimeBtwn(test);
-//        ec.testTimeFuncTimeOut(test);
+        ec.testTimeFuncOfMessages(test);
+        ec.testTimeFuncTimeBtwn(test);
+        ec.testTimeFuncTimeOut(test);
     }
 
     public void testTimeFuncOfPCorr(String writeFile){
