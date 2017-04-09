@@ -10,6 +10,12 @@ public class NetworkLayer
     Timeline tl; 
     Random ran; //random number generator for losing packets.
 
+    /**
+     * Constructor of TransportLayerFactory
+     * @param probability of losing a packet
+     * @param probability of corrupting a packet
+     * @param timeline
+     */
     public NetworkLayer(float lp, float cp,Timeline tl)
     {
         lossProbability=lp;
@@ -18,7 +24,11 @@ public class NetworkLayer
         ran = new Random();
     }
 
-    //sending packet if it is not lost, and corrupting it if necessary.
+    /**
+     * sending packet if it is not lost, and corrupting it if necessary.
+     * @param packet
+     * @param timeout
+     */
     public void sendPacket(Packet pkt, int to)
     {
         if(ran.nextDouble()<lossProbability)
