@@ -45,7 +45,7 @@ public class NetworkSimulator
                 protocol, debug, 15, 15);
     }
 
-    public static void run(String filename, int timeBtwnMsgs, float pLoss,
+    public static Results run(String filename, int timeBtwnMsgs, float pLoss,
                            float pCorr, int winSize, int protocol, int debug,
                            int senderTimeOut, int receiverTimeOut){
         //receiverTimeOut not used, could be used at a later point for delayed ACK
@@ -139,6 +139,7 @@ public class NetworkSimulator
                 }
                 count++;
             }
+            Results r = new Results(tl.getTotalMessagesToSend(), currentEvent.getTime());
         } catch (UnsupportedOperationException e){
             System.out.println("Network Simulator recognized simulation is over.");
             String protocolString = "";
@@ -149,6 +150,9 @@ public class NetworkSimulator
             }
             System.out.println("Time to send: " + tl.getTotalMessagesToSend() +
                     " messages using " +protocolString +" = " + currentEvent.getTime());
+        } finally {
+            Results r = new Results(tl.getTotalMessagesToSend(), currentEvent.getTime());
+            return r;
         }
     }
 
