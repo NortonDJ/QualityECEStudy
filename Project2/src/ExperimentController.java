@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class ExperimentController {
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         ExperimentController ec = new ExperimentController();
         String test = "t1.txt";
 //        ec.testTimeFuncOfPCorr(test);
@@ -20,12 +20,12 @@ public class ExperimentController {
         ec.testTransFuncOfTimeout(test);
     }
 
-    public void testTimeFuncOfPCorr(String writeFile){
+    public void testTimeFuncOfPCorr(String writeFile) {
         try {
             FileWriter ftcp = new FileWriter(new File("tcp_time_pCorr_" + writeFile));
             FileWriter fgbn = new FileWriter(new File("gbn_time_pCorr_" + writeFile));
             ArrayList<Float> vec = new ArrayList<Float>();
-            for(int i = 0; i < 20; i ++){
+            for (int i = 0; i < 20; i++) {
                 float f = (i * 0.05f);
                 vec.add(f);
             }
@@ -34,7 +34,7 @@ public class ExperimentController {
             for (Float pCorr : vec) {
                 ArrayList<Integer> tcpVec = new ArrayList<Integer>();
                 ArrayList<Integer> gbnVec = new ArrayList<Integer>();
-                for(int i = 0 ; i < 5; i ++) {
+                for (int i = 0; i < 5; i++) {
                     NetworkSimulator gbnns = new NetworkSimulator();
                     Results gbn = gbnns.run("test.txt", 10, 0, pCorr, 5, 0, 3, 50, 50);
                     NetworkSimulator tcpns = new NetworkSimulator();
@@ -49,16 +49,17 @@ public class ExperimentController {
             }
             ftcp.close();
             fgbn.close();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void testTimeFuncOfPLoss(String writeFile){
+
+    public void testTimeFuncOfPLoss(String writeFile) {
         try {
             FileWriter ftcp = new FileWriter(new File("tcp_time_pLoss_" + writeFile));
             FileWriter fgbn = new FileWriter(new File("gbn_time_pLoss_" + writeFile));
             ArrayList<Float> vec = new ArrayList<Float>();
-            for(int i = 0; i < 20; i ++){
+            for (int i = 0; i < 20; i++) {
                 float f = (i * 0.05f);
                 vec.add(f);
             }
@@ -67,7 +68,7 @@ public class ExperimentController {
             for (Float pLoss : vec) {
                 ArrayList<Integer> tcpVec = new ArrayList<Integer>();
                 ArrayList<Integer> gbnVec = new ArrayList<Integer>();
-                for(int i = 0 ; i < 5; i ++) {
+                for (int i = 0; i < 5; i++) {
                     NetworkSimulator gbnns = new NetworkSimulator();
                     Results gbn = gbnns.run("test.txt", 10, pLoss, 0, 5, 0, 3, 50, 50);
                     NetworkSimulator tcpns = new NetworkSimulator();
@@ -82,17 +83,17 @@ public class ExperimentController {
             }
             ftcp.close();
             fgbn.close();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void testTimeFuncOfWinSize(String writeFile){
+    public void testTimeFuncOfWinSize(String writeFile) {
         try {
             FileWriter ftcp = new FileWriter(new File("tcp_time_winSize_" + writeFile));
             FileWriter fgbn = new FileWriter(new File("gbn_time_winSize_" + writeFile));
             ArrayList<Integer> vec = new ArrayList<Integer>();
-            for(int i = 3; i < 40; i ++){
+            for (int i = 3; i < 40; i++) {
                 vec.add(i);
             }
             ftcp.write("winSize, aveTime\n");
@@ -100,7 +101,7 @@ public class ExperimentController {
             for (Integer winSize : vec) {
                 ArrayList<Integer> tcpVec = new ArrayList<Integer>();
                 ArrayList<Integer> gbnVec = new ArrayList<Integer>();
-                for(int i = 0 ; i < 5; i ++) {
+                for (int i = 0; i < 5; i++) {
                     NetworkSimulator gbnns = new NetworkSimulator();
                     Results gbn = gbnns.run("test.txt", 10, .05f, .05f, winSize, 0, 3, 50, 50);
                     NetworkSimulator tcpns = new NetworkSimulator();
@@ -115,17 +116,17 @@ public class ExperimentController {
             }
             ftcp.close();
             fgbn.close();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void testTransFuncOfWinSize(String writeFile){
+    public void testTransFuncOfWinSize(String writeFile) {
         try {
             FileWriter ftcp = new FileWriter(new File("tcp_trans_winSize_" + writeFile));
             FileWriter fgbn = new FileWriter(new File("gbn_trans_winSize_" + writeFile));
             ArrayList<Integer> vec = new ArrayList<Integer>();
-            for(int i = 3; i < 40; i ++){
+            for (int i = 3; i < 40; i++) {
                 vec.add(i);
             }
             ftcp.write("winSize, trans\n");
@@ -133,7 +134,7 @@ public class ExperimentController {
             for (Integer winSize : vec) {
                 ArrayList<Integer> tcpVec = new ArrayList<Integer>();
                 ArrayList<Integer> gbnVec = new ArrayList<Integer>();
-                for(int i = 0 ; i < 5; i ++) {
+                for (int i = 0; i < 5; i++) {
                     NetworkSimulator gbnns = new NetworkSimulator();
                     Results gbn = gbnns.run("test.txt", 10, .05f, .05f, winSize, 0, 3, 50, 50);
                     NetworkSimulator tcpns = new NetworkSimulator();
@@ -148,17 +149,17 @@ public class ExperimentController {
             }
             ftcp.close();
             fgbn.close();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void testTransFuncOfTimeout(String writeFile){
+    public void testTransFuncOfTimeout(String writeFile) {
         try {
             FileWriter ftcp = new FileWriter(new File("tcp_trans_timeout_" + writeFile));
             FileWriter fgbn = new FileWriter(new File("gbn_trans_timeout_" + writeFile));
             ArrayList<Integer> vec = new ArrayList<Integer>();
-            for(int i = 20; i < 100; i ++){
+            for (int i = 20; i < 100; i++) {
                 vec.add(i);
             }
             ftcp.write("timeout, trans\n");
@@ -166,7 +167,7 @@ public class ExperimentController {
             for (Integer timeout : vec) {
                 ArrayList<Integer> tcpVec = new ArrayList<Integer>();
                 ArrayList<Integer> gbnVec = new ArrayList<Integer>();
-                for(int i = 0 ; i < 5; i ++) {
+                for (int i = 0; i < 5; i++) {
                     NetworkSimulator gbnns = new NetworkSimulator();
                     Results gbn = gbnns.run("test.txt", 10, .05f, .05f, 5, 0, 3, timeout, 50);
                     NetworkSimulator tcpns = new NetworkSimulator();
@@ -181,12 +182,12 @@ public class ExperimentController {
             }
             ftcp.close();
             fgbn.close();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void testTimeFuncOfMessages(String writeFile){
+    public void testTimeFuncOfMessages(String writeFile) {
         try {
             FileWriter ftcp = new FileWriter(new File("tcp_time_messages_" + writeFile));
             FileWriter fgbn = new FileWriter(new File("gbn_time_messages_" + writeFile));
@@ -205,7 +206,7 @@ public class ExperimentController {
                 ArrayList<Integer> tcpVec = new ArrayList<Integer>();
                 ArrayList<Integer> gbnVec = new ArrayList<Integer>();
                 int messagesSent = 0;
-                for(int i = 0; i < 5; i++) {
+                for (int i = 0; i < 5; i++) {
                     NetworkSimulator gbnns = new NetworkSimulator();
                     Results gbn = gbnns.run(fn, 10, .05f, .05f, 5, 0, 3, 50, 50);
                     NetworkSimulator tcpns = new NetworkSimulator();
@@ -221,17 +222,17 @@ public class ExperimentController {
             }
             ftcp.close();
             fgbn.close();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void testTimeFuncTimeBtwn(String writeFile){
+    public void testTimeFuncTimeBtwn(String writeFile) {
         try {
             FileWriter ftcp = new FileWriter(new File("tcp_time_timeBtwn_" + writeFile));
             FileWriter fgbn = new FileWriter(new File("gbn_time_timeBtwn_" + writeFile));
             ArrayList<Integer> vec = new ArrayList<Integer>();
-            for(int i = 10; i < 100; i+= 5){
+            for (int i = 10; i < 100; i += 5) {
                 vec.add(i);
             }
             ftcp.write("timeBtwn, aveTime\n");
@@ -239,7 +240,7 @@ public class ExperimentController {
             for (Integer timeBtwn : vec) {
                 ArrayList<Integer> tcpVec = new ArrayList<Integer>();
                 ArrayList<Integer> gbnVec = new ArrayList<Integer>();
-                for(int i = 0 ; i < 5; i ++) {
+                for (int i = 0; i < 5; i++) {
                     NetworkSimulator gbnns = new NetworkSimulator();
                     Results gbn = gbnns.run("test.txt", timeBtwn, .05f, .05f, 5, 0, 3, 50, 50);
                     NetworkSimulator tcpns = new NetworkSimulator();
@@ -254,17 +255,17 @@ public class ExperimentController {
             }
             ftcp.close();
             fgbn.close();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void testTimeFuncTimeOut(String writeFile){
+    public void testTimeFuncTimeOut(String writeFile) {
         try {
             FileWriter ftcp = new FileWriter(new File("tcp_time_timeout_" + writeFile));
             FileWriter fgbn = new FileWriter(new File("gbn_time_timeout_" + writeFile));
             ArrayList<Integer> vec = new ArrayList<Integer>();
-            for(int i = 20; i < 100; i += 5){
+            for (int i = 20; i < 100; i += 5) {
                 vec.add(i);
             }
             ftcp.write("timeout, aveTime\n");
@@ -272,7 +273,7 @@ public class ExperimentController {
             for (Integer timeout : vec) {
                 ArrayList<Integer> tcpVec = new ArrayList<Integer>();
                 ArrayList<Integer> gbnVec = new ArrayList<Integer>();
-                for(int i = 0 ; i < 5; i ++) {
+                for (int i = 0; i < 5; i++) {
                     NetworkSimulator gbnns = new NetworkSimulator();
                     Results gbn = gbnns.run("test.txt", 10, .05f, .05f, 5, 0, 3, timeout, 50);
                     NetworkSimulator tcpns = new NetworkSimulator();
@@ -287,21 +288,21 @@ public class ExperimentController {
             }
             ftcp.close();
             fgbn.close();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public int average(ArrayList<Integer> intVec){
-        if(intVec.isEmpty()){
+    public int average(ArrayList<Integer> intVec) {
+        if (intVec.isEmpty()) {
             return 0;
         }
         int sum = 0;
         int size = intVec.size();
-        for(Integer i : intVec){
+        for (Integer i : intVec) {
             sum += i;
         }
-        return sum/size;
+        return sum / size;
     }
 
 }

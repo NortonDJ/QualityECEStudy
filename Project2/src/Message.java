@@ -2,23 +2,19 @@
  * A class which represents an application message (which is simply a string)
  */
 
-public class Message
-{
-    
+public class Message {
+
     private String x;
-    
-    public Message(String x)
-    {
-        this.x=x;
+
+    public Message(String x) {
+        this.x = x;
     }
-    
-    public String getMessage()
-    {
+
+    public String getMessage() {
         return x;
     }
-    
-    public void corruptMessage()
-    {
-       x=String.valueOf(x.charAt(0)+1) + x.substring(1);
+
+    public void corruptMessage() {
+        x = String.valueOf(x.charAt(0) + 1) + x.substring(1);
     }
 }

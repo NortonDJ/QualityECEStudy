@@ -14,9 +14,10 @@ public abstract class SenderTransport implements Protocol {
 
     /**
      * Constructor of sender transport layer
-     * @param network layer
+     *
+     * @param network  layer
      * @param timeline
-     * @param size of window
+     * @param size     of window
      */
     public SenderTransport(NetworkLayer nl, Timeline tl, int n) {
         this.nl = nl;
@@ -27,28 +28,30 @@ public abstract class SenderTransport implements Protocol {
 
     /**
      * Set if corruption is allowed in this layer
+     *
      * @param boolean corruptionAllowed
      */
-    public void enableCorruption(boolean corruptionAllowed){
+    public void enableCorruption(boolean corruptionAllowed) {
         this.corruptionAllowed = corruptionAllowed;
     }
 
     /**
      * Generate check sum for each message
+     *
      * @param message
-     * @param sequence number
+     * @param sequence    number
      * @param acknowledge number
      */
-    public int generateCheckSum(Message m, int seqNum, int ackNum){
+    public int generateCheckSum(Message m, int seqNum, int ackNum) {
         int checkSum = seqNum + ackNum;
         String s = m.getMessage();
-        for(char c : s.toCharArray()){
+        for (char c : s.toCharArray()) {
             checkSum += c;
         }
         return checkSum;
     }
 
-    public int getNumTransmissions(){
+    public int getNumTransmissions() {
         return numTransmissions;
     }
 

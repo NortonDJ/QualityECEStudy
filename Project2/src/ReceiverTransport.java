@@ -1,8 +1,7 @@
 /**
  * A class which represents the receiver transport layer
  */
-public abstract class ReceiverTransport implements Protocol
-{
+public abstract class ReceiverTransport implements Protocol {
     protected ReceiverApplication ra;
     protected NetworkLayer nl;
     protected int windowSize;
@@ -12,35 +11,38 @@ public abstract class ReceiverTransport implements Protocol
 
     /**
      * Constructor of receiver protocol
-     * @param network layer
+     *
+     * @param network  layer
      * @param receiver application
-     * @param timeout 
+     * @param timeout
      */
-    public ReceiverTransport(NetworkLayer nl, ReceiverApplication ra, int windowSize){
+    public ReceiverTransport(NetworkLayer nl, ReceiverApplication ra, int windowSize) {
         this.ra = ra;
-        this.nl=nl;
+        this.nl = nl;
         this.windowSize = windowSize;
         initialize();
     }
 
     /**
      * Set if corruption is allowed in this layer
+     *
      * @param boolean corruptionAllowed
      */
-    public void enableCorruption(boolean corruptionAllowed){
+    public void enableCorruption(boolean corruptionAllowed) {
         this.corruptionAllowed = corruptionAllowed;
     }
 
     /**
      * Generate check sum for each message
+     *
      * @param message
-     * @param sequence number
+     * @param sequence    number
      * @param acknowledge number
      */
-    public int generateCheckSum(Message m, int seqNum, int ackNum){
+    public int generateCheckSum(Message m, int seqNum, int ackNum) {
         int checkSum = seqNum + ackNum;
         String s = m.getMessage();
-        for(char c : s.toCharArray()){
+        for (char c : s.toCharArray()) {
             checkSum += c;
         }
         return checkSum;

@@ -32,14 +32,14 @@ class SenderGBNProtocolTest {
         //creating a new network layer with specific loss and corruption probability.
         nl = new NetworkLayer(pLoss, pCorr, tl);
         //create the sender transport from the factory
-        st = new SenderGBNProtocol(nl,tl,winSize,100);
+        st = new SenderGBNProtocol(nl, tl, winSize, 100);
         st.enableCorruption(false);
     }
 
     @Test
     void sendMessage1() {
         System.out.println("Test sendMessage1");
-        for(int i = 0; i < 4; i++){
+        for (int i = 0; i < 4; i++) {
             st.sendMessage(new Message(messageArray.get(i)));
         }
 
@@ -50,7 +50,7 @@ class SenderGBNProtocolTest {
     @Test
     void sendMessage2() {
         System.out.println("Test sendMessage2");
-        for(int i = 0; i < 5; i++){
+        for (int i = 0; i < 5; i++) {
             st.sendMessage(new Message(messageArray.get(i)));
         }
 
@@ -61,7 +61,7 @@ class SenderGBNProtocolTest {
     @Test
     void receiveACK0() {
         System.out.println("Test receiveACK0");
-        for(int i = 0; i < 5; i++){
+        for (int i = 0; i < 5; i++) {
             st.sendMessage(new Message(messageArray.get(i)));
         }
         Packet ack = new Packet(new Message("I'm an ACK"), -1, 0, -1);
@@ -73,7 +73,7 @@ class SenderGBNProtocolTest {
     @Test
     void receiveACK1() {
         System.out.println("Test receiveACK1");
-        for(int i = 0; i < 5; i++){
+        for (int i = 0; i < 5; i++) {
             st.sendMessage(new Message(messageArray.get(i)));
         }
         Packet ack = new Packet(new Message("I'm an ACK"), -1, 1, -1);
@@ -85,7 +85,7 @@ class SenderGBNProtocolTest {
     @Test
     void receiveCUMAckMovesBase() {
         System.out.println("Test receiveCUMAckMovesBase");
-        for(int i = 0; i < 5; i++){
+        for (int i = 0; i < 5; i++) {
             st.sendMessage(new Message(messageArray.get(i)));
         }
         Packet ack = new Packet(new Message("I'm an ACK"), -1, 2, -1);
@@ -96,7 +96,7 @@ class SenderGBNProtocolTest {
     @Test
     void receiveCUMAckSends3() {
         System.out.println("Test receiveCUMAckSends3");
-        for(int i = 0; i < 8; i++){
+        for (int i = 0; i < 8; i++) {
             st.sendMessage(new Message(messageArray.get(i)));
         }
         Packet ack = new Packet(new Message("I'm an ACK"), -1, 2, -1);
@@ -108,7 +108,7 @@ class SenderGBNProtocolTest {
     @Test
     void receiveCUMAckSendsLessThanWindowSize() {
         System.out.println("Test receiveCUMAckSendsLessThanWindowSize");
-        for(int i = 0; i < 8; i++){
+        for (int i = 0; i < 8; i++) {
             st.sendMessage(new Message(messageArray.get(i)));
         }
         Packet ack = new Packet(new Message("I'm an ACK"), -1, 2, -1);
@@ -117,9 +117,9 @@ class SenderGBNProtocolTest {
     }
 
     @Test
-    void receiveACKLessThanBaseDoesNothing(){
+    void receiveACKLessThanBaseDoesNothing() {
         System.out.println("Test receiveAckSendsLessThanBaseDoesNothing");
-        for(int i = 0; i < 8; i++){
+        for (int i = 0; i < 8; i++) {
             st.sendMessage(new Message(messageArray.get(i)));
         }
         Packet ack = new Packet(new Message("I'm an ACK"), -1, 2, -1);
@@ -131,9 +131,9 @@ class SenderGBNProtocolTest {
     }
 
     @Test
-    void receiveACKGreaterThanNextSeqNumDoesNothing(){
+    void receiveACKGreaterThanNextSeqNumDoesNothing() {
         System.out.println("Test receiveAckGreaterThanNextSeqNumDoesNothing");
-        for(int i = 0; i < 8; i++){
+        for (int i = 0; i < 8; i++) {
             st.sendMessage(new Message(messageArray.get(i)));
         }
         Packet ack = new Packet(new Message("I'm an ACK"), -1, 10, -1);
@@ -143,9 +143,9 @@ class SenderGBNProtocolTest {
     }
 
     @Test
-    void receiveACKDoesntResendPacketsBetweenBaseAndNextSeqNum(){
+    void receiveACKDoesntResendPacketsBetweenBaseAndNextSeqNum() {
         System.out.println("Test receiveACKDoesntResendPacketsBetweenBaseAndNextSeqNum");
-        for(int i = 0; i < 8; i++){
+        for (int i = 0; i < 8; i++) {
             st.sendMessage(new Message(messageArray.get(i)));
         }
         Packet ack = new Packet(new Message("I'm an ACK"), -1, 0, -1);
@@ -153,12 +153,12 @@ class SenderGBNProtocolTest {
         st.receiveMessage(ack);
         //by receiving ack for 0, it should send 3, and not resend 1,2
         ArrayList<Integer> seqNumCounts = new ArrayList<Integer>();
-        for(int i = 0; i < 100; i++){
+        for (int i = 0; i < 100; i++) {
             seqNumCounts.add(0);
         }
-        while(tl.sizeOfQueue() != 0){
+        while (tl.sizeOfQueue() != 0) {
             Event e = tl.returnNextEvent();
-            if(e.getType() == Event.MESSAGEARRIVE) {
+            if (e.getType() == Event.MESSAGEARRIVE) {
                 int seqNum = e.getPacket().getSeqnum();
                 seqNumCounts.set(seqNum, seqNumCounts.get(seqNum) + 1);
             }

@@ -1,12 +1,13 @@
 import java.util.*;
 import java.io.FileReader;
 
-public class NetworkSimulator
-{
+public class NetworkSimulator {
     public static int DEBUG;
     private static int endTime;
+
     /**
      * Main method with following variables
+     *
      * @param args[0] file with messages
      * @param args[1] time between messages (int)
      * @param args[2] loss probability (float)
@@ -15,11 +16,9 @@ public class NetworkSimulator
      * @param args[5] protocol type (int)
      * @param args[6] debugging trace (int)
      */
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         //checking to see if enough arguements have been sent
-        if(args.length<7)
-        {
+        if (args.length < 7) {
             System.out.println("need at least 7 arguements");
             System.exit(1);
         }
@@ -47,8 +46,8 @@ public class NetworkSimulator
     }
 
     public static Results run(String filename, int timeBtwnMsgs, float pLoss,
-                           float pCorr, int winSize, int protocol, int debug,
-                           int senderTimeOut, int receiverTimeOut){
+                              float pCorr, int winSize, int protocol, int debug,
+                              int senderTimeOut, int receiverTimeOut) {
         System.out.println("Working Directory = " + System.getProperty("user.dir"));
         int sentFromSenderCount = 0;
         //receiverTimeOut not used, could be used at a later point for delayed ACK
@@ -64,9 +63,9 @@ public class NetworkSimulator
 
 
         //create a factory to create transport layers
-        TransportLayerFactory factory = new TransportLayerFactory(nl,tl);
+        TransportLayerFactory factory = new TransportLayerFactory(nl, tl);
         //create the sender transport from the factory
-        SenderTransport st = factory.makeSender(protocol,winSize, senderTimeOut);
+        SenderTransport st = factory.makeSender(protocol, winSize, senderTimeOut);
         //create the application with the transport layer
         SenderApplication sa = new SenderApplication(messageArray, st);
 
@@ -112,12 +111,12 @@ public class NetworkSimulator
                     else {
                         if (DEBUG > 0)
                             System.out.println("Message arriving from sender to receiver at time " + currentEvent.getTime());
-                        if(sentFromSenderCount == 0 && testOverRide){
+                        if (sentFromSenderCount == 0 && testOverRide) {
                             System.out.println("CORRUPTING FIRST PACKET");
                             currentEvent.getPacket().corrupt();
                             sentFromSenderCount++;
                             rt.receiveMessage(currentEvent.getPacket());
-                        } else if (sentFromSenderCount == 1 && testOverRide){
+                        } else if (sentFromSenderCount == 1 && testOverRide) {
                             System.out.println("DROPPING SECOND PACKET FROM SENDER");
                             sentFromSenderCount++;
                         } else {
@@ -156,20 +155,19 @@ public class NetworkSimulator
                 count++;
             }
             Results r = new Results(tl.getTotalMessagesToSend(), endTime, st.getNumTransmissions());
-        } catch (UnsupportedOperationException e){
+        } catch (UnsupportedOperationException e) {
             System.out.println("Network Simulator recognized simulation is over.");
             String protocolString = "";
-            if(protocol == 0){
+            if (protocol == 0) {
                 protocolString = "GBN";
             } else {
                 protocolString = "TCP";
             }
             System.out.println("Time to send: " + tl.getTotalMessagesToSend() +
-                    " messages using " +protocolString +" = " + endTime);
-        } catch (Exception e){
+                    " messages using " + protocolString + " = " + endTime);
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             System.out.println("Program exited");
             Results r = new Results(tl.getTotalMessagesToSend(), endTime, st.getNumTransmissions());
             return r;
@@ -179,13 +177,14 @@ public class NetworkSimulator
     //reading in file line by line.
     public static ArrayList<String> readFile(String fileName) {
         ArrayList<String> messageArray = new ArrayList<String>();
-        Scanner sc=null;
-        try{
+        Scanner sc = null;
+        try {
             sc = new Scanner(new FileReader(fileName));
-        }catch(Exception e)
-        {System.out.println("Could not open file " + e);}
+        } catch (Exception e) {
+            System.out.println("Could not open file " + e);
+        }
 
-        while(sc.hasNextLine()) {
+        while (sc.hasNextLine()) {
             String s = sc.nextLine();
             if (!s.isEmpty()) {
                 messageArray.add(s);

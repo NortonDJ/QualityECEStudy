@@ -7,7 +7,7 @@ public class Results {
     private int timeTaken;
     private int numTransmissions;
 
-    public Results(int messagesSent, int timeTaken, int numTransmissions){
+    public Results(int messagesSent, int timeTaken, int numTransmissions) {
         this.messagesSent = messagesSent;
         this.timeTaken = timeTaken;
         this.numTransmissions = numTransmissions;
@@ -21,7 +21,7 @@ public class Results {
         return timeTaken;
     }
 
-    public int getNumTransmissions(){
+    public int getNumTransmissions() {
         return numTransmissions;
     }
 

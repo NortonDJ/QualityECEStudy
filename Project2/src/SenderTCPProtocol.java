@@ -71,7 +71,7 @@ public class SenderTCPProtocol extends SenderTransport {
         System.out.println("SENDER TCP RECEIVED:    " + pkt.toString());
         if (verifyPacket(pkt)) { //if packet is not corrupt
             int ackNum = pkt.getAcknum();
-            if(ackNum == tl.getTotalMessagesToSend()){
+            if (ackNum == tl.getTotalMessagesToSend()) {
                 System.out.println("Sender has received the final ACK. Simulation OVER.");
                 throw new UnsupportedOperationException("We're DONE!");
             }

@@ -8,30 +8,32 @@ public class TransportLayerFactory {
 
     /**
      * Constructor of TransportLayerFactory
-     * @param network layer
+     *
+     * @param network  layer
      * @param timeline
      */
-    public TransportLayerFactory(NetworkLayer nl, Timeline tl){
+    public TransportLayerFactory(NetworkLayer nl, Timeline tl) {
         this.nl = nl;
         this.tl = tl;
     }
 
     /**
      * create sender
+     *
      * @param protocol type
-     * @param size of window
+     * @param size     of window
      * @param timeout
      * @return SenderTransport
      */
-    public SenderTransport makeSender(int protocol, int windowSize, int timeOut){
-        switch(protocol){
-            case (0) :
+    public SenderTransport makeSender(int protocol, int windowSize, int timeOut) {
+        switch (protocol) {
+            case (0):
                 System.out.println("Setting Sender Transport protocol to GBN.");
                 return new SenderGBNProtocol(this.nl, this.tl, windowSize, timeOut);
 
-            case (1) : //continue down
+            case (1): //continue down
 
-            default :
+            default:
                 System.out.println("Setting Sender Transport protocol to TCP.");
                 return new SenderTCPProtocol(this.nl, this.tl, windowSize, timeOut);
         }
@@ -39,19 +41,20 @@ public class TransportLayerFactory {
 
     /**
      * create receiver
+     *
      * @param protocol type
-     * @param size of window
+     * @param size     of window
      * @param receiver application
      * @param timeout
      * @return ReceiverTransport
      */
-    public ReceiverTransport makeReceiver(int protocol, int windowSize, ReceiverApplication ra, int timeOut){
-        switch(protocol){
-            case (0) :
+    public ReceiverTransport makeReceiver(int protocol, int windowSize, ReceiverApplication ra, int timeOut) {
+        switch (protocol) {
+            case (0):
                 System.out.println("Setting Receiver Transport protocol to GBN.");
                 return new ReceiverGBNProtocol(this.nl, ra, windowSize);
-            case (1) : //continue down
-            default :
+            case (1): //continue down
+            default:
                 System.out.println("Setting Receiver Transport protocol to TCP.");
                 return new ReceiverTCPProtocol(this.nl, ra, windowSize, timeOut);
         }

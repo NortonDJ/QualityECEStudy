@@ -11,19 +11,21 @@ public class SenderGBNProtocol extends SenderTransport {
 
     /**
      * Constructor of Go-Back-n sender protocol
-     * @param network layer
+     *
+     * @param network  layer
      * @param timeline
-     * @param size of window
+     * @param size     of window
      * @param timeout
      */
-    public SenderGBNProtocol(NetworkLayer nl, Timeline tl, int n, int timeOut){
+    public SenderGBNProtocol(NetworkLayer nl, Timeline tl, int n, int timeOut) {
         super(nl, tl, n);
         this.timeOut = timeOut;
     }
+
     /**
      * initialize the Go-back-n of sender's transport layer
      */
-    public void initialize(){
+    public void initialize() {
         packetArrayList = new ArrayList<Packet>();
         nextSeqNum = 0;
         base = 0;
@@ -32,12 +34,13 @@ public class SenderGBNProtocol extends SenderTransport {
 
     /**
      * Send message in Go-Back-n protocol
+     *
      * @param message content
      */
     public void sendMessage(Message msg) {
         int seqNum = packetArrayList.size();
         int ackNum = -1;
-        Packet p = new Packet(msg, seqNum, ackNum, generateCheckSum(msg,seqNum,ackNum));
+        Packet p = new Packet(msg, seqNum, ackNum, generateCheckSum(msg, seqNum, ackNum));
         packetArrayList.add(p);
         if (canSendNext()) {
             sendNextPacket();
@@ -49,7 +52,7 @@ public class SenderGBNProtocol extends SenderTransport {
     /**
      * Send next packet in Go-Back-n protocol
      */
-    private void sendNextPacket(){
+    private void sendNextPacket() {
         Packet toSend = new Packet(packetArrayList.get(nextSeqNum));
         System.out.println("SENDER GBN SENDING:     " + toSend.toString());
         nl.sendPacket(toSend, to);
@@ -62,17 +65,18 @@ public class SenderGBNProtocol extends SenderTransport {
 
     /**
      * sender receive message in Go-Back-n protocol
+     *
      * @param packet received
      */
     public void receiveMessage(Packet pkt) {
         System.out.println("SENDER GBN RECEIVED:    " + pkt.toString());
         if (verifyPacket(pkt)) { // if packet is not corrupt
             int ackNum = pkt.getAcknum();
-            if(ackNum == tl.getTotalMessagesToSend() - 1){
+            if (ackNum == tl.getTotalMessagesToSend() - 1) {
                 System.out.println("Sender has received the final ACK. Simulation OVER.");
                 throw new UnsupportedOperationException("We're DONE!");
             }
-            if(ackNumMakesSense(ackNum)) { //if ack is in window
+            if (ackNumMakesSense(ackNum)) { //if ack is in window
                 base = ackNum + 1;
                 if (base == nextSeqNum) {
                     tl.stopTimer(me);
@@ -100,8 +104,8 @@ public class SenderGBNProtocol extends SenderTransport {
     /**
      * method of resending packet
      */
-    public void resendDueToTimeout(){
-        for(int i = base; i < nextSeqNum; i++){
+    public void resendDueToTimeout() {
+        for (int i = base; i < nextSeqNum; i++) {
             Packet toSend = new Packet(packetArrayList.get(i));
             System.out.println("SENDER GBN RESENDING:   " + toSend.toString());
             nl.sendPacket(toSend, to);
@@ -111,10 +115,11 @@ public class SenderGBNProtocol extends SenderTransport {
 
     /**
      * check if the received packet correct
+     *
      * @param packet
      */
-    public boolean verifyPacket(Packet pkt){
-        if(corruptionAllowed) {
+    public boolean verifyPacket(Packet pkt) {
+        if (corruptionAllowed) {
             return !pkt.isCorrupt();
         } else {
             return true;
@@ -124,8 +129,8 @@ public class SenderGBNProtocol extends SenderTransport {
     /**
      * check if next packet can be sent
      */
-    public boolean canSendNext(){
-        if(nextSeqNum < base + windowSize && nextSeqNum < packetArrayList.size()){
+    public boolean canSendNext() {
+        if (nextSeqNum < base + windowSize && nextSeqNum < packetArrayList.size()) {
             return true;
         } else {
             return false;
@@ -135,8 +140,8 @@ public class SenderGBNProtocol extends SenderTransport {
     /**
      * send next packet
      */
-    public void sendBufferedPkts(){
-         while(canSendNext()){
+    public void sendBufferedPkts() {
+        while (canSendNext()) {
             sendNextPacket();
         }
     }
@@ -175,6 +180,7 @@ public class SenderGBNProtocol extends SenderTransport {
 
     /**
      * set time out
+     *
      * @param time out
      */
     public void setTimeOut(int timeOut) {

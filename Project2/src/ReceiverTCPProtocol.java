@@ -14,10 +14,11 @@ public class ReceiverTCPProtocol extends ReceiverTransport {
 
     /**
      * Constructor of TCP receiver protocol
-     * @param network layer
+     *
+     * @param network  layer
      * @param receiver application
-     * @param window size
-     * @param timeout 
+     * @param window   size
+     * @param timeout
      */
     public ReceiverTCPProtocol(NetworkLayer nl, ReceiverApplication ra, int windowSize, int timeOut) {
         super(nl, ra, windowSize);
@@ -42,6 +43,7 @@ public class ReceiverTCPProtocol extends ReceiverTransport {
 
     /**
      * receive message in TCP protocol
+     *
      * @param packet
      */
     public void receiveMessage(Packet pkt) {
@@ -63,15 +65,16 @@ public class ReceiverTCPProtocol extends ReceiverTransport {
             sendAck(expectedSeqNum);
         }
     }
-    
+
     /**
      * Send acknowledgement in TCP protocol
+     *
      * @param acknowledgement number
      */
     public void sendAck(int ackNum) {
         Message msg = new Message("I'm an ACK");
         int seqNum = -1;
-        Packet ack = new Packet(msg, seqNum, ackNum, generateCheckSum(msg,seqNum,ackNum));
+        Packet ack = new Packet(msg, seqNum, ackNum, generateCheckSum(msg, seqNum, ackNum));
         System.out.println("RECEIVER TCP SENDING:   " + ack.toString());
         nl.sendPacket(ack, to);
     }
@@ -81,12 +84,13 @@ public class ReceiverTCPProtocol extends ReceiverTransport {
     }
 
     /**
-     * check if the received packet correct 
+     * check if the received packet correct
+     *
      * @param packet
      * @return true/false
      */
     public boolean verifyPacket(Packet pkt) {
-        if(corruptionAllowed) {
+        if (corruptionAllowed) {
             return !pkt.isCorrupt();
         } else {
             return true;
@@ -94,7 +98,8 @@ public class ReceiverTCPProtocol extends ReceiverTransport {
     }
 
     /**
-     * check if the sequence number in window 
+     * check if the sequence number in window
+     *
      * @param sequence number
      * @return true/false
      */
@@ -108,6 +113,7 @@ public class ReceiverTCPProtocol extends ReceiverTransport {
 
     /**
      * get the delivered sequence number
+     *
      * @return Delivered sequence number
      */
     public int deliverBuffered() {

@@ -1,8 +1,7 @@
 /**
  * A class which represents an event and is used in the Timeline class
  */
-public class Event implements Comparable<Event>
-{
+public class Event implements Comparable<Event> {
 
     int time; //time of the event
     int type; //type of event
@@ -18,81 +17,74 @@ public class Event implements Comparable<Event>
 
     /**
      * Initializing new event without packet. This will be used for sending events
+     *
      * @param time time of event
      * @param type type of event
      * @param host where event is happening.
      */
-    public Event(int time, int type, int host)
-    {
-        this.time=time;
-        this.type=type;
-        this.host=host;
+    public Event(int time, int type, int host) {
+        this.time = time;
+        this.type = type;
+        this.host = host;
     }
 
     /**
      * Initializing new event with packet. This will be used for arriving events
+     *
      * @param time time of event
      * @param type type of event
      * @param host where event is happening.
-     * @param pkt packet that is arriving.
+     * @param pkt  packet that is arriving.
      */
 
-    public Event(int time, int type, int host, Packet pkt)
-    {
-        this.time=time;
-        this.type=type;
-        this.host=host;
-        this.pkt=pkt;
+    public Event(int time, int type, int host, Packet pkt) {
+        this.time = time;
+        this.type = type;
+        this.host = host;
+        this.pkt = pkt;
     }
-    
+
     /**
      * Kills timer by simply setting its event type to KILLEDTIMER
      */
 
-    public void killTimer()
-    {
-        if(type!=TIMER)
-        {
+    public void killTimer() {
+        if (type != TIMER) {
             System.out.println("Trying to stop a timer on an event that is not a timer! should not happen!");
             System.exit(1);
         }
-        type=KILLEDTIMER;
+        type = KILLEDTIMER;
     }
-    
 
-    public int getTime()
-    {
+
+    public int getTime() {
         return time;
     }
 
-    public int getType()
-    {
+    public int getType() {
         return type;
     }
 
-    public int getHost()
-    {
+    public int getHost() {
         return host;
     }
 
-    public Packet getPacket()
-    {
+    public Packet getPacket() {
         return pkt;
     }
 
-    public int compareTo(Event e)
-    {
-        return this.time-e.time;
+    public int compareTo(Event e) {
+        return this.time - e.time;
 
     }
 
-    public String toString(){
-        switch (type){
+    public String toString() {
+        switch (type) {
             case MESSAGESEND:
                 return ("MESSAGESEND: Time: " + time + " Host: " + host);
             case MESSAGEARRIVE:
                 return ("MESSAGEARIVE: Time: " + time + " Host: " + host
-                + " Packet: " + pkt);
+                        + " Packet: " + pkt);
             case TIMER:
                 return ("TIMER: Time: " + time + " Host: " + host);
             case KILLEDTIMER:
