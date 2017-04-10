@@ -2,6 +2,16 @@ PROJECT TITLE: Implementing a Reliable Transport Protocol
 DATE: April.9th.2017
 AUTHORS: Darren Norton, Yizhong Chen
 
+Fair warning:
+    This project was developed in Intellij IDEA, and uses a build structure such
+    that the build directory is Project2/production. If the program does not accept
+    your input files, we have left a built in working directory detector. Please
+    adjust using that.
+
+    The unit tests provided in the /tests folder are run using Junit5, and will
+    likely not run on BlueJ. We don't know how to get the library for this, but
+    all 42 unit tests ran as of 04/09/2017.
+
 HOW TO START THIS PROJECT: 
 	1. Open terminal. 
 	2. Then Go to “/src” directory, compile the program by 

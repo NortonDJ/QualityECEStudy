@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Created by nortondj on 4/5/17.
  */
-class SenderGBNProtocolNoCorruptionTest {
+class SenderGBNProtocolTest {
     private ArrayList<String> messageArray;
     private Timeline tl;
     private NetworkLayer nl;

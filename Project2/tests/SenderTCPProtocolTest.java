@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Created by nortondj on 4/6/17.
  */
-class SenderTCPProtocolNoCorruptionTest {
+class SenderTCPProtocolTest {
 
     private ArrayList<String> messageArray;
     private Timeline tl;
