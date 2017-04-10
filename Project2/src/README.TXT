@@ -17,6 +17,7 @@ HOW TO START THIS PROJECT:
       		@param args[6] debugging trace (int)
 
 HOW TO GET DATA:
-	If the program has not been compile, follow first and second step in “HOW TO START 	THIS PROJECT”
+	If the program has not yet been compiled, follow the first and second steps
+	in “HOW TO START THIS PROJECT”
 
-	Then, run the program, by “java ExperimentController”
+	Then, run the experiments, through the command “java ExperimentController”
